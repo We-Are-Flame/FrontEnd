@@ -3,13 +3,13 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 
+import LoginPage from "./src/pages/Login/LoginPage";
+import ProfileScreen from "./src/pages/Profile/ProfileScreen";
 import NavContainer from "./src/components/NavContainer";
+import { useState } from "react";
 export default function App() {
-  return (
-    <>
-      <NavContainer />
-    </>
-  );
+  const [isLogin, setIsLogin] = useState(false);
+  return <>{isLogin ? <NavContainer /> : <LoginPage />}</>;
 }
 
 const styles = StyleSheet.create({
