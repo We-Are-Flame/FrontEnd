@@ -1,9 +1,13 @@
 import React from "react";
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
+import { Image } from "expo-image";
 import { Modal, Portal } from "react-native-paper";
 import theme from "../../styles/theme";
-
+import loginIcon from "../../../assets/kakao_login.png";
+import loginLarge from "../../../assets/kakao_login_large_wide.png";
+import { useNavigation } from "@react-navigation/native";
 const LoginModal = ({ visible, onDismiss }) => {
+  const navigation = useNavigation();
   return (
     <Portal>
       <Modal
@@ -20,7 +24,20 @@ const LoginModal = ({ visible, onDismiss }) => {
               아래의 소셜계정과 연동하여 가입할 수 있습니다.
             </Text>
           </View>
-          <View style={styles.modalContentBottom}></View>
+          <View style={styles.modalContentBottom}>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("KaKaoLogin", { screen: "KaKaoLogin" })
+              }
+              style={{ width: "100%", height: "100%" }}
+            >
+              <Image
+                style={{ width: "100%", height: "100%" }}
+                source={loginLarge}
+                contentFit="contain"
+              />
+            </TouchableOpacity>
+          </View>
         </View>
       </Modal>
     </Portal>
@@ -51,8 +68,7 @@ const styles = {
   },
   modalContentMiddle: {
     flex: 0.3,
-    alignItems: "center",
-    justifyContent: "center",
+    ...theme.centerStyle,
   },
   modalText: {
     fontSize: 15,
@@ -60,6 +76,7 @@ const styles = {
   },
   modalContentBottom: {
     flex: 1,
+    ...theme.centerStyle,
   },
 };
 
