@@ -1,26 +1,66 @@
-/** @format */
+import React from "react";
+import { View, Text } from "react-native";
+import { Modal, Portal } from "react-native-paper";
+import theme from "../../styles/theme";
 
-import * as React from "react";
-import { Modal, Portal, Text, Button, PaperProvider } from "react-native-paper";
-
-const MyComponent = () => {
-  const [visible, setVisible] = React.useState(false);
-
-  const showModal = () => setVisible(true);
-  const hideModal = () => setVisible(false);
-  const containerStyle = { backgroundColor: "white", padding: 20 };
-
+const LoginModal = ({ visible, onDismiss }) => {
   return (
-    <PaperProvider>
+    <Portal>
       <Modal
-        onDismiss={hideModal}
-        visible={true}
-        contentContainerStyle={containerStyle}
+        visible={visible}
+        onDismiss={onDismiss}
+        contentContainerStyle={styles.modalContainer}
       >
-        <Text>Example Modal. Click outside this area to dismiss.</Text>
+        <View style={styles.modalContent}>
+          <View style={styles.modalContentTop}>
+            <Text style={styles.modalTitle}>가입하기</Text>
+          </View>
+          <View style={styles.modalContentMiddle}>
+            <Text style={styles.modalText}>
+              아래의 소셜계정과 연동하여 가입할 수 있습니다.
+            </Text>
+          </View>
+          <View style={styles.modalContentBottom}></View>
+        </View>
       </Modal>
-    </PaperProvider>
+    </Portal>
   );
 };
 
-export default MyComponent;
+const styles = {
+  modalContainer: {
+    ...theme.centerStyle,
+    backgroundColor: "white",
+    borderRadius: 10,
+    width: "75%",
+    height: "24%",
+    alignSelf: "center",
+  },
+  modalContent: {
+    padding: 10,
+    flex: 1,
+  },
+  modalContentTop: {
+    flex: 0.4,
+    alignItems: "center",
+    justifyContent: "flex-end",
+  },
+  modalTitle: {
+    fontSize: 24,
+    fontWeight: "500",
+  },
+  modalContentMiddle: {
+    flex: 0.3,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  modalText: {
+    fontSize: 15,
+    fontWeight: "400",
+  },
+  modalContentBottom: {
+    flex: 1,
+  },
+};
+
+export default LoginModal;
