@@ -7,9 +7,11 @@ import LoginPage from "./src/pages/Login/LoginPage";
 import ProfileScreen from "./src/pages/Profile/ProfileScreen";
 import NavContainer from "./src/components/NavContainer";
 import { useState } from "react";
+import LoginModal from "./src/modals/LoginModal/LoginModal";
+import MyLoginModal from "./src/modals/LoginModal/MyLoginModal";
 export default function App() {
-  const [isLogin, setIsLogin] = useState(false);
-  return <>{isLogin ? <NavContainer /> : <LoginPage />}</>;
+  const [isLogin, setIsLogin] = useState(true);
+  return <>{isLogin ? <LoginModal /> : <LoginPage />}</>;
 }
 
 const styles = StyleSheet.create({
