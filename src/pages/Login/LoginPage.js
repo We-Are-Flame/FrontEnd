@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Pressable,
 } from "react-native";
+
 import { PaperProvider, Portal, Modal } from "react-native-paper";
 import { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -19,7 +20,9 @@ const LoginPage = () => {
   const [visible, setVisible] = useState(false);
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
+
   const navigation = useNavigation();
+
   return (
     <PaperProvider>
       <LoginModal visible={visible} onDismiss={hideModal} />
