@@ -10,7 +10,11 @@ import HomeContentItem from './HomeContentItem/HomeContentItem';
 export default function HomeContent() {
   return (
     <View style={styles.homeContentView}>
-      <HomeContentItem state={homeData[0]}/>
+      {
+        homeData.map((state,index)=>{
+          return <HomeContentItem state={state} key={index}/>
+        })
+      }
     </View>
   );
 }

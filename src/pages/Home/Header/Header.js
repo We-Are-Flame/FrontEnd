@@ -7,6 +7,7 @@ import { Image } from "expo-image";
 import { AntDesign } from '@expo/vector-icons';
 
 import Logo from "../../../../assets/kitchingLogo.png";
+import theme from './../../../styles/theme';
 
 export default function Header() {
   return (
@@ -25,8 +26,8 @@ export default function Header() {
 
       </View>
       <View style={styles.headerIconView}>
-        <AntDesign name="search1" size={24} color="black" />
-        <AntDesign name="bells" size={24} color="black" />
+        <AntDesign name="search1" size={24} color="white" />
+        <AntDesign name="bells" size={24} color="white" />
       </View>
     </View>
   );
@@ -34,9 +35,11 @@ export default function Header() {
 
 const styles = StyleSheet.create({
   headerView:{
-    marginTop:40,
+    marginTop:30,
     flexDirection:"row",
-    justifyContent:"space-between"
+    justifyContent:"space-between",
+    backgroundColor:theme.psColor,
+    paddingBottom:20,
   },
   headerCenter:{
     flex:2
@@ -49,7 +52,8 @@ const styles = StyleSheet.create({
     fontWeight:'bold',
     fontSize:30,
     marginTop:25,
-    marginLeft:10,
+    marginLeft:20,
+    color:"#ffffff",
   },
   headerIconView:{
     flexDirection:"row",

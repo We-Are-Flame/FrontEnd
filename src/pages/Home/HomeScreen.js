@@ -1,7 +1,7 @@
 /** @format */
 
 import * as React from "react";
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View,ScrollView } from 'react-native';
 
 import Header from './Header/Header';
 import HomeContent from './HomeContent/HomeContent';
@@ -14,7 +14,9 @@ export default function HomeScreen() {
         <Header />
       </View>
       <View style={styles.homeScreenContent}>
-        <HomeContent />
+        <ScrollView>
+          <HomeContent />
+        </ScrollView>
       </View>
       {/* <View style={styles.homeScreenNavBar}>
         <NavContainer />
