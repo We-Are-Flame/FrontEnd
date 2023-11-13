@@ -23,6 +23,7 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   homeScreenView: {
+    backgroundColor: "white",
     flex: 1,
   },
   homeScreenHeader: {
