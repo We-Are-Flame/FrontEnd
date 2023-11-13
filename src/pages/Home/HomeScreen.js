@@ -5,6 +5,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import Header from './Header/Header';
 import HomeContent from './HomeContent/HomeContent';
+import NavContainer from '../../components/NavContainer';
 
 export default function HomeScreen() {
   return (
@@ -15,6 +16,9 @@ export default function HomeScreen() {
       <View style={styles.homeScreenContent}>
         <HomeContent />
       </View>
+      {/* <View style={styles.homeScreenNavBar}>
+        <NavContainer />
+      </View> */}
     </View>
   );
 }
@@ -28,5 +32,8 @@ const styles = StyleSheet.create({
   },
   homeScreenContent:{
     flex:6,
-  }
+  },
+  // homeScreenNavBar:{
+  //   flex:1,
+  // }
 });

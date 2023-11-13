@@ -12,11 +12,14 @@ export default function Header() {
   return (
     <View style={styles.headerView}>
       <View style={styles.headerLogoView}>
-        <Image
+        {/* <Image
           style={{ width: "100%", height: "100%" }}
           source={Logo}
           contentFit="contain"
-        />
+        /> */}
+        <Text style={styles.headerLogoText}>
+          KitChing
+        </Text>
       </View>
       <View style={styles.headerCenter}>
 
@@ -39,11 +42,18 @@ const styles = StyleSheet.create({
     flex:2
   },
   headerLogoView:{
-    flex:1,
+    flex:3,
+    
+  },
+  headerLogoText:{
+    fontWeight:'bold',
+    fontSize:30,
+    marginTop:25,
+    marginLeft:10,
   },
   headerIconView:{
     flexDirection:"row",
-    flex:1,
+    flex:2,
     marginTop:30,
     justifyContent:"space-evenly"
   }
