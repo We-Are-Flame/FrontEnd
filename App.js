@@ -4,7 +4,10 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 
 import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
+import {
+  createStackNavigator,
+  TransitionPresets,
+} from "@react-navigation/stack";
 
 import LoginPage from "./src/pages/Login/LoginPage";
 import NavContainer from "./src/components/NavContainer";
@@ -20,6 +23,7 @@ export default function App() {
         initialRouteName={isLogin ? NavContainer : LoginPage}
         screenOptions={{
           headerShown: false,
+          gestureEnabled: true,
         }}
       >
         <Stack.Screen name="Login" component={LoginPage} />

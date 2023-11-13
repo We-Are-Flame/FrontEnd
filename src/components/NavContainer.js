@@ -24,41 +24,39 @@ export default function NavContainer() {
   const theme = useTheme();
   theme.colors.secondaryContainer = "transparent";
   return (
-    <NavigationContainer>
-      <Tab.Navigator
-        barStyle={{
-          height: 100,
-          borderTopWidth: 0.2,
-          borderTopColor: "lightgray",
-          backgroundColor: "white",
-        }}
-        initialRouteName={homeName}
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused }) => {
-            let iconName;
-            let rn = route.name;
+    <Tab.Navigator
+      barStyle={{
+        height: 100,
+        borderTopWidth: 0.2,
+        borderTopColor: "lightgray",
+        backgroundColor: "white",
+      }}
+      initialRouteName={homeName}
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused }) => {
+          let iconName;
+          let rn = route.name;
 
-            if (rn === homeName) {
-              iconName = focused ? "home" : "home-outline";
-            } else if (rn === randomName) {
-              iconName = focused ? "shuffle" : "shuffle-outline";
-            } else if (rn === profileName) {
-              iconName = focused ? "settings" : "settings-outline";
-            } else if (rn === chatName) {
-              iconName = focused
-                ? "chatbubble-ellipses"
-                : "chatbubble-ellipses-outline";
-            }
+          if (rn === homeName) {
+            iconName = focused ? "home" : "home-outline";
+          } else if (rn === randomName) {
+            iconName = focused ? "shuffle" : "shuffle-outline";
+          } else if (rn === profileName) {
+            iconName = focused ? "settings" : "settings-outline";
+          } else if (rn === chatName) {
+            iconName = focused
+              ? "chatbubble-ellipses"
+              : "chatbubble-ellipses-outline";
+          }
 
-            return <Ionicons name={iconName} size={23} color="black" />;
-          },
-        })}
-      >
-        <Tab.Screen name={homeName} component={HomeScreen} />
-        <Tab.Screen name={chatName} component={ChatScreen} />
-        <Tab.Screen name={randomName} component={RandomScreen} />
-        <Tab.Screen name={profileName} component={ProfileScreen} />
-      </Tab.Navigator>
-    </NavigationContainer>
+          return <Ionicons name={iconName} size={23} color="black" />;
+        },
+      })}
+    >
+      <Tab.Screen name={homeName} component={HomeScreen} />
+      <Tab.Screen name={chatName} component={ChatScreen} />
+      <Tab.Screen name={randomName} component={RandomScreen} />
+      <Tab.Screen name={profileName} component={ProfileScreen} />
+    </Tab.Navigator>
   );
 }

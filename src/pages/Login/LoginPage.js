@@ -8,17 +8,18 @@ import {
   TouchableOpacity,
   Pressable,
 } from "react-native";
-
-import { useState } from "react";
+import { PaperProvider, Portal, Modal } from "react-native-paper";
+import { useState, useEffect } from "react";
+import { useNavigation } from "@react-navigation/native";
 
 import LoginModal from "../../modals/LoginModal/LoginModal";
 import theme from "../../styles/theme";
-import { PaperProvider, Portal, Modal } from "react-native-paper";
+
 const LoginPage = () => {
   const [visible, setVisible] = useState(false);
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
-
+  const navigation = useNavigation();
   return (
     <PaperProvider>
       <LoginModal visible={visible} onDismiss={hideModal} />
@@ -30,7 +31,7 @@ const LoginPage = () => {
               <Text style={{ ...styles.contentTop }}>안녕하세요!</Text>
               <Text style={{ ...styles.contentTop }}>Kitching</Text>
             </View>
-            <View style={{ flex: 1 }}>
+            <View style={{ flex: 0.8 }}>
               <Text style={styles.contentBottom}>로그인 후, 키칭을 통해</Text>
               <Text style={styles.contentBottom}>
                 새로운 인연을 만나보세요!
@@ -47,7 +48,9 @@ const LoginPage = () => {
             </TouchableOpacity>
           </View>
           <View style={styles.noLoginContainer}>
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Home", { screen: "Home" })}
+            >
               <Text style={{ fontWeight: "400", fontSize: 18, color: "white" }}>
                 로그인 하지 않고 시작하기
               </Text>
@@ -75,12 +78,12 @@ const styles = StyleSheet.create({
   bottom: { flex: 0.8, backgroundColor: theme.psColor },
   contentTop: {
     color: "white",
-    fontSize: 28,
-    height: 30,
+    fontSize: theme.screenHeight / 24,
+    lineHeight: theme.screenHeight / 24,
   },
   contentBottom: {
     color: "white",
-    fontSize: 18,
+    fontSize: theme.screenWidth / 24,
     fontWeight: "300",
   },
   startContainer: {

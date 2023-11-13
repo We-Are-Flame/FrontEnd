@@ -49,7 +49,7 @@ const styles = {
     ...theme.centerStyle,
     backgroundColor: "white",
     borderRadius: 10,
-    width: "75%",
+    width: theme.screenWidth * 0.75,
     height: "24%",
     alignSelf: "center",
   },
@@ -63,7 +63,7 @@ const styles = {
     justifyContent: "flex-end",
   },
   modalTitle: {
-    fontSize: 24,
+    fontSize: theme.screenHeight / 30,
     fontWeight: "500",
   },
   modalContentMiddle: {
@@ -71,7 +71,7 @@ const styles = {
     ...theme.centerStyle,
   },
   modalText: {
-    fontSize: 15,
+    fontSize: theme.screenWidth / 29,
     fontWeight: "400",
   },
   modalContentBottom: {
