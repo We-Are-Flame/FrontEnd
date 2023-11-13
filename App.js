@@ -9,6 +9,7 @@ import {
   TransitionPresets,
 } from "@react-navigation/stack";
 
+import ClubManagePage from "./src/pages/Club/ClubManagePage";
 import LoginPage from "./src/pages/Login/LoginPage";
 import NavContainer from "./src/components/NavContainer";
 import KaKaoLogin from "./src/components/Kakao";
@@ -18,10 +19,11 @@ const Stack = createStackNavigator();
 
 export default function App() {
   const [isLogin, setIsLogin] = useState(false);
+  // const [isLogin, setIsLogin] = useState(true);
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName={isLogin ? NavContainer : LoginPage}
+        initialRouteName={isLogin ? "Home" : "ClubManagePage"}
         screenOptions={{
           headerShown: false,
           gestureEnabled: true,
@@ -30,6 +32,7 @@ export default function App() {
         <Stack.Screen name="Login" component={LoginPage} />
         <Stack.Screen name="Home" component={NavContainer} />
         <Stack.Screen name="KaKaoLogin" component={KaKaoLogin} />
+        <Stack.Screen name="ClubManagePage" component={ClubManagePage} />
       </Stack.Navigator>
     </NavigationContainer>
   );
