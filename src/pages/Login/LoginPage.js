@@ -10,6 +10,7 @@ import {
 } from "react-native";
 
 import { useState } from "react";
+import { useNavigation } from '@react-navigation/native';
 
 import LoginModal from "../../modals/LoginModal/LoginModal";
 import theme from "../../styles/theme";
@@ -18,6 +19,8 @@ const LoginPage = () => {
   const [visible, setVisible] = useState(false);
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
+
+  const navigation = useNavigation();
 
   return (
     <PaperProvider>
@@ -48,7 +51,7 @@ const LoginPage = () => {
           </View>
           <View style={styles.noLoginContainer}>
             <TouchableOpacity>
-              <Text style={{ fontWeight: "400", fontSize: 18, color: "white" }}>
+              <Text style={{ fontWeight: "400", fontSize: 18, color: "white" }} onPress={()=>{navigation.navigate("Home")}}>
                 로그인 하지 않고 시작하기
               </Text>
             </TouchableOpacity>
