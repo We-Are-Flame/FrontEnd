@@ -1,15 +1,32 @@
 /** @format */
 
 import * as React from "react";
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from "react-native";
 import { Image } from "expo-image";
 
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign } from "@expo/vector-icons";
 
 import Logo from "../../../../assets/kitchingLogo.png";
-import theme from './../../../styles/theme';
+import theme from "./../../../styles/theme";
 
+import { useRoute } from "@react-navigation/core";
+import { useState, useEffect } from "react";
 export default function Header() {
+  const [logoName, setLogoName] = useState("");
+  const route = useRoute();
+
+  useEffect(() => {
+    console.log(route.name);
+    selectLogoText(route.name);
+  }, []);
+
+  const selectLogoText = (routeName) => {
+    if (routeName == "ClubManagePage") {
+      setLogoName("신청 관리");
+    } else if (routeName == "홈") {
+      setLogoName("KitChing");
+    }
+  };
   return (
     <View style={styles.headerView}>
       <View style={styles.headerLogoView}>
@@ -18,47 +35,43 @@ export default function Header() {
           source={Logo}
           contentFit="contain"
         /> */}
-        <Text style={styles.headerLogoText}>
-          KitChing
-        </Text>
+        <Text style={styles.headerLogoText}>{logoName}</Text>
       </View>
-      <View style={styles.headerCenter}>
-
-      </View>
+      <View style={styles.headerCenter}></View>
       <View style={styles.headerIconView}>
-        <AntDesign name="search1" size={24} color="white" />
-        <AntDesign name="bells" size={24} color="white" />
+        <AntDesign name="search1" size={24} color="black" />
+        <AntDesign name="bells" size={24} color="black" />
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  headerView:{
-    marginTop:30,
-    flexDirection:"row",
-    justifyContent:"space-between",
-    backgroundColor:theme.psColor,
-    paddingBottom:20,
+  headerView: {
+    marginTop: 30,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    // backgroundColor:theme.psColor,
+    paddingBottom: 20,
   },
-  headerCenter:{
-    flex:2
+  headerCenter: {
+    flex: 2,
   },
-  headerLogoView:{
-    flex:3,
-    
+  headerLogoView: {
+    flex: 3,
   },
-  headerLogoText:{
-    fontWeight:'bold',
-    fontSize:30,
-    marginTop:25,
-    marginLeft:20,
-    color:"#ffffff",
+  headerLogoText: {
+    fontWeight: "bold",
+    fontSize: 30,
+    marginTop: 25,
+    marginLeft: 20,
+    // color: "#ffffff",
+    color: theme.psColor,
   },
-  headerIconView:{
-    flexDirection:"row",
-    flex:2,
-    marginTop:30,
-    justifyContent:"space-evenly"
-  }
+  headerIconView: {
+    flexDirection: "row",
+    flex: 2,
+    marginTop: 30,
+    justifyContent: "space-evenly",
+  },
 });
