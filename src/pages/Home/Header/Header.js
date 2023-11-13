@@ -1,7 +1,7 @@
 /** @format */
 
 import * as React from "react";
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { Image } from "expo-image";
 
 import { AntDesign } from '@expo/vector-icons';
@@ -18,16 +18,22 @@ export default function Header() {
           source={Logo}
           contentFit="contain"
         /> */}
-        <Text style={styles.headerLogoText}>
-          KitChing
-        </Text>
+        <TouchableOpacity>
+          <Text style={styles.headerLogoText}>
+            KitChing
+          </Text>
+        </TouchableOpacity>
       </View>
       <View style={styles.headerCenter}>
 
       </View>
       <View style={styles.headerIconView}>
-        <AntDesign name="search1" size={24} color="white" />
-        <AntDesign name="bells" size={24} color="white" />
+        <TouchableOpacity>
+          <AntDesign name="search1" size={24} color="white" />
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <AntDesign name="bells" size={24} color="white" />
+        </TouchableOpacity>
       </View>
     </View>
   );

@@ -40,4 +40,13 @@ export const homeData = [
     people:2,
     hashtag:"#술 #불금 #달리자",
   },
-]
+];
+
+export const category = [
+  "스포츠",
+  "공부",
+  "술",
+  "게임",
+  "봉사활동",
+  "기타",
+];
