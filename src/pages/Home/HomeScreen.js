@@ -1,7 +1,7 @@
 /** @format */
 
 import * as React from "react";
-import { StyleSheet, Text, View,ScrollView } from 'react-native';
+import { StyleSheet, Text, View, ScrollView } from "react-native";
 
 import Header from './Header/Header';
 import HomeContent from './HomeContent/HomeContent';
@@ -24,9 +24,6 @@ export default function HomeScreen() {
           <HomeContent />
         </ScrollView>
       </View>
-      {/* <View style={styles.homeScreenNavBar}>
-        <NavContainer />
-      </View> */}
     </View>
   );
 }
@@ -35,8 +32,8 @@ const styles = StyleSheet.create({
   homeScreenView:{
     flex:1,
   },
-  homeScreenHeader:{
-    flex:1,
+  homeScreenHeader: {
+    flex: 1,
   },
   homeScreenCategory:{
     flex:1,
@@ -48,9 +45,5 @@ const styles = StyleSheet.create({
   homeScreenCategoryText:{
     fontSize:18,
     fontWeight:'bold',
-    
   },
-  // homeScreenNavBar:{
-  //   flex:1,
-  // }
 });

@@ -3,9 +3,9 @@
 import * as React from "react";
 import { View, Text } from "react-native";
 
-import { NavigationContainer } from "@react-navigation/native";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
+
 import { useTheme } from "react-native-paper";
 
 import HomeScreen from "../pages/Home/HomeScreen";
@@ -42,7 +42,7 @@ export default function NavContainer() {
           } else if (rn === randomName) {
             iconName = focused ? "shuffle" : "shuffle-outline";
           } else if (rn === profileName) {
-            iconName = focused ? "settings" : "settings-outline";
+            iconName = focused ? "person-circle" : "person-circle-outline";
           } else if (rn === chatName) {
             iconName = focused
               ? "chatbubble-ellipses"
