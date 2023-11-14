@@ -3,8 +3,10 @@
 import * as React from "react";
 import { StyleSheet, Text, View, ScrollView } from "react-native";
 
-import Header from "./Header/Header";
-import HomeContent from "./HomeContent/HomeContent";
+import Header from './Header/Header';
+import HomeContent from './HomeContent/HomeContent';
+import HomeCategory from './HomeCategory/HomeCategory';
+import NavContainer from '../../components/NavContainer';
 
 export default function HomeScreen() {
   return (
@@ -12,24 +14,33 @@ export default function HomeScreen() {
       <View style={styles.homeScreenHeader}>
         <Header />
       </View>
-      <View style={styles.homeScreenContent}>
-        <ScrollView>
+      <ScrollView style={{flex:5}}>
+        <View style={styles.homeScreenCategory}>
+          <Text style={styles.homeScreenCategoryText}>카테고리 별로</Text>
+          <Text style={styles.homeScreenCategoryText}>확인해 보세요!</Text>
+          <HomeCategory />
+        </View>
+        <View style={styles.homeScreenContent}>
           <HomeContent />
-        </ScrollView>
-      </View>
+        </View>
+      </ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  homeScreenView: {
-    backgroundColor: "white",
-    flex: 1,
+
+  homeScreenView:{
+    flex:1,
   },
   homeScreenHeader: {
-    flex: 1,
+    flex: 0,
   },
-  homeScreenContent: {
-    flex: 6,
+  homeScreenCategory:{
+    margin:30,
+  },
+  homeScreenCategoryText:{
+    fontSize:18,
+    fontWeight:'bold',
   },
 });

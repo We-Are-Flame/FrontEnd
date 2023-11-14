@@ -12,6 +12,7 @@ export const homeData = [
     people: 1,
     hashtag: "#축구 #친목 #화요일",
   },
+
   {
     nickname: "야구하고싶은사람",
     title: "야구 인원 모집",
@@ -89,3 +90,13 @@ export const manageData = [
     ],
   },
 ];
+
+export const category = [
+  "스포츠",
+  "공부",
+  "술",
+  "게임",
+  "봉사활동",
+  "기타",
+];
+
