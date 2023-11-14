@@ -19,11 +19,10 @@ const Stack = createStackNavigator();
 
 export default function App() {
   const [isLogin, setIsLogin] = useState(false);
-  // const [isLogin, setIsLogin] = useState(true);
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName={isLogin ? "Home" : "ClubManagePage"}
+        initialRouteName={isLogin ? "Home" : "Login"}
         screenOptions={{
           headerShown: false,
           gestureEnabled: true,

@@ -1,3 +1,5 @@
+/** @format */
+
 export const homeData = [
   {
     nickname: "축구하고싶은사람",
@@ -50,19 +52,22 @@ export const manageData = [
     clubname: "우리는 불꽃", // 모임 이름
     peoples: [
       {
+        id: 1,
         nickname: "라이언",
         temper: 85,
-        img: "../../assets/lion.webp",
+        img: "../../../../assets/lion.webp",
       },
       {
+        id: 2,
         nickname: "춘식",
         temper: 70,
-        img: "../../assets/chunsik.web",
+        img: "../../../../assets/chunsik.webp",
       },
       {
+        id: 3,
         nickname: "네오",
         temper: 60,
-        img: "../../assets/neo.webp",
+        img: "../../../../assets/neo.webp",
       },
     ],
   },
@@ -70,14 +75,16 @@ export const manageData = [
     clubname: "우리는 물방울", // 모임 이름
     peoples: [
       {
+        id: 4,
         nickname: "춘식",
         temper: 90,
-        img: "../../assets/chunsik.web",
+        img: "../../../../assets/chunsik.webp",
       },
       {
+        id: 5,
         nickname: "네오",
         temper: 80,
-        img: "../../assets/neo.webp",
+        img: "../../../../assets/neo.webp",
       },
     ],
   },

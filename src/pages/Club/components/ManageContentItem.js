@@ -1,5 +1,7 @@
+/** @format */
+
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -13,7 +15,24 @@ import ManageCard from "./ManageCard";
 
 export default function ManageContentItem({ state }) {
   const [showAllPeoples, setShowAllPeoples] = useState(false);
+  const [peopleList, setPeopleList] = useState(state.peoples);
+  const [headCount, setHeadCount] = useState(state.peoples.length);
 
+  const handlePeoples = (userId) => {
+    const updatedPeopleList = peopleList.filter(
+      (person) => person.id !== userId
+    );
+    setPeopleList(updatedPeopleList);
+    setHeadCount(updatedPeopleList.length);
+  };
+  const acceptRequest = (userId) => {
+    console.log("수락");
+    handlePeoples(userId);
+  };
+  const rejectRequest = (userId) => {
+    console.log("거절");
+    handlePeoples(userId);
+  };
   const handleTogglePeoples = () => {
     setShowAllPeoples(!showAllPeoples);
   };
@@ -23,9 +42,7 @@ export default function ManageContentItem({ state }) {
       <View style={styles.manageContentItemClub}>
         <Text style={styles.manageContentItemClubName}>{state.clubname}</Text>
         <Text style={{ flexGrow: 0.1 }}></Text>
-        <Text style={{ flexGrow: 2, color: "grey" }}>
-          ({state.peoples.length})
-        </Text>
+        <Text style={{ flexGrow: 2, color: "grey" }}>({headCount})</Text>
         <TouchableOpacity onPress={handleTogglePeoples}>
           <Ionicons
             name={showAllPeoples ? "caret-up" : "caret-down"}
@@ -37,14 +54,26 @@ export default function ManageContentItem({ state }) {
       {showAllPeoples ? (
         <ScrollView style={styles.scrollView}>
           <View style={{ ...theme.centerStyle, flex: 1 }}>
-            {state.peoples.map((person, index) => {
-              return <ManageCard state={person} flag={true} key={index} />;
+            {peopleList.map((person, index) => {
+              return (
+                <ManageCard
+                  state={person}
+                  flag={true}
+                  key={index}
+                  onAccept={acceptRequest}
+                  onReject={rejectRequest}
+                />
+              );
             })}
           </View>
         </ScrollView>
       ) : (
         <View style={{ ...theme.centerStyle, flex: 1 }}>
-          <ManageCard state={state.peoples[0]} />
+          <ManageCard
+            onAccept={acceptRequest}
+            onReject={rejectRequest}
+            state={peopleList[0]}
+          />
         </View>
       )}
     </View>

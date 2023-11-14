@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
     flexDirection: "row",
     justifyContent: "space-between",
-    // backgroundColor:theme.psColor,
+    backgroundColor: theme.psColor,
     paddingBottom: 20,
   },
   headerCenter: {
@@ -65,8 +65,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     marginTop: 25,
     marginLeft: 20,
-    // color: "#ffffff",
-    color: theme.psColor,
+    color: "#ffffff",
   },
   headerIconView: {
     flexDirection: "row",
