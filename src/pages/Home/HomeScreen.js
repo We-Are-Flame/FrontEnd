@@ -29,6 +29,7 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
+
   homeScreenView:{
     flex:1,
   },
