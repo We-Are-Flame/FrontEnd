@@ -2,7 +2,7 @@
 
 import * as React from "react";
 
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 
 import { Image } from "expo-image";
 
@@ -32,33 +32,19 @@ export default function Header() {
   return (
     <View style={styles.headerView}>
       <View style={styles.headerLogoView}>
-        {/* <Image
-          style={{ width: "100%", height: "100%" }}
-          source={Logo}
-          contentFit="contain"
-        /> */}
-
-
         <TouchableOpacity>
-          <Text style={styles.headerLogoText}>
-            KitChing
-          </Text>
+          <Text style={styles.headerLogoText}>{logoName}</Text>
         </TouchableOpacity>
       </View>
-      <View style={styles.headerCenter}>
-
-      </View>
+      <View style={styles.headerCenter}></View>
       <View style={styles.headerCenter}></View>
       <View style={styles.headerIconView}>
-
-
         <TouchableOpacity>
           <AntDesign name="search1" size={24} color="white" />
         </TouchableOpacity>
         <TouchableOpacity>
           <AntDesign name="bells" size={24} color="white" />
         </TouchableOpacity>
-
       </View>
     </View>
   );
@@ -66,29 +52,31 @@ export default function Header() {
 
 const styles = StyleSheet.create({
   headerView: {
-    marginTop: 30,
+    // marginTop: 30,
+    flex: 0.8,
     flexDirection: "row",
     justifyContent: "space-between",
     backgroundColor: theme.psColor,
-    paddingBottom: 20,
   },
   headerCenter: {
     flex: 2,
   },
   headerLogoView: {
     flex: 3,
+    ...theme.centerStyle,
   },
   headerLogoText: {
     fontWeight: "bold",
-    fontSize: 30,
-    marginTop: 25,
-    marginLeft: 20,
+    fontSize: theme.screenWidth / 16,
+    // marginTop: 25,
+    // marginLeft: 20,
+
     color: "#ffffff",
   },
   headerIconView: {
     flexDirection: "row",
     flex: 2,
-    marginTop: 30,
     justifyContent: "space-evenly",
+    alignItems: "center",
   },
 });
