@@ -1,26 +1,41 @@
 /** @format */
 
 import * as React from "react";
-import { StyleSheet, Text, View,TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 
-import { MaterialIcons } from '@expo/vector-icons';
-import { Entypo } from '@expo/vector-icons';
-import { FontAwesome5 } from '@expo/vector-icons';
-import { FontAwesome } from '@expo/vector-icons';
-import { AntDesign } from '@expo/vector-icons';
-
-
+import { MaterialIcons } from "@expo/vector-icons";
+import { Entypo } from "@expo/vector-icons";
+import { FontAwesome5 } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
+import theme from "../../../../styles/theme";
 const icon = [
-  <MaterialIcons name="sports-baseball" size={24} color="black" style={{marginLeft:5}}/>,
-  <Entypo name="pencil" size={24} color="black" style={{marginLeft:5}}/>,
-  <FontAwesome5 name="wine-bottle" size={24} color="black" style={{marginLeft:5}}/>,
-  <FontAwesome name="gamepad" size={24} color="black" style={{marginLeft:5}}/>,
-  <MaterialIcons name="volunteer-activism" size={24} color="black" style={{marginLeft:5}}/>,
-  <AntDesign name="aliwangwang" size={24} color="black" style={{marginLeft:5}}/>,
+  <MaterialIcons
+    name="sports-baseball"
+    size={theme.categoryIconSize}
+    color="black"
+  />,
+  <Entypo
+    name="pencil"
+    size={theme.categoryIconSize}
+    color="black"
+    style={{ marginLeft: 5 }}
+  />,
+  <FontAwesome5
+    name="wine-bottle"
+    size={theme.categoryIconSize}
+    color="black"
+  />,
+  <FontAwesome name="gamepad" size={theme.categoryIconSize} color="black" />,
+  <MaterialIcons
+    name="volunteer-activism"
+    size={theme.categoryIconSize}
+    color="black"
+  />,
+  <AntDesign name="aliwangwang" size={theme.categoryIconSize} color="black" />,
 ];
 
-
-export default function CategoryItem({data,index}) {
+export default function CategoryItem({ data, index }) {
   return (
     <TouchableOpacity>
       <View style={styles.categoryItemView}>
@@ -32,8 +47,9 @@ export default function CategoryItem({data,index}) {
 }
 
 const styles = StyleSheet.create({
-  categoryItemView:{
-    padding:20,
-    
+  categoryItemView: {
+    paddingVertical: 20,
+    paddingRight: 40,
+    ...theme.centerStyle,
   },
 });
