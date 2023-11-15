@@ -1,8 +1,8 @@
 import * as React from "react";
 import { StyleSheet, View } from "react-native";
 
-import ManageContentItem from "./ManageContentItem";
-import { manageData } from "../../../utils/StaticData";
+import ManageContentItem from "../ManageContentItem/ManageContentItem";
+import { manageData } from "../../../../utils/StaticData";
 
 export default function ManageContentContainer() {
   return (

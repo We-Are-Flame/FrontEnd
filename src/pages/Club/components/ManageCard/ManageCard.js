@@ -3,9 +3,9 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
 import { View, Text, StyleSheet } from "react-native";
-import theme from "../../../styles/theme";
+
 import { Button, Card } from "react-native-paper";
-import LionProfile from "../../../../assets/lion.webp";
+import theme from "../../../../styles/theme";
 export default function ManageCard({ state, flag, onAccept, onReject }) {
   return (
     <View style={{ ...styles.manageCard, width: flag ? "98%" : "100%" }}>
@@ -13,7 +13,10 @@ export default function ManageCard({ state, flag, onAccept, onReject }) {
         <Card style={{}}>
           <View style={{ flexDirection: "row" }}>
             <View style={styles.cardCoverContainer}>
-              <Card.Cover style={styles.cardImageStyle} source={LionProfile} />
+              <Card.Cover
+                style={styles.cardImageStyle}
+                source={{ uri: state.img }}
+              />
             </View>
             <View style={styles.cardContentStyle}>
               <Text style={{ fontSize: 20, fontWeight: "600" }}>
