@@ -38,14 +38,18 @@ export default function Header() {
       </View>
       <View style={styles.headerCenter}></View>
       <View style={styles.headerCenter}></View>
-      <View style={styles.headerIconView}>
-        <TouchableOpacity>
-          <AntDesign name="search1" size={24} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <AntDesign name="bells" size={24} color="white" />
-        </TouchableOpacity>
-      </View>
+      {route.name == "ClubManagePage" ? (
+        <View style={styles.headerIconView} />
+      ) : (
+        <View style={styles.headerIconView}>
+          <TouchableOpacity>
+            <AntDesign name="search1" size={24} color="white" />
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <AntDesign name="bells" size={24} color="white" />
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 }
