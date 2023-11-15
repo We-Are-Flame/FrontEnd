@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     flex: 2,
   },
   headerLogoView: {
-    flex: 3,
+    flex: 4,
   },
   headerLogoText: {
     fontWeight: "bold",
