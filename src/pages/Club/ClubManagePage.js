@@ -1,22 +1,24 @@
 /** @format */
 
 import { StyleSheet, Text, View, ScrollView } from "react-native";
+import { useState } from "react";
 
 import Header from "../Home/Header/Header";
-
-import { useState } from "react";
-import { manageData } from "../../utils/StaticData";
-import ManageContentItem from "./components/ManageContentItem";
-import ManageContentContainer from "./components/ManageContentContainer";
+import theme from "../../styles/theme";
+import ManageContentContainer from "./components/ManageContentContainer/ManageContentContainer";
 export default function ClubManagePage() {
   return (
     <View style={styles.managePageView}>
+      <View style={{ flex: 0.5, backgroundColor: theme.psColor }}></View>
       <View style={styles.managePageHeader}>
         <Header />
       </View>
       <View style={styles.managePageContent}>
-        <ManageContentContainer />
+        <ScrollView style={{ flex: 1 }}>
+          <ManageContentContainer />
+        </ScrollView>
       </View>
+      <View style={{ height: 100 }}></View>
     </View>
   );
 }
@@ -30,6 +32,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   managePageContent: {
-    flex: 6,
+    flex: 7,
   },
 });
