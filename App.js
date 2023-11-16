@@ -4,36 +4,48 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 
 import { NavigationContainer } from "@react-navigation/native";
-import {
-  createStackNavigator,
-  TransitionPresets,
-} from "@react-navigation/stack";
+import { createStackNavigator } from "@react-navigation/stack";
+import { useState } from "react";
 
+import theme from "./src/styles/theme";
 import ClubManagePage from "./src/pages/Club/ClubManagePage";
 import LoginPage from "./src/pages/Login/LoginPage";
 import NavContainer from "./src/components/NavContainer";
 import KaKaoLogin from "./src/components/Kakao";
-import HomeDetailPage from './src/pages/Home/HomeDetailPage/HomeDetailPage';
-import { useState } from "react";
+import HomeDetailPage from "./src/pages/Home/HomeDetailPage/HomeDetailPage";
 
 const Stack = createStackNavigator();
 
 export default function App() {
   const [isLogin, setIsLogin] = useState(false);
+
   return (
     <NavigationContainer>
       <Stack.Navigator
         initialRouteName={isLogin ? "Home" : "Login"}
         screenOptions={{
           headerShown: false,
-          gestureEnabled: true,
         }}
       >
         <Stack.Screen name="Login" component={LoginPage} />
-        <Stack.Screen name="Home" component={NavContainer} />
+        <Stack.Screen
+          name="Home"
+          component={NavContainer}
+          options={{ gestureEnabled: false }}
+        />
         <Stack.Screen name="KaKaoLogin" component={KaKaoLogin} />
         <Stack.Screen name="ClubManagePage" component={ClubManagePage} />
-        <Stack.Screen name="HomeDetailPage" component={HomeDetailPage} />
+        <Stack.Screen
+          name="HomeDetailPage"
+          component={HomeDetailPage}
+          options={({ route }) => ({
+            gestureEnabled: true,
+            headerShown: true,
+            title: route.params?.detailData?.nickname,
+            headerBackTitle: " ",
+            headerTintColor: "black",
+          })}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
