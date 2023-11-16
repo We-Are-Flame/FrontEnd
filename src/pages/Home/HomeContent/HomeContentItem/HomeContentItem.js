@@ -20,11 +20,6 @@ export default function HomeContentItem({ state }) {
   const navigation = useNavigation();
   const [detailData, setDetailData] = useState({});
 
-  const av = new Animated.Value(0);
-  av.addListener(() => {
-    return;
-  });
-
   useEffect(() => {
     const data = homeDetailData.find((item) => item.id === state.id);
 
