@@ -7,6 +7,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useState } from "react";
 
+import theme from "./src/styles/theme";
 import ClubManagePage from "./src/pages/Club/ClubManagePage";
 import LoginPage from "./src/pages/Login/LoginPage";
 import NavContainer from "./src/components/NavContainer";
@@ -42,6 +43,7 @@ export default function App() {
             headerShown: true,
             title: route.params?.detailData?.nickname,
             headerBackTitle: " ",
+            headerTintColor: "black",
           })}
         />
       </Stack.Navigator>
