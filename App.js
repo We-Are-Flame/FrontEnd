@@ -13,6 +13,7 @@ import LoginPage from "./src/pages/Login/LoginPage";
 import NavContainer from "./src/components/NavContainer";
 import KaKaoLogin from "./src/components/Kakao";
 import HomeDetailPage from "./src/pages/Home/HomeDetailPage/HomeDetailPage";
+import ProfileSetting from "./src/pages/Profile/ProfileSetting";
 
 const Stack = createStackNavigator();
 
@@ -45,6 +46,17 @@ export default function App() {
             headerBackTitle: " ",
             headerTintColor: "black",
           })}
+        />
+        <Stack.Screen
+          name="ProfileSetting"
+          component={ProfileSetting}
+          options={{
+            gestureEnabled: true,
+            headerShown: true,
+            headerBackTitle: " ",
+            headerTintColor: "black",
+            title: "설정",
+          }}
         />
       </Stack.Navigator>
     </NavigationContainer>
