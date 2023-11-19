@@ -37,6 +37,7 @@ const styles = StyleSheet.create({
   },
   homeScreenHeader: {
     flex: 1,
+    backgroundColor: theme.psColor,
   },
   homeScreenCategory: {
     margin: 30,
