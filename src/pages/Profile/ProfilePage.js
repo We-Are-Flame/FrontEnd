@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useState, useCallback } from "react";
 import theme from "../../styles/theme";
-import Header from "../Home/Header/Header";
+import Header from "../../components/Header";
 import {
   View,
   Text,

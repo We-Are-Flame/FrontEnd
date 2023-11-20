@@ -6,10 +6,11 @@ import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 
 import { Ionicons, AntDesign } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/core";
-import theme from "./../../../styles/theme";
+import theme from "../styles/theme";
 
 import { useRoute } from "@react-navigation/core";
 import { useState, useEffect } from "react";
+
 export default function Header() {
   const [isLogin, setIsLogin] = useState(true);
   const [logoName, setLogoName] = useState("");
@@ -63,7 +64,7 @@ export default function Header() {
     if (routeName == "ClubManagePage") {
       setLogoName("신청 관리");
     } else if (routeName == "홈") {
-      setLogoName("KitChing");
+      setLogoName("Kitching");
     } else if (routeName == "마이") {
       setLogoName("마이홈");
     }
