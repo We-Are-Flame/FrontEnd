@@ -3,7 +3,7 @@
 import { StyleSheet, Text, View, ScrollView } from "react-native";
 import { useState } from "react";
 
-import Header from "../Home/Header/Header";
+import Header from "../../components/Header";
 import theme from "../../styles/theme";
 import ManageContentContainer from "./components/ManageContentContainer/ManageContentContainer";
 export default function ClubManagePage() {
