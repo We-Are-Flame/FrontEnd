@@ -15,8 +15,7 @@ import KaKaoLogin from "./src/components/Kakao";
 import HomeDetailPage from "./src/pages/Home/HomeDetailPage/HomeDetailPage";
 
 import ProfileSetting from "./src/pages/Profile/ProfileSetting";
-import CreateClubPostPage from './src/pages/Club/CreateClubPostPage';
-
+import CreateClubPostPage from "./src/pages/Club/CreateClubPostPage";
 
 const Stack = createStackNavigator();
 
@@ -61,9 +60,10 @@ export default function App() {
             headerTintColor: "black",
             title: "설정",
           }}
-
-        <Stack.Screen name="CreateClubPostPage"
-          component={CreateClubPostPage} 
+        />
+        <Stack.Screen
+          name="CreateClubPostPage"
+          component={CreateClubPostPage}
           options={({ route }) => ({
             gestureEnabled: true,
             headerShown: true,
@@ -71,7 +71,6 @@ export default function App() {
             headerBackTitle: " ",
             headerTintColor: "black",
           })}
-
         />
       </Stack.Navigator>
     </NavigationContainer>
