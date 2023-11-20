@@ -1,4 +1,7 @@
 /** @format */
+import React from 'react';
+import { Text, StyleSheet, Pressable } from 'react-native';
+import theme from './../styles/theme';
 
 export const homeData = [
   {
@@ -172,3 +175,46 @@ export const category = [
   "기타",
 ];
 
+export const timeArr = [
+  "1시간","2시간","3시간","4시간"
+];
+
+export default function Button(props) {
+  const { title, setTime,time  } = props;
+  
+  const clickBtn = ()=>{
+    setTime(title);
+  }
+  return (
+    <Pressable style={[styles.button, (title === time) ? styles.activeBtn : ""]} onPress={clickBtn}>
+      <Text style={[styles.text, (title === time) ? styles.activeText : ""]}>{title}</Text>
+    </Pressable>
+  );
+}
+
+const styles = StyleSheet.create({
+  button: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex:1,
+    borderRadius: 4,
+    backgroundColor: '#eeeeee',
+    height: 40,
+    marginTop: 12,
+    marginBottom: 12,
+  },
+  text: {
+    fontSize: 12,
+    lineHeight: 21,
+    fontWeight: 'bold',
+    letterSpacing: 0.25,
+    color: '#aaaaaa',
+  },
+  activeBtn:{
+    backgroundColor:theme.psColor,
+    color:"#ffffff"
+  },
+  activeText:{
+    color:"#ffffff",
+  }
+});

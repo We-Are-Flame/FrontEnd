@@ -13,6 +13,7 @@ import LoginPage from "./src/pages/Login/LoginPage";
 import NavContainer from "./src/components/NavContainer";
 import KaKaoLogin from "./src/components/Kakao";
 import HomeDetailPage from "./src/pages/Home/HomeDetailPage/HomeDetailPage";
+import CreateClubPostPage from './src/pages/Club/CreateClubPostPage';
 
 const Stack = createStackNavigator();
 
@@ -42,6 +43,16 @@ export default function App() {
             gestureEnabled: true,
             headerShown: true,
             title: route.params?.detailData?.nickname,
+            headerBackTitle: " ",
+            headerTintColor: "black",
+          })}
+        />
+        <Stack.Screen name="CreateClubPostPage"
+          component={CreateClubPostPage} 
+          options={({ route }) => ({
+            gestureEnabled: true,
+            headerShown: true,
+            title: "모임만들기",
             headerBackTitle: " ",
             headerTintColor: "black",
           })}
