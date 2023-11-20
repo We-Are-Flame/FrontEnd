@@ -9,8 +9,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "react-native-paper";
 
 import HomeScreen from "../pages/Home/HomeScreen";
-import RandomScreen from "../pages/Random/RandomScreen";
-import ProfileScreen from "../pages/Profile/ProfileScreen";
+import RandomPage from "../pages/Random/RandomScreen";
+import ProfilePage from "../pages/Profile/ProfilePage";
 import ChatScreen from "../pages/Chat/ChatScreen";
 
 const homeName = "홈";
@@ -55,8 +55,8 @@ export default function NavContainer() {
     >
       <Tab.Screen name={homeName} component={HomeScreen} />
       <Tab.Screen name={chatName} component={ChatScreen} />
-      <Tab.Screen name={randomName} component={RandomScreen} />
-      <Tab.Screen name={profileName} component={ProfileScreen} />
+      <Tab.Screen name={randomName} component={RandomPage} />
+      <Tab.Screen name={profileName} component={ProfilePage} />
     </Tab.Navigator>
   );
 }

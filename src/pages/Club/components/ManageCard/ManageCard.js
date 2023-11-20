@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
 import { View, Text, StyleSheet } from "react-native";
-
+import LionImg from "../../../../../assets/lion.webp";
 import { Button, Card } from "react-native-paper";
 import theme from "../../../../styles/theme";
 export default function ManageCard({ state, flag, onAccept, onReject }) {
@@ -13,10 +13,7 @@ export default function ManageCard({ state, flag, onAccept, onReject }) {
         <Card style={{}}>
           <View style={{ flexDirection: "row" }}>
             <View style={styles.cardCoverContainer}>
-              <Card.Cover
-                style={styles.cardImageStyle}
-                source={{ uri: state.img }}
-              />
+              <Card.Cover style={styles.cardImageStyle} source={LionImg} />
             </View>
             <View style={styles.cardContentStyle}>
               <Text style={{ fontSize: 20, fontWeight: "600" }}>

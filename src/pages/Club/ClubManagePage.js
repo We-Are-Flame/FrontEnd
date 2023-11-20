@@ -9,7 +9,9 @@ import ManageContentContainer from "./components/ManageContentContainer/ManageCo
 export default function ClubManagePage() {
   return (
     <View style={styles.managePageView}>
-      <View style={{ flex: 0.5, backgroundColor: theme.psColor }}></View>
+      <View
+        style={{ flex: theme.headerSpace, backgroundColor: theme.psColor }}
+      ></View>
       <View style={styles.managePageHeader}>
         <Header />
       </View>

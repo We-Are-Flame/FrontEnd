@@ -4,43 +4,49 @@ import * as React from "react";
 
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 
-import { Image } from "expo-image";
-
-import { AntDesign } from "@expo/vector-icons";
-
-import Logo from "../../../../assets/kitchingLogo.png";
+import { Ionicons, AntDesign } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/core";
 import theme from "./../../../styles/theme";
 
 import { useRoute } from "@react-navigation/core";
 import { useState, useEffect } from "react";
 export default function Header() {
+  const [isLogin, setIsLogin] = useState(true);
   const [logoName, setLogoName] = useState("");
   const route = useRoute();
+  const navigation = useNavigation();
 
   useEffect(() => {
     console.log(route.name);
     selectLogoText(route.name);
   }, []);
-
-  const selectLogoText = (routeName) => {
-    if (routeName == "ClubManagePage") {
-      setLogoName("신청 관리");
-    } else if (routeName == "홈") {
-      setLogoName("KitChing");
+  const setIcons = (routeName, isLogin) => {
+    if (!isLogin) {
+      return <View style={styles.headerIconView}></View>;
     }
-  };
-  return (
-    <View style={styles.headerView}>
-      <View style={styles.headerLogoView}>
-        <TouchableOpacity>
-          <Text style={styles.headerLogoText}>{logoName}</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.headerCenter}></View>
-      <View style={styles.headerCenter}></View>
-      {route.name == "ClubManagePage" ? (
-        <View style={styles.headerIconView} />
-      ) : (
+    let icons;
+    if (routeName == "마이") {
+      icons = (
+        <View style={styles.headerIconView}>
+          <View style={{ flex: 1 }} />
+          <TouchableOpacity
+            style={{ flex: 1 }}
+            onPress={() =>
+              navigation.navigate("ProfileSetting", {
+                screen: "ProfileSetting",
+              })
+            }
+          >
+            <Ionicons
+              name="ellipsis-horizontal-sharp"
+              size={24}
+              color="white"
+            />
+          </TouchableOpacity>
+        </View>
+      );
+    } else if (routeName == "홈") {
+      icons = (
         <View style={styles.headerIconView}>
           <TouchableOpacity>
             <AntDesign name="search1" size={24} color="white" />
@@ -49,7 +55,30 @@ export default function Header() {
             <AntDesign name="bells" size={24} color="white" />
           </TouchableOpacity>
         </View>
-      )}
+      );
+    }
+    return icons;
+  };
+  const selectLogoText = (routeName) => {
+    if (routeName == "ClubManagePage") {
+      setLogoName("신청 관리");
+    } else if (routeName == "홈") {
+      setLogoName("KitChing");
+    } else if (routeName == "마이") {
+      setLogoName("마이홈");
+    }
+  };
+  return (
+    <View style={styles.headerView}>
+      <View style={{ flex: 0.4 }} />
+      <View style={styles.headerLogoView}>
+        <TouchableOpacity>
+          <Text style={styles.headerLogoText}>{logoName}</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.headerCenter}></View>
+      <View style={styles.headerCenter}></View>
+      {setIcons(route.name, isLogin)}
     </View>
   );
 }
@@ -57,7 +86,7 @@ export default function Header() {
 const styles = StyleSheet.create({
   headerView: {
     // marginTop: 30,
-    flex: 0.8,
+    flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
     backgroundColor: theme.psColor,
@@ -67,7 +96,7 @@ const styles = StyleSheet.create({
   },
   headerLogoView: {
     flex: 3,
-    ...theme.centerStyle,
+    justifyContent: "center",
   },
   headerLogoText: {
     fontWeight: "bold",
