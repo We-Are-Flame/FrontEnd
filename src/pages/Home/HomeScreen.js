@@ -1,6 +1,5 @@
 /** @format */
 
-
 import * as React from "react";
 import {
   StyleSheet,
@@ -8,27 +7,26 @@ import {
   View,
   ScrollView,
   RefreshControl,
-  Modal, TouchableOpacity, Alert
+  Modal,
+  TouchableOpacity,
+  Alert,
 } from "react-native";
 import { useState, useCallback } from "react";
 import { FAB } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 
-
-
 import theme from "../../styles/theme";
-import Header from "./Header/Header";
+import Header from "../../components/Header";
 import HomeContent from "./HomeContent/HomeContent";
 import HomeCategory from "./HomeCategory/HomeCategory";
 
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from "@expo/vector-icons";
 
 export default function HomeScreen() {
-
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const navigation = useNavigation();
-  
+
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     setTimeout(() => {
@@ -63,7 +61,6 @@ export default function HomeScreen() {
       </View>
       <FAB
         style={styles.fab}
-        small
         icon="plus"
         color="#ffffff"
         onPress={() => setModalVisible(!modalVisible)} // 'Pressed' 대신에 모달을 열도록 변경
@@ -84,6 +81,7 @@ export default function HomeScreen() {
           <TouchableOpacity
             onPress={() => {
               navigation.navigate("CreateClubPostPage");
+              setModalVisible(false);
             }}
           >
             <Text style={styles.modalText}>모임 만들기</Text>
@@ -114,43 +112,48 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   fab: {
-    position: 'absolute',
+    position: "absolute",
     margin: 16,
     right: 0,
     bottom: 0,
-    backgroundColor: "#61D451",
+    // backgroundColor: "#61D451",
+    backgroundColor: theme.psColor,
     borderRadius: 30,
   },
   modalOverlay: {
     flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0,0,0,0.5)'
+    justifyContent: "flex-end",
+    backgroundColor: "rgba(0,0,0,0.5)",
   },
-  modalText:{
-    position: 'absolute',
+  modalText: {
+    position: "absolute",
     margin: 16,
     right: 70,
     bottom: 200,
-    width: '20px',
-    height:"20px",
-    color:"#ffffff",
-    fontWeight:"bold",
+    width: "20px",
+    height: "20px",
+    color: "#ffffff",
+    fontWeight: "bold",
     fontSize: 18,
   },
   modalView: {
-    position: 'absolute',
+    position: "absolute",
+    ...theme.centerStyle,
     margin: 16,
     right: 0,
     bottom: 180,
-    width: '20px',
-    height:"20px",
+    // width: "20px",
+    // height: "20px",
+    width: 56,
+    height: 56,
+
     // 모달의 높이, 배경색 등 원하는 스타일을 추가하세요
-    backgroundColor: 'white',
-    padding: 20,
+    backgroundColor: "white",
+
     // 모달의 둥근 모서리를 위한 스타일
-    borderRadius:50,
+    borderRadius: 30,
     // 그림자를 위한 스타일
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -163,7 +166,7 @@ const styles = StyleSheet.create({
     // 닫기 버튼 스타일
   },
   textStyle: {
-    color: 'black',
+    color: "black",
     // 텍스트 스타일
   },
 });
