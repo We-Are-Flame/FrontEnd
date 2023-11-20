@@ -70,6 +70,7 @@ export default function Header() {
   };
   return (
     <View style={styles.headerView}>
+      <View style={{ flex: 0.4 }} />
       <View style={styles.headerLogoView}>
         <TouchableOpacity>
           <Text style={styles.headerLogoText}>{logoName}</Text>
@@ -95,7 +96,7 @@ const styles = StyleSheet.create({
   },
   headerLogoView: {
     flex: 3,
-    ...theme.centerStyle,
+    justifyContent: "center",
   },
   headerLogoText: {
     fontWeight: "bold",
