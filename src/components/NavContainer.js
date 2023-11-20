@@ -7,7 +7,7 @@ import { createMaterialBottomTabNavigator } from "@react-navigation/material-bot
 import { Ionicons } from "@expo/vector-icons";
 
 import { useTheme } from "react-native-paper";
-
+import theme from "../styles/theme";
 import HomeScreen from "../pages/Home/HomeScreen";
 import RandomPage from "../pages/Random/RandomScreen";
 import ProfilePage from "../pages/Profile/ProfilePage";
@@ -21,12 +21,12 @@ const profileName = "마이";
 const Tab = createMaterialBottomTabNavigator();
 
 export default function NavContainer() {
-  const theme = useTheme();
-  theme.colors.secondaryContainer = "transparent";
+  const custheme = useTheme();
+  custheme.colors.secondaryContainer = "transparent";
   return (
     <Tab.Navigator
       barStyle={{
-        height: 100,
+        height: theme.screenHeight / 8.5,
         borderTopWidth: 0.2,
         borderTopColor: "lightgray",
         backgroundColor: "white",
