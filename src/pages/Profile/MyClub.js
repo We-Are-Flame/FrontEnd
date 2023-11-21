@@ -2,10 +2,8 @@
 
 import * as React from "react";
 import theme from "../../styles/theme";
-
 import { useState } from "react";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
-
 import {
   View,
   Text,
@@ -13,14 +11,18 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
+import ClubCard from "./ClubCard";
 
 const FirstRoute = () => (
+  // <ScrollView contentContainerStyle={{ flex: 1 }}>
+  //   <View style={{ flex: 1, ...theme.centerStyle }}>
+  //     <Text style={{ fontSize: 16, color: "lightgray" }}>
+  //       생성한 모임이 없습니다
+  //     </Text>
+  //   </View>
+  // </ScrollView>
   <ScrollView contentContainerStyle={{ flex: 1 }}>
-    <View style={{ flex: 1, ...theme.centerStyle }}>
-      <Text style={{ fontSize: 16, color: "lightgray" }}>
-        생성한 모임이 없습니다
-      </Text>
-    </View>
+    <ClubCard />
   </ScrollView>
 );
 
