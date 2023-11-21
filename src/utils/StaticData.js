@@ -218,3 +218,19 @@ const styles = StyleSheet.create({
     color:"#ffffff",
   }
 });
+
+export const commentData = {
+  status:"success",
+  data:[
+    {
+      "profile_image": "../../../../assets/lion.webp",  // 댓글 작성자의 프로필 이미지
+      "nickname": "태헌",            // 댓글 작성자의 닉네임
+      "content": "모임에 강아지 데려가도 되나요?"  // 댓글 내용
+    },
+    {
+      "profile_image": "../../../../assets/chunsik.webp",  // 댓글 작성자의 프로필 이미지
+      "nickname": "재성",            // 댓글 작성자의 닉네임
+      "content": "모임 끝나고 술 한잔 하고싶은데 어떤가요?"  // 댓글 내용
+    },
+  ]
+}
