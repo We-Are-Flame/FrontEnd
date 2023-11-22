@@ -11,7 +11,9 @@ import ProfileEditModal from "../../modals/ProfileEditModal/ProfileEditModal";
 export default function MyProfile() {
   const [modalVisible, setModalVisible] = useState(false);
   const [isAuth, setIsAuth] = useState(false);
-
+  const info = {
+    nickname: "히어로",
+  };
   const showModal = () => {
     setModalVisible(true);
   };
@@ -67,7 +69,11 @@ export default function MyProfile() {
           </View>
         </View>
       </View>
-      <ProfileEditModal visible={modalVisible} hideModal={hideModal} />
+      <ProfileEditModal
+        visible={modalVisible}
+        hideModal={hideModal}
+        info={info}
+      />
     </View>
   );
 }
