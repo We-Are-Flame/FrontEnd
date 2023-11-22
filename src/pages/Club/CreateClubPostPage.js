@@ -9,6 +9,10 @@ import { useEffect } from 'react';
 import { TouchableOpacity } from 'react-native';
 import theme from './../../styles/theme';
 
+import { category } from '../../utils/StaticData';
+
+import Dropdown from '../../components/Dropdown';
+
 
 export default function CreateClubPostPage() {
   const [date,setDate] = useState("");
@@ -18,6 +22,7 @@ export default function CreateClubPostPage() {
   const [introduce,setIntroduce] = useState("");
   const [time,setTime] = useState("");
   const [alarm,setAlarm] = useState(false);
+  const [categoryData,setCategoryData] = useState("");
   const [data,setData] = useState({
     date:"",
     location:"",
@@ -26,6 +31,7 @@ export default function CreateClubPostPage() {
     introduce:"",
     time:"",
     alarm:false,
+    categoryData:"",
   });
 
   const toggleSwitch = () => setAlarm(alarm => !alarm);
@@ -37,7 +43,8 @@ export default function CreateClubPostPage() {
       people:people,
       introduce:introduce,
       time:time,
-      alarm:alarm
+      alarm:alarm,
+      category:categoryData,
     });
   };
 
@@ -49,6 +56,8 @@ export default function CreateClubPostPage() {
   return (
     <View style={styles.createClubPostPageView}>
       <ScrollView style={{borderTopColor:"#cccccc" , borderTopWidth: 1, padding:16}}>
+        <Text style={styles.createPageLabel}>카테고리</Text>
+        <Dropdown dropDownItem={category} setData={setCategoryData}/>
         <Text style={styles.createPageLabel}>일시</Text>
         <TextInput
           style={styles.input}
