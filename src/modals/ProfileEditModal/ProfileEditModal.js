@@ -10,15 +10,47 @@ import {
   Modal,
   TextInput,
 } from "react-native";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Image } from "expo-image";
 import { AntDesign, EvilIcons, Entypo } from "@expo/vector-icons";
-
 import LionImg from "../../../assets/lion.webp";
 import DefaultImg from "../../../assets/user.png";
 import theme from "../../styles/theme";
-export default function ProfileEditModal({ visible, hideModal }) {
-  const nickname = useState();
+export default function ProfileEditModal({ visible, hideModal, info }) {
+  const [nickname, setNickname] = useState(info.nickname);
+  const [isNicknameValid, setIsNicknameValid] = useState(true);
+  const [isNicknameChange, setIsNicknameChange] = useState(false);
+
+  useEffect(() => {
+    if (info.nickname === nickname) {
+      setIsNicknameChange(false);
+    } else {
+      setIsNicknameChange(true);
+    }
+  }, [nickname]);
+
+  const handleNicknameChange = (changeName) => {
+    const isValid = validateNickname(changeName);
+    setIsNicknameValid(isValid);
+    setNickname(changeName);
+  };
+
+  const validateNickname = (changeName) => {
+    const regex = /^[a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣]*$/;
+    return (
+      regex.test(changeName) && changeName.length >= 2 && changeName.length <= 6
+    );
+  };
+
+  const handleCompletePress = () => {
+    if (isNicknameValid && isNicknameChange) {
+      console.log("닉네임 유효:", nickname);
+      hideModal();
+      /* 완료시에 로직 수행*/
+    } else {
+      console.log("닉네임 유효하지 않음");
+    }
+  };
   return (
     <Modal
       visible={visible}
@@ -37,8 +69,19 @@ export default function ProfileEditModal({ visible, hideModal }) {
               프로필 수정
             </Text>
 
-            <TouchableOpacity>
-              <Text style={{ fontSize: 19, color: "lightgray" }}>완료</Text>
+            <TouchableOpacity
+              onPress={handleCompletePress}
+              disabled={!isNicknameChange || !isNicknameValid}
+            >
+              <Text
+                style={{
+                  fontSize: 19,
+                  color:
+                    isNicknameValid && isNicknameChange ? "black" : "lightgray",
+                }}
+              >
+                완료
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -62,7 +105,15 @@ export default function ProfileEditModal({ visible, hideModal }) {
               dataDetectorTypes="phoneNumber"
               placeholder="닉네임을 입력해주세요."
               placeholderTextColor="lightgray"
+              value={nickname}
+              onChangeText={handleNicknameChange}
+              maxLength={6}
             />
+            {!isNicknameValid && (
+              <Text style={{ color: "red", marginTop: 5 }}>
+                닉네임은 공백과 특수문자를 제외한 2~6자로 입력해주세요
+              </Text>
+            )}
           </View>
           <View style={{ flex: 2, backgroundColor: "gray" }}></View>
         </View>
