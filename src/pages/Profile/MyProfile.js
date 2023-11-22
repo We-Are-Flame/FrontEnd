@@ -6,9 +6,18 @@ import { Image } from "expo-image";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import theme from "../../styles/theme";
 import LionProfile from "../../../assets/lion.webp";
+import ProfileEditModal from "../../modals/ProfileEditModal/ProfileEditModal";
 
 export default function MyProfile() {
+  const [modalVisible, setModalVisible] = useState(false);
   const [isAuth, setIsAuth] = useState(false);
+
+  const showModal = () => {
+    setModalVisible(true);
+  };
+  const hideModal = () => {
+    setModalVisible(false);
+  };
   return (
     <View style={styles.myProfileView}>
       <View style={styles.myProfileViewTop}>
@@ -29,7 +38,7 @@ export default function MyProfile() {
       </View>
       <View style={styles.myProfileViewBottom}>
         <View style={styles.myProfileEdit}>
-          <TouchableOpacity style={styles.editBtn}>
+          <TouchableOpacity style={styles.editBtn} onPress={showModal}>
             <Text style={{ fontWeight: "bold", fontSize: 16 }}>
               프로필 수정
             </Text>
@@ -58,6 +67,7 @@ export default function MyProfile() {
           </View>
         </View>
       </View>
+      <ProfileEditModal visible={modalVisible} hideModal={hideModal} />
     </View>
   );
 }
@@ -112,7 +122,7 @@ const styles = StyleSheet.create({
   image: {
     // flex: 1,
     borderWidth: 1,
-    borderColor: theme.subColor,
+    borderColor: theme.profileBorderColor,
     width: 80,
     height: 80,
     borderRadius: theme.screenWidth / 6,
