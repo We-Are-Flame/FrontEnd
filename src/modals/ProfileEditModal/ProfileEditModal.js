@@ -13,13 +13,21 @@ import {
 import { useState, useEffect } from "react";
 import { Image } from "expo-image";
 import { AntDesign, EvilIcons, Entypo } from "@expo/vector-icons";
+import {
+  MediaTypeOptions,
+  launchImageLibraryAsync,
+  useMediaLibraryPermissions,
+} from "expo-image-picker";
 import LionImg from "../../../assets/lion.webp";
 import DefaultImg from "../../../assets/user.png";
 import theme from "../../styles/theme";
+import ImageViewer from "../../components/ImageViewer";
 export default function ProfileEditModal({ visible, hideModal, info }) {
   const [nickname, setNickname] = useState(info.nickname);
   const [isNicknameValid, setIsNicknameValid] = useState(true);
   const [isNicknameChange, setIsNicknameChange] = useState(false);
+  const [imageUrl, setImageUrl] = useState("");
+  const [status, requestPermission] = useMediaLibraryPermissions();
 
   useEffect(() => {
     if (info.nickname === nickname) {
@@ -29,6 +37,28 @@ export default function ProfileEditModal({ visible, hideModal, info }) {
     }
   }, [nickname]);
 
+  const uploadImage = async () => {
+    if (!status.granted) {
+      const permission = await requestPermission();
+      if (!permission.granted) {
+        return null;
+      }
+    }
+
+    const result = await launchImageLibraryAsync({
+      mediaTypes: MediaTypeOptions.Images,
+      allowsEditing: false,
+      quality: 1,
+      aspect: [1, 1],
+    });
+
+    if (!result.canceled) {
+      console.log(result);
+      setImageUrl(result.assets[0].uri);
+    } else {
+      return null;
+    }
+  };
   const handleNicknameChange = (changeName) => {
     const isValid = validateNickname(changeName);
     setIsNicknameValid(isValid);
@@ -87,11 +117,13 @@ export default function ProfileEditModal({ visible, hideModal, info }) {
         </View>
         <View style={styles.modalContent}>
           <View style={styles.imageContainer}>
-            <Pressable>
+            <Pressable onPress={uploadImage}>
               <View style={{ position: "relative" }}>
-                <View style={styles.imageWrapper}>
-                  <Image style={styles.image} source={DefaultImg} />
-                </View>
+                <ImageViewer
+                  placeholderImageSource={DefaultImg}
+                  selectedImage={imageUrl}
+                />
+
                 <View style={styles.iconContainer}>
                   <Entypo name="camera" size={17} color="black" />
                 </View>
