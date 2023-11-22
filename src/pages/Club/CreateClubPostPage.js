@@ -15,7 +15,13 @@ import Dropdown from '../../components/Dropdown';
 
 
 export default function CreateClubPostPage() {
-  const [date,setDate] = useState("");
+  const [sDate,setSDate] = useState("");
+  const [eDate,setEDate] = useState("");
+  const [year,setYear] = useState("");
+  const [month,setMonth] = useState("");
+  const [day,setDay] = useState("");
+  const [hour,setHour] = useState("");
+  const [min,setMin] = useState("");
   const [location,setLocation] = useState("");
   const [people,setPeople] = useState("");
   const [title,setTitle] = useState("");
@@ -38,7 +44,8 @@ export default function CreateClubPostPage() {
   
   const submitPost = ()=>{
     setData({
-      date:date,
+      sDate:sDate,
+      eDate:eDate,
       location:location,
       people:people,
       introduce:introduce,
@@ -48,10 +55,21 @@ export default function CreateClubPostPage() {
     });
   };
 
+  const extractNumberFromString = (str) => {
+    const matches = str.match(/\d+/);
+    return matches ? parseInt(matches[0], 10) : null;
+  }
+
   useEffect(()=>{
     console.log(data);
     //여기서 통신 조건문으로 데이터 하나라도 없으면 안되도록 처리
   },[data]);
+
+  useEffect(()=>{
+    let calHour = parseInt(hour)+extractNumberFromString(time);
+    setSDate(`${year}-${month}-${day}T${hour}:${min}:00Z`);
+    setEDate(`${year}-${month}-${day}T${calHour}:${min}:00Z`);
+  },[year,month,day,hour,min,time]);
 
   return (
     <View style={styles.createClubPostPageView}>
@@ -59,12 +77,43 @@ export default function CreateClubPostPage() {
         <Text style={styles.createPageLabel}>카테고리</Text>
         <Dropdown dropDownItem={category} setData={setCategoryData}/>
         <Text style={styles.createPageLabel}>일시</Text>
-        <TextInput
-          style={styles.input}
-          onChangeText={setDate}
-          value={date}
-          placeholder="날짜, 시간을 선택해주세요."
-        />
+        <View style={{flexDirection:"row", flex:1}}>
+          <TextInput
+            style={styles.inputDate}
+            onChangeText={setYear}
+            value={year}
+            placeholder="YYYY"
+            keyboardType="number-pad"
+          />
+          <TextInput
+            style={styles.inputDate}
+            onChangeText={setMonth}
+            value={month}
+            placeholder="MM"
+            keyboardType="number-pad"
+          />
+          <TextInput
+            style={styles.inputDate}
+            onChangeText={setDay}
+            value={day}
+            placeholder="DD"
+            keyboardType="number-pad"
+          />
+          <TextInput
+            style={styles.inputDate}
+            onChangeText={setHour}
+            value={hour}
+            placeholder="HH"
+            keyboardType="number-pad"
+          />
+          <TextInput
+            style={styles.inputDate}
+            onChangeText={setMin}
+            value={min}
+            placeholder="mm"
+            keyboardType="number-pad"
+          />
+        </View>
         <Text style={styles.createPageLabel}>위치</Text>
         <TextInput
           style={styles.input}
@@ -148,6 +197,15 @@ const styles = StyleSheet.create({
     margin: 12,
     backgroundColor:"#eeeeee",
     padding: 10,
+  },
+  inputDate:{
+    height: 40,
+    marginTop: 12,
+    marginBottom:12,
+    marginRight:5,
+    backgroundColor:"#eeeeee",
+    padding: 10,
+    flex:1,
   },
   inputArea:{
     height: 80,
