@@ -1,6 +1,6 @@
 /** @format */
 
-import { StyleSheet, Text, View, ScrollView,TextInput,Switch } from "react-native";
+import { StyleSheet, Text, View, ScrollView,TextInput,Switch,Modal,Pressable } from "react-native";
 import { useState } from "react";
 
 import { timeArr } from '../../utils/StaticData';
@@ -12,6 +12,7 @@ import theme from './../../styles/theme';
 import { category } from '../../utils/StaticData';
 
 import Dropdown from '../../components/Dropdown';
+import GooglePlacesInput from '../../components/GooglePlacesInput';
 
 
 export default function CreateClubPostPage() {
@@ -23,12 +24,14 @@ export default function CreateClubPostPage() {
   const [hour,setHour] = useState("");
   const [min,setMin] = useState("");
   const [location,setLocation] = useState("");
+  const [detailLocation,setDetailLocation] = useState("");
   const [people,setPeople] = useState("");
   const [title,setTitle] = useState("");
   const [introduce,setIntroduce] = useState("");
   const [time,setTime] = useState("");
   const [alarm,setAlarm] = useState(false);
   const [categoryData,setCategoryData] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
   const [data,setData] = useState({
     date:"",
     location:"",
@@ -47,6 +50,7 @@ export default function CreateClubPostPage() {
       sDate:sDate,
       eDate:eDate,
       location:location,
+      detailLocation,detailLocation,
       people:people,
       introduce:introduce,
       time:time,
@@ -115,11 +119,41 @@ export default function CreateClubPostPage() {
           />
         </View>
         <Text style={styles.createPageLabel}>위치</Text>
+        <View style={styles.centeredView}>
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {
+              setModalVisible(!modalVisible);
+            }}>
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <GooglePlacesInput setState={setLocation} />
+                <Pressable
+                  style={[styles.button, styles.buttonClose]}
+                  onPress={() => setModalVisible(!modalVisible)}>
+                  <Text style={styles.textStyleModal}>주소 입력 완료</Text>
+                </Pressable>
+              </View>
+            </View>
+          </Modal>
+          <Pressable
+            style={[styles.button, styles.buttonOpen]}
+            onPress={() => setModalVisible(true)}>
+            {
+              (location.length === 0) ? 
+              <Text style={styles.textStyle}>위치 검색하기</Text> :
+              <Text style={styles.textStyle}>{location}</Text>
+            }
+          </Pressable>
+        </View>
+        <Text style={styles.createPageLabel}>상세 위치</Text>
         <TextInput
           style={styles.input}
-          onChangeText={setLocation}
-          value={location}
-          placeholder="모임 위치를 선택해주세요."
+          onChangeText={setDetailLocation}
+          value={detailLocation}
+          placeholder="예) 디지털관 DB131"
         />
         <Text style={styles.createPageLabel}>인원</Text>
         <TextInput
@@ -244,5 +278,46 @@ const styles = StyleSheet.create({
     borderRadius:15,
     marginBottom:32,
     marginTop:32
-  }
+  },
+  centeredView: {
+    flex: 1,
+    margin: 12,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: '#dddddd',
+    borderRadius: 20,
+    padding: 35,
+    width:"90%",
+    height:"100%",
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    padding: 10,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: '#eeeeee',
+  },
+  buttonClose: {
+    backgroundColor: theme.psColor,
+    borderRadius:10,
+  },
+  textStyle: {
+    color: 'gray',
+  },
+  textStyleModal:{
+    color:"#ffffff",
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
+  },
 });
