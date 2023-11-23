@@ -169,7 +169,7 @@ export default function ProfileEditModal({ visible, hideModal, info }) {
               </Text>
             )}
           </View>
-          <View style={{ flex: 2, backgroundColor: "gray" }}></View>
+          <View style={{ flex: 2 }}></View>
         </View>
       </View>
     </Modal>
@@ -197,7 +197,6 @@ const styles = StyleSheet.create({
   modalHeader: {
     flexDirection: "row",
     width: "90%",
-    // backgroundColor: "red",
     flex: 1,
     alignItems: "center",
     justifyContent: "space-between",
@@ -217,7 +216,6 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     flex: 0.5,
-    // backgroundColor: "red",
     ...theme.centerStyle,
     position: "relative",
   },
@@ -236,7 +234,7 @@ const styles = StyleSheet.create({
     right: 5,
     backgroundColor: "white",
     padding: 5,
-    borderRadius: "50%",
+    borderRadius: theme.screenWidth / 6,
     borderWidth: 0.5,
     borderColor: theme.profileBorderColor,
   },
