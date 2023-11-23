@@ -18,6 +18,9 @@ import { AntDesign } from "@expo/vector-icons";
 
 import theme from "../../../styles/theme";
 
+import HomeDetailComment from './HomeDetailComment/HomeDetailComment';
+import HomeDetailCommentInput from './HomeDetailComment/HomeDetailCommentInput';
+
 export default function HomeDetailPage({ route }) {
   const navigation = useNavigation();
   const state = route.params.detailData;
@@ -72,6 +75,18 @@ export default function HomeDetailPage({ route }) {
             <Text style={{ color: theme.psColor }}>{state.hashtag}</Text>
 
             {/* 여기에 종료된게임, 참가신청, 참가취소 버튼 추가 */}
+            {
+              (false) ? 
+              <TouchableOpacity style={styles.homeDetailStateBtnGray}>
+                <Text style={styles.homeDetailStateTextGray}>종료된 게임</Text>
+              </TouchableOpacity> : (true) ? 
+              <TouchableOpacity style={styles.homeDetailStateBtnBlue}>
+                <Text style={styles.homeDetailStateTextBlue}>참가 신청</Text>
+              </TouchableOpacity> : 
+              <TouchableOpacity style={styles.homeDetailStateBtnRed}>
+                <Text style={styles.homeDetailStateTextRed}>참가 취소</Text>
+              </TouchableOpacity>
+            }
           </View>
 
           <View style={styles.homeDetailInformation}>
@@ -155,8 +170,11 @@ export default function HomeDetailPage({ route }) {
               </Text>
             </View>
           </View>
+          <HomeDetailComment/>
         </ScrollView>
+  
       </View>
+    <HomeDetailCommentInput />
     </View>
   );
 }
@@ -210,4 +228,37 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1, // 하단 테두리의 두께
     borderBottomColor: "#cccccc", // 하단 테두리의 색상
   },
+  homeDetailStateBtnGray:{
+    borderWidth: 1,
+    borderColor: "#cccccc",
+    borderRadius: 10,
+    padding:15,
+    marginTop:10,
+    ...theme.centerStyle
+  },
+  homeDetailStateTextGray:{
+    color:"#cccccc"
+  },
+  homeDetailStateBtnBlue:{
+    borderWidth: 1,
+    borderColor: theme.psColor,
+    borderRadius: 10,
+    padding:15,
+    marginTop:10,
+    ...theme.centerStyle
+  },
+  homeDetailStateTextBlue:{
+    color:theme.psColor,
+  },
+  homeDetailStateBtnRed:{
+    borderWidth: 1,
+    borderColor: "#ff0000",
+    borderRadius: 10,
+    padding:15,
+    marginTop:10,
+    ...theme.centerStyle
+  },
+  homeDetailStateTextRed:{
+    color:"#ff0000"
+  }
 });
