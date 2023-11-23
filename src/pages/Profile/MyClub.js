@@ -2,10 +2,9 @@
 
 import * as React from "react";
 import theme from "../../styles/theme";
-
-import { useState } from "react";
+import { useState, Fragment } from "react";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
-
+import { myclubData } from "../../utils/StaticData";
 import {
   View,
   Text,
@@ -13,13 +12,23 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
+import ClubCard from "./ClubCard";
 
 const FirstRoute = () => (
   <ScrollView contentContainerStyle={{ flex: 1 }}>
-    <View style={{ flex: 1, ...theme.centerStyle }}>
-      <Text style={{ fontSize: 16, color: "lightgray" }}>
-        생성한 모임이 없습니다
-      </Text>
+    <View style={styles.clubCardView}>
+      <View style={{ width: "90%" }}>
+        {myclubData.map((day, index) => (
+          <Fragment key={index}>
+            <Text style={{ ...styles.clubDate, marginTop: 20 }}>
+              {day.date}
+            </Text>
+            {day.clubs.map((club, clubIndex) => (
+              <ClubCard key={clubIndex} clubData={club} />
+            ))}
+          </Fragment>
+        ))}
+      </View>
     </View>
   </ScrollView>
 );
@@ -68,7 +77,16 @@ export default function MyClub() {
 }
 
 const styles = StyleSheet.create({
+  clubCardView: {
+    ...theme.centerStyle,
+    padding: 10,
+    backgroundColor: "white",
+  },
   myClubView: {
     flex: 1,
+  },
+  clubDate: {
+    fontWeight: "600",
+    fontSize: 20,
   },
 });
