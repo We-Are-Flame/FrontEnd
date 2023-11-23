@@ -18,7 +18,7 @@ import {
   launchImageLibraryAsync,
   useMediaLibraryPermissions,
 } from "expo-image-picker";
-import LionImg from "../../../assets/lion.webp";
+
 import DefaultImg from "../../../assets/user.png";
 import theme from "../../styles/theme";
 import ImageViewer from "../../components/ImageViewer";
@@ -119,11 +119,12 @@ export default function ProfileEditModal({ visible, hideModal, info }) {
           <View style={styles.imageContainer}>
             <Pressable onPress={uploadImage}>
               <View style={{ position: "relative" }}>
-                <ImageViewer
-                  placeholderImageSource={DefaultImg}
-                  selectedImage={imageUrl}
-                />
-
+                <View style={styles.imageWrapper}>
+                  <ImageViewer
+                    placeholderImageSource={DefaultImg}
+                    selectedImage={imageUrl}
+                  />
+                </View>
                 <View style={styles.iconContainer}>
                   <Entypo name="camera" size={17} color="black" />
                 </View>
@@ -198,6 +199,15 @@ const styles = StyleSheet.create({
     // backgroundColor: "red",
     ...theme.centerStyle,
     position: "relative",
+  },
+  imageWrapper: {
+    borderWidth: 1,
+    borderColor: theme.profileBorderColor,
+    width: 100,
+    height: 100,
+    borderRadius: theme.screenWidth / 6,
+    ...theme.centerStyle,
+    overflow: "hidden",
   },
   iconContainer: {
     position: "absolute",

@@ -1,3 +1,5 @@
+/** @format */
+
 import { StyleSheet } from "react-native";
 import { Image } from "expo-image";
 import theme from "../styles/theme";
@@ -6,15 +8,26 @@ export default function ImageViewer({ placeholderImageSource, selectedImage }) {
     ? { uri: selectedImage }
     : placeholderImageSource;
 
-  return <Image source={imageSource} style={styles.image} />;
+  return (
+    <Image
+      source={imageSource}
+      style={
+        selectedImage
+          ? styles.image
+          : { ...styles.image, width: 80, height: 80 }
+      }
+    />
+  );
 }
 const styles = StyleSheet.create({
   image: {
-    borderWidth: 1,
-    borderColor: theme.profileBorderColor,
     width: 100,
     height: 100,
-    borderRadius: theme.screenWidth / 6,
-    ...theme.centerStyle,
+    // borderWidth: 1,
+    // borderColor: theme.profileBorderColor,
+    // width: 100,
+    // height: 100,
+    // borderRadius: theme.screenWidth / 6,
+    // ...theme.centerStyle,
   },
 });
