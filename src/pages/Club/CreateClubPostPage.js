@@ -14,7 +14,6 @@ import { category } from '../../utils/StaticData';
 import Dropdown from '../../components/Dropdown';
 import GooglePlacesInput from '../../components/GooglePlacesInput';
 
-
 export default function CreateClubPostPage() {
   const [sDate,setSDate] = useState("");
   const [eDate,setEDate] = useState("");
@@ -30,39 +29,55 @@ export default function CreateClubPostPage() {
   const [introduce,setIntroduce] = useState("");
   const [time,setTime] = useState("");
   const [alarm,setAlarm] = useState(false);
+  const [hashtags,setHashtags] = useState([]);
   const [categoryData,setCategoryData] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
-  const [data,setData] = useState({
-    date:"",
-    location:"",
-    people:"",
-    title:"",
-    introduce:"",
-    time:"",
-    alarm:false,
-    categoryData:"",
-  });
+  const [data,setData] = useState({});
 
   const toggleSwitch = () => setAlarm(alarm => !alarm);
   
   const submitPost = ()=>{
     setData({
-      sDate:sDate,
-      eDate:eDate,
-      location:location,
-      detailLocation,detailLocation,
-      people:people,
-      introduce:introduce,
-      time:time,
       alarm:alarm,
       category:categoryData,
+      hashtags:hashtags,
+      info:{
+        name:title,
+        max_participants:people,
+        description:introduce,
+      },
+      location:{
+        location:location,
+        detail_location:detailLocation
+      },
+      time:{
+        start_time:sDate,
+        end_time:eDate
+      },
+      image:{
+        thumbnail_url:"썸네일 url",
+        image_urls:[
+          "image.jpg",
+          "image.jpg",
+        ]
+      }
     });
   };
 
   const extractNumberFromString = (str) => {
     const matches = str.match(/\d+/);
     return matches ? parseInt(matches[0], 10) : null;
-  }
+  };
+
+  const extractHashTags = (inputText) => {
+    const regex = /#[\w가-힣]+/g; // 해시태그 추출을 위한 정규 표현식
+    const hashTags = inputText.match(regex) || []; // 해시태그 추출
+    return hashTags;
+  };
+
+  useEffect(()=>{
+    setHashtags(extractHashTags(introduce));
+  },[introduce]);
 
   useEffect(()=>{
     console.log(data);
