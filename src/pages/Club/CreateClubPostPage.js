@@ -1,6 +1,6 @@
 /** @format */
 
-import { StyleSheet, Text, View, ScrollView,TextInput,Switch } from "react-native";
+import { StyleSheet, Text, View, ScrollView,TextInput,Switch,Modal,Pressable } from "react-native";
 import { useState } from "react";
 
 import { timeArr } from '../../utils/StaticData';
@@ -9,59 +9,166 @@ import { useEffect } from 'react';
 import { TouchableOpacity } from 'react-native';
 import theme from './../../styles/theme';
 
+import { category } from '../../utils/StaticData';
+
+import Dropdown from '../../components/Dropdown';
+import GooglePlacesInput from '../../components/GooglePlacesInput';
 
 export default function CreateClubPostPage() {
-  const [date,setDate] = useState("");
+  const [sDate,setSDate] = useState("");
+  const [eDate,setEDate] = useState("");
+  const [year,setYear] = useState("");
+  const [month,setMonth] = useState("");
+  const [day,setDay] = useState("");
+  const [hour,setHour] = useState("");
+  const [min,setMin] = useState("");
   const [location,setLocation] = useState("");
+  const [detailLocation,setDetailLocation] = useState("");
   const [people,setPeople] = useState("");
   const [title,setTitle] = useState("");
   const [introduce,setIntroduce] = useState("");
   const [time,setTime] = useState("");
   const [alarm,setAlarm] = useState(false);
-  const [data,setData] = useState({
-    date:"",
-    location:"",
-    people:"",
-    title:"",
-    introduce:"",
-    time:"",
-    alarm:false,
-  });
+  const [hashtags,setHashtags] = useState([]);
+  const [categoryData,setCategoryData] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
+  const [data,setData] = useState({});
 
   const toggleSwitch = () => setAlarm(alarm => !alarm);
   
   const submitPost = ()=>{
     setData({
-      date:date,
-      location:location,
-      people:people,
-      introduce:introduce,
-      time:time,
-      alarm:alarm
+      alarm:alarm,
+      category:categoryData,
+      hashtags:hashtags,
+      info:{
+        name:title,
+        max_participants:people,
+        description:introduce,
+      },
+      location:{
+        location:location,
+        detail_location:detailLocation
+      },
+      time:{
+        start_time:sDate,
+        end_time:eDate
+      },
+      image:{
+        thumbnail_url:"썸네일 url",
+        image_urls:[
+          "image.jpg",
+          "image.jpg",
+        ]
+      }
     });
   };
+
+  const extractNumberFromString = (str) => {
+    const matches = str.match(/\d+/);
+    return matches ? parseInt(matches[0], 10) : null;
+  };
+
+  const extractHashTags = (inputText) => {
+    const regex = /#[\w가-힣]+/g; // 해시태그 추출을 위한 정규 표현식
+    const hashTags = inputText.match(regex) || []; // 해시태그 추출
+    return hashTags;
+  };
+
+  useEffect(()=>{
+    setHashtags(extractHashTags(introduce));
+  },[introduce]);
 
   useEffect(()=>{
     console.log(data);
     //여기서 통신 조건문으로 데이터 하나라도 없으면 안되도록 처리
   },[data]);
 
+  useEffect(()=>{
+    let calHour = parseInt(hour)+extractNumberFromString(time);
+    setSDate(`${year}-${month}-${day}T${hour}:${min}:00Z`);
+    setEDate(`${year}-${month}-${day}T${calHour}:${min}:00Z`);
+  },[year,month,day,hour,min,time]);
+
   return (
     <View style={styles.createClubPostPageView}>
       <ScrollView style={{borderTopColor:"#cccccc" , borderTopWidth: 1, padding:16}}>
+        <Text style={styles.createPageLabel}>카테고리</Text>
+        <Dropdown dropDownItem={category} setData={setCategoryData}/>
         <Text style={styles.createPageLabel}>일시</Text>
-        <TextInput
-          style={styles.input}
-          onChangeText={setDate}
-          value={date}
-          placeholder="날짜, 시간을 선택해주세요."
-        />
+        <View style={{flexDirection:"row", flex:1}}>
+          <TextInput
+            style={styles.inputDate}
+            onChangeText={setYear}
+            value={year}
+            placeholder="YYYY"
+            keyboardType="number-pad"
+          />
+          <TextInput
+            style={styles.inputDate}
+            onChangeText={setMonth}
+            value={month}
+            placeholder="MM"
+            keyboardType="number-pad"
+          />
+          <TextInput
+            style={styles.inputDate}
+            onChangeText={setDay}
+            value={day}
+            placeholder="DD"
+            keyboardType="number-pad"
+          />
+          <TextInput
+            style={styles.inputDate}
+            onChangeText={setHour}
+            value={hour}
+            placeholder="HH"
+            keyboardType="number-pad"
+          />
+          <TextInput
+            style={styles.inputDate}
+            onChangeText={setMin}
+            value={min}
+            placeholder="mm"
+            keyboardType="number-pad"
+          />
+        </View>
         <Text style={styles.createPageLabel}>위치</Text>
+        <View style={styles.centeredView}>
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {
+              setModalVisible(!modalVisible);
+            }}>
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <GooglePlacesInput setState={setLocation} />
+                <Pressable
+                  style={[styles.button, styles.buttonClose]}
+                  onPress={() => setModalVisible(!modalVisible)}>
+                  <Text style={styles.textStyleModal}>주소 입력 완료</Text>
+                </Pressable>
+              </View>
+            </View>
+          </Modal>
+          <Pressable
+            style={[styles.button, styles.buttonOpen]}
+            onPress={() => setModalVisible(true)}>
+            {
+              (location.length === 0) ? 
+              <Text style={styles.textStyle}>위치 검색하기</Text> :
+              <Text style={styles.textStyle}>{location}</Text>
+            }
+          </Pressable>
+        </View>
+        <Text style={styles.createPageLabel}>상세 위치</Text>
         <TextInput
           style={styles.input}
-          onChangeText={setLocation}
-          value={location}
-          placeholder="모임 위치를 선택해주세요."
+          onChangeText={setDetailLocation}
+          value={detailLocation}
+          placeholder="예) 디지털관 DB131"
         />
         <Text style={styles.createPageLabel}>인원</Text>
         <TextInput
@@ -140,6 +247,15 @@ const styles = StyleSheet.create({
     backgroundColor:"#eeeeee",
     padding: 10,
   },
+  inputDate:{
+    height: 40,
+    marginTop: 12,
+    marginBottom:12,
+    marginRight:5,
+    backgroundColor:"#eeeeee",
+    padding: 10,
+    flex:1,
+  },
   inputArea:{
     height: 80,
     margin: 12,
@@ -177,5 +293,46 @@ const styles = StyleSheet.create({
     borderRadius:15,
     marginBottom:32,
     marginTop:32
-  }
+  },
+  centeredView: {
+    flex: 1,
+    margin: 12,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: '#dddddd',
+    borderRadius: 20,
+    padding: 35,
+    width:"90%",
+    height:"100%",
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    padding: 10,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: '#eeeeee',
+  },
+  buttonClose: {
+    backgroundColor: theme.psColor,
+    borderRadius:10,
+  },
+  textStyle: {
+    color: 'gray',
+  },
+  textStyleModal:{
+    color:"#ffffff",
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
+  },
 });
