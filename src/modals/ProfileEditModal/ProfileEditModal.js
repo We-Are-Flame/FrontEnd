@@ -26,16 +26,25 @@ export default function ProfileEditModal({ visible, hideModal, info }) {
   const [nickname, setNickname] = useState(info.nickname);
   const [isNicknameValid, setIsNicknameValid] = useState(true);
   const [isNicknameChange, setIsNicknameChange] = useState(false);
+  const [isProfileImgChange, setIsProfileImgChange] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
   const [status, requestPermission] = useMediaLibraryPermissions();
 
   useEffect(() => {
-    if (info.nickname === nickname) {
+    if (info.nickname == nickname) {
       setIsNicknameChange(false);
     } else {
       setIsNicknameChange(true);
     }
   }, [nickname]);
+
+  useEffect(() => {
+    if (imageUrl != "") {
+      setIsProfileImgChange(true);
+    } else {
+      setIsProfileImgChange(false);
+    }
+  }, [imageUrl]);
 
   const uploadImage = async () => {
     if (!status.granted) {
@@ -53,7 +62,6 @@ export default function ProfileEditModal({ visible, hideModal, info }) {
     });
 
     if (!result.canceled) {
-      console.log(result);
       setImageUrl(result.assets[0].uri);
     } else {
       return null;
@@ -73,12 +81,21 @@ export default function ProfileEditModal({ visible, hideModal, info }) {
   };
 
   const handleCompletePress = () => {
-    if (isNicknameValid && isNicknameChange) {
-      console.log("닉네임 유효:", nickname);
-      hideModal();
+    if (isNicknameValid && isNicknameChange && isProfileImgChange) {
+      /* 닉네임 프로필 이미지가 바뀌었을 때*/
+      console.log("닉네임 프로필 이미지 바뀜:", nickname);
       /* 완료시에 로직 수행*/
-    } else {
-      console.log("닉네임 유효하지 않음");
+      hideModal();
+    } else if (isProfileImgChange) {
+      /*  프로필 이미지만 바뀜*/
+      console.log("프로필 이미지 변경됨");
+      /* 완료시에 로직 수행*/
+      hideModal();
+    } else if (isNicknameValid && isNicknameChange) {
+      /*  닉네임만 바뀜*/
+      console.log("닉네임 변경됨");
+      /* 완료시에 로직 수행*/
+      hideModal();
     }
   };
   return (
@@ -101,13 +118,17 @@ export default function ProfileEditModal({ visible, hideModal, info }) {
 
             <TouchableOpacity
               onPress={handleCompletePress}
-              disabled={!isNicknameChange || !isNicknameValid}
+              disabled={
+                (!isNicknameChange || !isNicknameValid) && !isProfileImgChange
+              }
             >
               <Text
                 style={{
                   fontSize: 19,
                   color:
-                    isNicknameValid && isNicknameChange ? "black" : "lightgray",
+                    (isNicknameValid && isNicknameChange) || isProfileImgChange
+                      ? "black"
+                      : "lightgray",
                 }}
               >
                 완료
@@ -121,7 +142,7 @@ export default function ProfileEditModal({ visible, hideModal, info }) {
               <View style={{ position: "relative" }}>
                 <View style={styles.imageWrapper}>
                   <ImageViewer
-                    placeholderImageSource={DefaultImg}
+                    placeholderImageSource={info.profile}
                     selectedImage={imageUrl}
                   />
                 </View>

@@ -13,7 +13,10 @@ export default function MyProfile() {
   const [isAuth, setIsAuth] = useState(false);
   const info = {
     nickname: "히어로",
+    profile:
+      "https://i.namu.wiki/i/MIdKf35SuzXJmr3tDx_pRotdE4w0qZXXjjpkOWBRbRMyNrPEqcR1j5qycTSTaan4_zDcWX50JbpCb8jmGIbY9PQuCGff_BpbOjXlNZnZsbglilvkpm2N5INbRTyrZWhQmFq6eqKLQWaYHdoAZEQ98Q.webp",
   };
+
   const showModal = () => {
     setModalVisible(true);
   };
