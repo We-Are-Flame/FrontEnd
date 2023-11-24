@@ -3,16 +3,16 @@
 import { StyleSheet, Text, View, ScrollView,TextInput,Switch,Modal,Pressable } from "react-native";
 import { useState } from "react";
 
-import { timeArr } from '../../utils/StaticData';
-import Button from '../../utils/StaticData';
+import { timeArr } from '../../../utils/StaticData';
+import Button from '../../../utils/StaticData';
 import { useEffect } from 'react';
 import { TouchableOpacity } from 'react-native';
-import theme from './../../styles/theme';
+import theme from '../../../styles/theme';
 
-import { category } from '../../utils/StaticData';
+import { category } from '../../../utils/StaticData';
 
-import Dropdown from '../../components/Dropdown';
-import GooglePlacesInput from '../../components/GooglePlacesInput';
+import Dropdown from '../../../components/Dropdown';
+import GooglePlacesInput from '../../../components/GooglePlacesInput';
 
 export default function CreateClubPostPage() {
   const [sDate,setSDate] = useState("");

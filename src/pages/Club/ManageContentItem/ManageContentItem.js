@@ -10,8 +10,8 @@ import {
   ScrollView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import theme from "../../../../styles/theme";
-import ManageCard from "../ManageCard/ManageCard";
+import theme from "../../../styles/theme";
+import ManageCard from "./ManageCard/ManageCard";
 
 export default function ManageContentItem({ state }) {
   const [showAllPeoples, setShowAllPeoples] = useState(false);
