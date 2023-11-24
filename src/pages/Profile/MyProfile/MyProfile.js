@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { Image } from "expo-image";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import theme from "../../../styles/theme";
-import LionProfile from "../../../assets/lion.webp";
+import LionProfile from "../../../../assets/lion.webp";
 import ProfileEditModal from "../../../modals/ProfileEditModal/ProfileEditModal";
 
 export default function MyProfile() {

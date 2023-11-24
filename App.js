@@ -14,8 +14,8 @@ import NavContainer from "./src/components/NavContainer";
 import KaKaoLogin from "./src/components/Kakao";
 import HomeDetailPage from "./src/pages/Home/HomeDetailPage/HomeDetailPage";
 
-import ProfileSetting from "./src/pages/Profile/ProfileSetting";
-import CreateClubPostPage from "./src/pages/Club/CreateClubPostPage";
+import ProfileSetting from "./src/pages/Profile/ProfileSetting/ProfileSetting";
+import CreateClubPostPage from "./src/pages/Club/CreateClubPostPage/CreateClubPostPage";
 
 const Stack = createStackNavigator();
 

@@ -4,7 +4,7 @@ import * as React from "react";
 import { useState, useEffect } from "react";
 import theme from "../../../styles/theme";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import ClubImg from "../../../assets/dummyImage.jpg";
+import ClubImg from "../../../../assets/dummyImage.jpg";
 import { Button, Card } from "react-native-paper";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 
