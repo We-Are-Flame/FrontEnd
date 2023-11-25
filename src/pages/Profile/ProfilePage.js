@@ -11,8 +11,8 @@ import {
   ScrollView,
   RefreshControl,
 } from "react-native";
-import MyProfile from "./MyProfile";
-import MyClub from "./MyClub";
+import MyProfile from "./MyProfile/MyProfile";
+import MyClub from "./MyClub/MyClub";
 
 export default function ProfilePage() {
   const [refreshing, setRefreshing] = useState(false);

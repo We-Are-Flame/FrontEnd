@@ -1,10 +1,10 @@
 /** @format */
 
 import * as React from "react";
-import theme from "../../styles/theme";
+import theme from "../../../styles/theme";
 import { useState, Fragment } from "react";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
-import { myclubData } from "../../utils/StaticData";
+import { myclubData } from "../../../utils/StaticData";
 import {
   View,
   Text,
@@ -12,7 +12,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import ClubCard from "./ClubCard";
+import ClubCard from "../ClubCard/ClubCard";
 
 const FirstRoute = () => (
   <ScrollView contentContainerStyle={{ flex: 1 }}>

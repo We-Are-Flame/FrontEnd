@@ -1,11 +1,11 @@
-import React from 'react';
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
-import { googleAPI } from '../config/apiKey';
-
-const GooglePlacesInput = ({setState}) => {
+import React from "react";
+import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+// import { googleAPI } from "../config/apiKey";
+import { GOOGLE_API_KEY } from "@env";
+const GooglePlacesInput = ({ setState }) => {
   return (
     <GooglePlacesAutocomplete
-      placeholder='주소 검색'
+      placeholder="주소 검색"
       fetchDetails={true}
       enablePoweredByContainer={false}
       GooglePlacesSearchQuery={{ rankby: "distance" }}
@@ -15,24 +15,24 @@ const GooglePlacesInput = ({setState}) => {
       }}
       keepResultsAfterBlur={true}
       query={{
-        key: googleAPI,
-        language: 'ko',
+        key: GOOGLE_API_KEY,
+        language: "ko",
       }}
       styles={{
         textInputContainer: {
-          backgroundColor: '#dddddd',
+          backgroundColor: "#dddddd",
           borderTopWidth: 0,
-          borderBottomWidth:0,
+          borderBottomWidth: 0,
         },
         textInput: {
           marginLeft: 0,
           marginRight: 0,
           height: 38,
-          color: '#5d5d5d',
+          color: "#5d5d5d",
           fontSize: 16,
         },
         predefinedPlacesDescription: {
-          color: '#1faadb',
+          color: "#1faadb",
         },
       }}
     />

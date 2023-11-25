@@ -5,7 +5,7 @@ import { useState } from "react";
 
 import Header from "../../components/Header";
 import theme from "../../styles/theme";
-import ManageContentContainer from "./components/ManageContentContainer/ManageContentContainer";
+import ManageContentContainer from "./ManageContentContainer/ManageContentContainer";
 export default function ClubManagePage() {
   return (
     <View style={styles.managePageView}>

@@ -8,11 +8,11 @@ import {
   useMediaLibraryPermissions,
 } from "expo-image-picker";
 
-import { timeArr } from '../../utils/StaticData';
-import Button from '../../utils/StaticData';
+import { timeArr } from '../../../utils/StaticData';
+import Button from '../../../utils/StaticData';
 import { useEffect } from 'react';
 import { TouchableOpacity } from 'react-native';
-import theme from './../../styles/theme';
+import theme from '../../../styles/theme';
 
 import { category } from '../../utils/StaticData';
 import lion from "../../../assets/lion.webp"
@@ -21,6 +21,7 @@ import { Entypo } from "@expo/vector-icons";
 import Dropdown from '../../components/Dropdown';
 import GooglePlacesInput from '../../components/GooglePlacesInput';
 import ImageViewer from '../../components/ImageViewer';
+
 
 export default function CreateClubPostPage() {
   const [sDate,setSDate] = useState("");
