@@ -1,7 +1,12 @@
 /** @format */
 
-import { StyleSheet, Text, View, ScrollView,TextInput,Switch,Modal,Pressable } from "react-native";
+import { StyleSheet, Text, View, ScrollView,TextInput,Switch,Modal,Pressable,Dimensions } from "react-native";
 import { useState } from "react";
+import {
+  MediaTypeOptions,
+  launchImageLibraryAsync,
+  useMediaLibraryPermissions,
+} from "expo-image-picker";
 
 import { timeArr } from '../../utils/StaticData';
 import Button from '../../utils/StaticData';
@@ -10,9 +15,12 @@ import { TouchableOpacity } from 'react-native';
 import theme from './../../styles/theme';
 
 import { category } from '../../utils/StaticData';
+import lion from "../../../assets/lion.webp"
+import { Entypo } from "@expo/vector-icons";
 
 import Dropdown from '../../components/Dropdown';
 import GooglePlacesInput from '../../components/GooglePlacesInput';
+import ImageViewer from '../../components/ImageViewer';
 
 export default function CreateClubPostPage() {
   const [sDate,setSDate] = useState("");
@@ -32,7 +40,10 @@ export default function CreateClubPostPage() {
   const [hashtags,setHashtags] = useState([]);
   const [categoryData,setCategoryData] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
+  const [thumbnailImageUrl, setThumbnailImageUrl] = useState("");
   const [data,setData] = useState({});
+
+  const [status, requestPermission] = useMediaLibraryPermissions();
 
   const toggleSwitch = () => setAlarm(alarm => !alarm);
   
@@ -55,7 +66,7 @@ export default function CreateClubPostPage() {
         end_time:eDate
       },
       image:{
-        thumbnail_url:"썸네일 url",
+        thumbnail_url:thumbnailImageUrl,
         image_urls:[
           "image.jpg",
           "image.jpg",
@@ -73,6 +84,28 @@ export default function CreateClubPostPage() {
     const regex = /#[\w가-힣]+/g; // 해시태그 추출을 위한 정규 표현식
     const hashTags = inputText.match(regex) || []; // 해시태그 추출
     return hashTags;
+  };
+
+  const uploadImage = async () => {
+    if (!status.granted) {
+      const permission = await requestPermission();
+      if (!permission.granted) {
+        return null;
+      }
+    }
+
+    const result = await launchImageLibraryAsync({
+      mediaTypes: MediaTypeOptions.Images,
+      allowsEditing: false,
+      quality: 1,
+      aspect: [3, 1],
+    });
+
+    if (!result.canceled) {
+      setThumbnailImageUrl(result.assets[0].uri);
+    } else {
+      return null;
+    }
   };
 
   useEffect(()=>{
@@ -93,6 +126,24 @@ export default function CreateClubPostPage() {
   return (
     <View style={styles.createClubPostPageView}>
       <ScrollView style={{borderTopColor:"#cccccc" , borderTopWidth: 1, padding:16}}>
+      <Text style={styles.createPageLabel}>썸네일</Text>
+        <View style={styles.imageContainer}>
+          <Pressable onPress={uploadImage}>
+            <View style={{ position: "relative" }}>
+              <View style={styles.imageWrapper}>
+                <ImageViewer
+                  placeholderImageSource={lion}
+                  selectedImage={thumbnailImageUrl}
+                  widthProps="100%"
+                  heightProps="100%"
+                />
+              </View>
+              <View style={styles.iconContainer}>
+                <Entypo name="camera" size={17} color="black" />
+              </View>
+              </View>
+          </Pressable>
+        </View>
         <Text style={styles.createPageLabel}>카테고리</Text>
         <Dropdown dropDownItem={category} setData={setCategoryData}/>
         <Text style={styles.createPageLabel}>일시</Text>
@@ -334,5 +385,20 @@ const styles = StyleSheet.create({
   modalText: {
     marginBottom: 15,
     textAlign: 'center',
+  },
+  imageContainer: {
+    flex: 0.5,
+    // backgroundColor: "red",
+    ...theme.centerStyle,
+    position: "relative",
+  },
+  imageWrapper: {
+    borderWidth: 1,
+    borderColor: theme.profileBorderColor,
+    width: Dimensions.get('window').width - 50,
+    height: (Dimensions.get('window').width - 50)/2,
+    borderRadius: theme.screenWidth / 6,
+    ...theme.centerStyle,
+    overflow: "hidden",
   },
 });

@@ -13,6 +13,9 @@ const Dropdown = ({dropDownItem,setData}) => {
             return {label: item, value: item};
           })
         }
+        placeholder={{
+          label: "카테고리를 선택해주세요.",
+        }}
       />
     </View>
   );

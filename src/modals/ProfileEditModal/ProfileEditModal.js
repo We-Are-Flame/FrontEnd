@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
     right: 5,
     backgroundColor: "white",
     padding: 5,
-    borderRadius: "50%",
+    borderRadius: theme.screenWidth / 6,
     borderWidth: 0.5,
     borderColor: theme.profileBorderColor,
   },

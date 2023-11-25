@@ -12,13 +12,15 @@ const INJECTED_JAVASCRIPT = `window.ReactNativeWebView.postMessage('message from
 const KaKaoLogin = () => {
   const navigation = useNavigation();
   function KakaoLoginWebView(data) {
-    const exp = "code=";
-    var condition = data.indexOf(exp);
-    if (condition != -1) {
-      var authorize_code = data.substring(condition + exp.length);
-      console.log(authorize_code);
-      requestToken(authorize_code);
-    }
+    // const exp = "code=";
+    console.log(data);
+    navigation.navigate("Login", { screen: "Login" });
+    // var condition = data.indexOf(exp);
+    // if (condition != -1) {
+    //   var authorize_code = data.substring(condition + exp.length);
+    //   console.log(authorize_code);
+    //   requestToken(authorize_code);
+    // }
   }
 
   const requestToken = async (authorize_code) => {
@@ -45,28 +47,6 @@ const KaKaoLogin = () => {
     navigation.navigate("Login", { screen: "Login" });
   };
 
-  const requestUserInfo = (AccessToken) => {
-    axios({
-      method: "GET",
-      url: "https://kapi.kakao.com/v2/user/me",
-      headers: {
-        Authorization: `Bearer ${AccessToken}`,
-      },
-    })
-      .then((response) => {
-        let user_email = response.data.kakao_account.email;
-        let user_range = response.data.kakao_account.age_range;
-        let user_gender = response.data.kakao_account.gender;
-
-        console.log(user_email);
-        console.log(user_range);
-        console.log(user_gender);
-        console.log(response.data);
-      })
-      .catch((err) => {
-        console.log("error :", err);
-      });
-  };
   return (
     <View style={Styles.container}>
       <WebView
@@ -74,7 +54,7 @@ const KaKaoLogin = () => {
         originWhitelist={["*"]}
         scalesPageToFit={false}
         source={{
-          uri: `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}`,
+          uri: `http://118.67.128.48/api/login/kakao`,
         }}
         injectedJavaScript={INJECTED_JAVASCRIPT}
         javaScriptEnabled
