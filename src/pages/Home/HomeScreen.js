@@ -19,16 +19,16 @@ import theme from "../../styles/theme";
 import Header from "../../components/Header";
 import HomeContent from "./HomeContent/HomeContent";
 import HomeCategory from "./HomeCategory/HomeCategory";
-import Dropdown from '../../components/Dropdown';
+import Dropdown from "../../components/Dropdown";
 
 import { Ionicons } from "@expo/vector-icons";
 
-import { sort } from '../../utils/StaticData';
+import { sort } from "../../utils/StaticData";
 
 export default function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedSort,setSelectedSort] = useState(sort[0]);
+  const [selectedSort, setSelectedSort] = useState(sort[0]);
   const navigation = useNavigation();
 
   const onRefresh = useCallback(() => {
@@ -59,10 +59,15 @@ export default function HomeScreen() {
             <HomeCategory />
           </View>
           <View style={styles.homeScreenSort}>
-            <Dropdown dropDownItem={sort} setData={setSelectedSort} label="정렬 선택" widthProps={150}/>
+            <Dropdown
+              dropDownItem={sort}
+              setData={setSelectedSort}
+              label="정렬 선택"
+              widthProps={150}
+            />
           </View>
           <View style={styles.homeScreenContent}>
-            <HomeContent selectedSort={selectedSort}/>
+            <HomeContent selectedSort={selectedSort} />
           </View>
         </ScrollView>
       </View>
@@ -85,18 +90,20 @@ export default function HomeScreen() {
           activeOpacity={1}
           onPress={() => setModalVisible(!modalVisible)} // 이 부분이 모달 외부를 눌렀을 때 닫히도록 함
         >
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate("CreateClubPostPage");
-              setModalVisible(false);
-            }}
-          >
-            <Text style={styles.modalText}>모임 만들기</Text>
-            <View style={styles.modalView}>
-              {/* 모달 내용 */}
+          <Text style={styles.modalText}>모임 만들기</Text>
+
+          <View style={styles.modalView}>
+            {/* 모달 내용 */}
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("CreateClubPostPage");
+                setModalVisible(false);
+              }}
+              hitSlop={{ top: 32, bottom: 32, left: 32, right: 32 }}
+            >
               <Ionicons name="baseball-outline" size={24} color="black" />
-            </View>
-          </TouchableOpacity>
+            </TouchableOpacity>
+          </View>
         </TouchableOpacity>
       </Modal>
     </View>
@@ -113,7 +120,7 @@ const styles = StyleSheet.create({
   },
   homeScreenCategory: {
     margin: 30,
-    marginBottom:0,
+    marginBottom: 0,
   },
   homeScreenCategoryText: {
     fontSize: 18,
@@ -177,7 +184,7 @@ const styles = StyleSheet.create({
     color: "black",
     // 텍스트 스타일
   },
-  homeScreenSort:{
-    alignItems:"flex-end",
-  }
+  homeScreenSort: {
+    alignItems: "flex-end",
+  },
 });

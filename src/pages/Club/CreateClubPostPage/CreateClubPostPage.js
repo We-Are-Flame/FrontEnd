@@ -9,56 +9,50 @@ import {
   Switch,
   Modal,
   Pressable,
-  Dimensions
+  Dimensions,
+  TouchableOpacity,
 } from "react-native";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   MediaTypeOptions,
   launchImageLibraryAsync,
   useMediaLibraryPermissions,
 } from "expo-image-picker";
-
-import { timeArr } from "../../../utils/StaticData";
-import Button from "../../../utils/StaticData";
-import { useEffect } from "react";
-import { TouchableOpacity } from "react-native";
-import theme from "../../../styles/theme";
-import { useNavigation } from "@react-navigation/native";
-import { category } from "../../../utils/StaticData";
-import lion from "../../../../assets/lion.webp";
 import { Entypo } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/core";
 
-import Dropdown from '../../../components/Dropdown';
-import GooglePlacesInput from '../../../components/GooglePlacesInput';
-import ImageViewer from '../../../components/ImageViewer';
-
-
-export default function CreateClubPostPage() {
-  const [sDate,setSDate] = useState("");
-  const [eDate,setEDate] = useState("");
-  const [year,setYear] = useState("");
-  const [month,setMonth] = useState("");
-  const [day,setDay] = useState("");
-  const [hour,setHour] = useState("");
-  const [min,setMin] = useState("");
-  const [location,setLocation] = useState("");
-  const [detailLocation,setDetailLocation] = useState("");
-  const [people,setPeople] = useState("");
-  const [title,setTitle] = useState("");
-  const [introduce,setIntroduce] = useState("");
-  const [time,setTime] = useState("");
-  const [alarm,setAlarm] = useState(false);
-  const [hashtags,setHashtags] = useState([]);
-  const [categoryData,setCategoryData] = useState("");
+import Dropdown from "../../../components/Dropdown";
+import ImageViewer from "../../../components/ImageViewer";
+import { timeArr, category } from "../../../utils/StaticData";
+import Button from "../../../utils/StaticData";
+import lion from "../../../../assets/lion.webp";
+import theme from "../../../styles/theme";
+export default function CreateClubPostPage({ route }) {
+  const [sDate, setSDate] = useState("");
+  const [eDate, setEDate] = useState("");
+  const [year, setYear] = useState("");
+  const [month, setMonth] = useState("");
+  const [day, setDay] = useState("");
+  const [hour, setHour] = useState("");
+  const [min, setMin] = useState("");
+  const [location, setLocation] = useState("");
+  const [detailLocation, setDetailLocation] = useState("");
+  const [people, setPeople] = useState("");
+  const [title, setTitle] = useState("");
+  const [introduce, setIntroduce] = useState("");
+  const [time, setTime] = useState("");
+  const [alarm, setAlarm] = useState(false);
+  const [hashtags, setHashtags] = useState([]);
+  const [categoryData, setCategoryData] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [thumbnailImageUrl, setThumbnailImageUrl] = useState("");
-  const [data,setData] = useState({});
+  const [data, setData] = useState({});
 
   const [status, requestPermission] = useMediaLibraryPermissions();
+  const navigation = useNavigation();
+  const toggleSwitch = () => setAlarm((alarm) => !alarm);
 
-  const toggleSwitch = () => setAlarm(alarm => !alarm);
-  
-  const submitPost = ()=>{
+  const submitPost = () => {
     setData({
       alarm: alarm,
       category: categoryData,
@@ -80,16 +74,13 @@ export default function CreateClubPostPage() {
         thumbnail_url: "썸네일 url",
         image_urls: ["image.jpg", "image.jpg"],
       },
-      image:{
-        thumbnail_url:thumbnailImageUrl,
-        image_urls:[
-          "image.jpg",
-          "image.jpg",
-        ]
-      }
+      image: {
+        thumbnail_url: thumbnailImageUrl,
+        image_urls: ["image.jpg", "image.jpg"],
+      },
     });
   };
-  
+
   const extractNumberFromString = (str) => {
     const matches = str.match(/\d+/);
     return matches ? parseInt(matches[0], 10) : null;
@@ -123,7 +114,7 @@ export default function CreateClubPostPage() {
     }
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     setHashtags(extractHashTags(introduce));
   }, [introduce]);
 
@@ -140,8 +131,10 @@ export default function CreateClubPostPage() {
 
   return (
     <View style={styles.createClubPostPageView}>
-      <ScrollView style={{borderTopColor:"#cccccc" , borderTopWidth: 1, padding:16}}>
-      <Text style={styles.createPageLabel}>썸네일</Text>
+      <ScrollView
+        style={{ borderTopColor: "#cccccc", borderTopWidth: 1, padding: 16 }}
+      >
+        <Text style={styles.createPageLabel}>썸네일</Text>
         <View style={styles.imageContainer}>
           <Pressable onPress={uploadImage}>
             <View style={{ position: "relative" }}>
@@ -156,11 +149,15 @@ export default function CreateClubPostPage() {
               <View style={styles.iconContainer}>
                 <Entypo name="camera" size={17} color="black" />
               </View>
-              </View>
+            </View>
           </Pressable>
         </View>
         <Text style={styles.createPageLabel}>카테고리</Text>
-        <Dropdown dropDownItem={category} setData={setCategoryData} label="카테고리를 선택해주세요"/>
+        <Dropdown
+          dropDownItem={category}
+          setData={setCategoryData}
+          label="카테고리를 선택해주세요"
+        />
         <Text style={styles.createPageLabel}>일시</Text>
         <View style={{ flexDirection: "row", flex: 1 }}>
           <TextInput
@@ -205,9 +202,8 @@ export default function CreateClubPostPage() {
           onPressIn={() => {
             navigation.navigate("FindAddress", { screen: "FindAddress" });
           }}
-          editable={false}
           style={styles.input}
-          value={route.params.address || ""}
+          value={route.params?.address || ""}
           placeholder="예) 거의동 423-2"
         />
 
@@ -396,8 +392,8 @@ const styles = StyleSheet.create({
   imageWrapper: {
     borderWidth: 1,
     borderColor: theme.profileBorderColor,
-    width: Dimensions.get('window').width - 50,
-    height: (Dimensions.get('window').width - 50)/2,
+    width: Dimensions.get("window").width - 50,
+    height: (Dimensions.get("window").width - 50) / 2,
     borderRadius: theme.screenWidth / 6,
     ...theme.centerStyle,
     overflow: "hidden",
