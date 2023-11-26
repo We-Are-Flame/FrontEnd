@@ -44,7 +44,7 @@ export default function App() {
           options={({ route }) => ({
             gestureEnabled: true,
             headerShown: true,
-            title: route.params?.detailData?.nickname,
+            title: route.params?.hostName,
             headerBackTitle: " ",
             headerTintColor: "black",
           })}
