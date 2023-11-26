@@ -8,18 +8,19 @@ import { useNavigation } from "@react-navigation/native";
 import theme from "../../../../styles/theme";
 import dummy1 from "../../../../../assets/dummyImage.jpg";
 
-import { Ionicons } from "@expo/vector-icons";
-import { AntDesign } from "@expo/vector-icons";
+import { Ionicons, Entypo, AntDesign } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 
 export default function HomeContentItem({ state }) {
   const navigation = useNavigation();
-  const [duration,setDuration] = useState(0);
-  const [timeString,setTimeString] = useState("");
-  const [hashtagString,setHashtagString] = useState("");
-  const [dateString,setDateString] = useState("");
+  const [duration, setDuration] = useState(0);
+  const [timeString, setTimeString] = useState("");
+  const [hashtagString, setHashtagString] = useState("");
+  const [dateString, setDateString] = useState("");
 
-  const imageSource = state.host.profile_image ? { uri: state.host.profile_image } : null;
+  const imageSource = state.host.profile_image
+    ? { uri: state.host.profile_image }
+    : null;
   const startTime = new Date(state.time.start_time);
   const endTime = new Date(state.time.end_time);
 
@@ -29,29 +30,44 @@ export default function HomeContentItem({ state }) {
   // 밀리초를 시간 단위로 변환
   const hours = diff / 1000 / 60 / 60;
 
-  useEffect(()=>{
+  useEffect(() => {
     setDuration(hours);
-  },[hours]);
+  }, [hours]);
 
-  useEffect(()=>{
+  useEffect(() => {
     const hours = startTime.getHours();
     const isPM = hours >= 12;
     const formattedHour = isPM ? hours - 12 : hours;
-    const amPmString = isPM ? '오후' : '오전';
+    const amPmString = isPM ? "오후" : "오전";
     setTimeString(`${amPmString} ${formattedHour}시`);
-  },[startTime]);
+  }, [startTime]);
 
-  useEffect(()=>{
+  useEffect(() => {
     // 해시태그에 '#'이 붙어있지 않으면 붙이기
-    const formattedHashtags = state.hashtags.map(tag => tag.startsWith('#') ? tag : `#${tag}`);
+    const formattedHashtags = state.hashtags.map((tag) =>
+      tag.startsWith("#") ? tag : `#${tag}`
+    );
 
     // 모든 해시태그를 공백으로 구분하여 하나의 문자열로 결합
-    setHashtagString(formattedHashtags.join(' '));
-  },[state.hashtags]);
+    setHashtagString(formattedHashtags.join(" "));
+  }, [state.hashtags]);
 
-  useEffect(()=>{
-    const months = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
-    const days = ['일', '월', '화', '수', '목', '금', '토'];
+  useEffect(() => {
+    const months = [
+      "1월",
+      "2월",
+      "3월",
+      "4월",
+      "5월",
+      "6월",
+      "7월",
+      "8월",
+      "9월",
+      "10월",
+      "11월",
+      "12월",
+    ];
+    const days = ["일", "월", "화", "수", "목", "금", "토"];
 
     const month = months[startTime.getMonth()]; // getMonth()는 0부터 시작하므로 배열을 사용
     const date = startTime.getDate(); // 일
@@ -59,12 +75,15 @@ export default function HomeContentItem({ state }) {
 
     // 최종 문자열 생성
     setDateString(`${month} ${date}일(${dayOfWeek})`);
-  },[startTime]);
+  }, [startTime]);
 
   return (
     <TouchableOpacity
       onPress={() => {
-        navigation.navigate("HomeDetailPage", { id : state.id });
+        navigation.navigate("HomeDetailPage", {
+          id: state.id,
+          hostName: state.host.name,
+        });
       }}
     >
       <View style={styles.homeContentItemView}>
@@ -113,7 +132,9 @@ export default function HomeContentItem({ state }) {
           />
           <View style={{ flexDirection: "row" }}>
             <MaterialIcons name="place" size={24} color="black" />
-            <Text style={{ marginTop: 5 }}>&nbsp;{state.location.location}</Text>
+            <Text style={{ marginTop: 5 }}>
+              &nbsp;{state.location.location}
+            </Text>
           </View>
           <View style={{ flexDirection: "row", marginLeft: 3, marginTop: 5 }}>
             <AntDesign name="clockcircle" size={18} color="black" />
@@ -124,10 +145,13 @@ export default function HomeContentItem({ state }) {
           <View style={{ flexDirection: "row", marginLeft: 3, marginTop: 5 }}>
             <Ionicons name="people" size={20} color="black" />
             <Text style={{ marginTop: 3 }}>
-              &nbsp;{state.info.current_participants}/{state.info.max_participants}
+              &nbsp;{state.info.current_participants}/
+              {state.info.max_participants}
             </Text>
           </View>
-          <Text style={{ marginTop: 10, color: theme.psColor }}>{hashtagString}</Text>
+          <Text style={{ marginTop: 10, color: theme.psColor }}>
+            {hashtagString}
+          </Text>
         </View>
       </View>
     </TouchableOpacity>
