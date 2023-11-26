@@ -1,8 +1,7 @@
 /** @format */
 /** @format */
 
-import * as React from "react";
-import {useState} from "react";
+import React,{useState,useEffect} from "react";
 import {
   StyleSheet,
   Text,
@@ -13,14 +12,27 @@ import {
 } from "react-native";
 
 import theme from './../../../../styles/theme';
+import { post_headers } from '../../../../utils/StaticData';
+import axios from 'axios';
 
-export default function HomeDetailCommentInput() {
+export default function HomeDetailCommentInput({id}) {
   const [text,setText] = useState("");
 
   const submitComment = ()=>{
-    console.log("전송 댓글 : " + text);
-    setText("");
-  }
+    axios.post(`http://118.67.128.48/api/meetings/${id}/comments`,
+    {description:text},
+    {headers:post_headers}
+    )
+    .then((res)=>{
+      console.log(res.data);
+      setText("");
+    })
+    .catch((err)=>{
+      console.log(err);
+    })
+  };
+
+
 
   return (
     <View style={styles.homeDetailCommentInputView}>

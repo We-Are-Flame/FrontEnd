@@ -256,11 +256,11 @@ export default function HomeDetailPage({ route }) {
                 </Text>
               </View>
             </View>
-            <HomeDetailComment/>
+            <HomeDetailComment id={stateId}/>
           </ScrollView>
     
         </View>
-      <HomeDetailCommentInput />
+      <HomeDetailCommentInput id={stateId} />
       </View>
       : <Image
           source={Spinner}
