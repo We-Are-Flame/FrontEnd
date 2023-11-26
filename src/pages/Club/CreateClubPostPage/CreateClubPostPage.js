@@ -1,69 +1,75 @@
 /** @format */
 
-import { StyleSheet, Text, View, ScrollView,TextInput,Switch,Modal,Pressable } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  TextInput,
+  Switch,
+  Modal,
+  Pressable,
+} from "react-native";
 import { useState } from "react";
 
-import { timeArr } from '../../../utils/StaticData';
-import Button from '../../../utils/StaticData';
-import { useEffect } from 'react';
-import { TouchableOpacity } from 'react-native';
-import theme from '../../../styles/theme';
+import { timeArr } from "../../../utils/StaticData";
+import Button from "../../../utils/StaticData";
+import { useEffect } from "react";
+import { TouchableOpacity } from "react-native";
+import theme from "../../../styles/theme";
+import { useNavigation } from "@react-navigation/native";
+import { category } from "../../../utils/StaticData";
 
-import { category } from '../../../utils/StaticData';
+import Dropdown from "../../../components/Dropdown";
+import GooglePlacesInput from "../../../components/GooglePlacesInput";
 
-import Dropdown from '../../../components/Dropdown';
-import GooglePlacesInput from '../../../components/GooglePlacesInput';
-
-export default function CreateClubPostPage() {
-  const [sDate,setSDate] = useState("");
-  const [eDate,setEDate] = useState("");
-  const [year,setYear] = useState("");
-  const [month,setMonth] = useState("");
-  const [day,setDay] = useState("");
-  const [hour,setHour] = useState("");
-  const [min,setMin] = useState("");
-  const [location,setLocation] = useState("");
-  const [detailLocation,setDetailLocation] = useState("");
-  const [people,setPeople] = useState("");
-  const [title,setTitle] = useState("");
-  const [introduce,setIntroduce] = useState("");
-  const [time,setTime] = useState("");
-  const [alarm,setAlarm] = useState(false);
-  const [hashtags,setHashtags] = useState([]);
-  const [categoryData,setCategoryData] = useState("");
+export default function CreateClubPostPage({ route }) {
+  const [sDate, setSDate] = useState("");
+  const [eDate, setEDate] = useState("");
+  const [year, setYear] = useState("");
+  const [month, setMonth] = useState("");
+  const [day, setDay] = useState("");
+  const [hour, setHour] = useState("");
+  const [min, setMin] = useState("");
+  const [location, setLocation] = useState("");
+  const [detailLocation, setDetailLocation] = useState("");
+  const [people, setPeople] = useState("");
+  const [title, setTitle] = useState("");
+  const [introduce, setIntroduce] = useState("");
+  const [time, setTime] = useState("");
+  const [alarm, setAlarm] = useState(false);
+  const [hashtags, setHashtags] = useState([]);
+  const [categoryData, setCategoryData] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
-  const [data,setData] = useState({});
+  const [data, setData] = useState({});
+  const navigation = useNavigation();
+  const toggleSwitch = () => setAlarm((alarm) => !alarm);
 
-  const toggleSwitch = () => setAlarm(alarm => !alarm);
-  
-  const submitPost = ()=>{
+  const submitPost = () => {
     setData({
-      alarm:alarm,
-      category:categoryData,
-      hashtags:hashtags,
-      info:{
-        name:title,
-        max_participants:people,
-        description:introduce,
+      alarm: alarm,
+      category: categoryData,
+      hashtags: hashtags,
+      info: {
+        name: title,
+        max_participants: people,
+        description: introduce,
       },
-      location:{
-        location:location,
-        detail_location:detailLocation
+      location: {
+        location: location,
+        detail_location: detailLocation,
       },
-      time:{
-        start_time:sDate,
-        end_time:eDate
+      time: {
+        start_time: sDate,
+        end_time: eDate,
       },
-      image:{
-        thumbnail_url:"썸네일 url",
-        image_urls:[
-          "image.jpg",
-          "image.jpg",
-        ]
-      }
+      image: {
+        thumbnail_url: "썸네일 url",
+        image_urls: ["image.jpg", "image.jpg"],
+      },
     });
   };
-
+  
   const extractNumberFromString = (str) => {
     const matches = str.match(/\d+/);
     return matches ? parseInt(matches[0], 10) : null;
@@ -75,28 +81,30 @@ export default function CreateClubPostPage() {
     return hashTags;
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     setHashtags(extractHashTags(introduce));
-  },[introduce]);
+  }, [introduce]);
 
-  useEffect(()=>{
+  useEffect(() => {
     console.log(data);
     //여기서 통신 조건문으로 데이터 하나라도 없으면 안되도록 처리
-  },[data]);
+  }, [data]);
 
-  useEffect(()=>{
-    let calHour = parseInt(hour)+extractNumberFromString(time);
+  useEffect(() => {
+    let calHour = parseInt(hour) + extractNumberFromString(time);
     setSDate(`${year}-${month}-${day}T${hour}:${min}:00Z`);
     setEDate(`${year}-${month}-${day}T${calHour}:${min}:00Z`);
-  },[year,month,day,hour,min,time]);
+  }, [year, month, day, hour, min, time]);
 
   return (
     <View style={styles.createClubPostPageView}>
-      <ScrollView style={{borderTopColor:"#cccccc" , borderTopWidth: 1, padding:16}}>
+      <ScrollView
+        style={{ borderTopColor: "#cccccc", borderTopWidth: 1, padding: 16 }}
+      >
         <Text style={styles.createPageLabel}>카테고리</Text>
-        <Dropdown dropDownItem={category} setData={setCategoryData}/>
+        <Dropdown dropDownItem={category} setData={setCategoryData} />
         <Text style={styles.createPageLabel}>일시</Text>
-        <View style={{flexDirection:"row", flex:1}}>
+        <View style={{ flexDirection: "row", flex: 1 }}>
           <TextInput
             style={styles.inputDate}
             onChangeText={setYear}
@@ -134,35 +142,17 @@ export default function CreateClubPostPage() {
           />
         </View>
         <Text style={styles.createPageLabel}>위치</Text>
-        <View style={styles.centeredView}>
-          <Modal
-            animationType="fade"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => {
-              setModalVisible(!modalVisible);
-            }}>
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <GooglePlacesInput setState={setLocation} />
-                <Pressable
-                  style={[styles.button, styles.buttonClose]}
-                  onPress={() => setModalVisible(!modalVisible)}>
-                  <Text style={styles.textStyleModal}>주소 입력 완료</Text>
-                </Pressable>
-              </View>
-            </View>
-          </Modal>
-          <Pressable
-            style={[styles.button, styles.buttonOpen]}
-            onPress={() => setModalVisible(true)}>
-            {
-              (location.length === 0) ? 
-              <Text style={styles.textStyle}>위치 검색하기</Text> :
-              <Text style={styles.textStyle}>{location}</Text>
-            }
-          </Pressable>
-        </View>
+
+        <TextInput
+          onPressIn={() => {
+            navigation.navigate("FindAddress", { screen: "FindAddress" });
+          }}
+          editable={false}
+          style={styles.input}
+          value={route.params.address || ""}
+          placeholder="예) 거의동 423-2"
+        />
+
         <Text style={styles.createPageLabel}>상세 위치</Text>
         <TextInput
           style={styles.input}
@@ -194,39 +184,43 @@ export default function CreateClubPostPage() {
         />
         <Text style={styles.createPageLabel}>모임 시간</Text>
         <View style={styles.timeBtnView}>
-          {
-            timeArr.map((value,index)=>{
-              return <Button
-              // onPress={onPressLearnMore}
-              title={value}
-              setTime={setTime}
-              time={time}
-              key={index}
-            />
-            })
-          }
+          {timeArr.map((value, index) => {
+            return (
+              <Button
+                // onPress={onPressLearnMore}
+                title={value}
+                setTime={setTime}
+                time={time}
+                key={index}
+              />
+            );
+          })}
           <TextInput
-          style={styles.inputTime}
-          onChangeText={setTime}
-          value={time}
-          placeholder="직접 입력"
-        />
+            style={styles.inputTime}
+            onChangeText={setTime}
+            value={time}
+            placeholder="직접 입력"
+          />
         </View>
-        <View style={{flexDirection:"row", justifyContent:"space-between"}}>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <View>
             <Text style={styles.createPageLabel}>모임 알림</Text>
-            <Text style={styles.createPageSubLabel}>모임 시작 알림 메세지를 보냅니다.</Text>
+            <Text style={styles.createPageSubLabel}>
+              모임 시작 알림 메세지를 보냅니다.
+            </Text>
           </View>
           <Switch
-            trackColor={{false: '#767577', true: '#81b0ff'}}
-            thumbColor={alarm ? '#f5dd4b' : '#f4f3f4'}
+            trackColor={{ false: "#767577", true: "#81b0ff" }}
+            thumbColor={alarm ? "#f5dd4b" : "#f4f3f4"}
             ios_backgroundColor="#3e3e3e"
             onValueChange={toggleSwitch}
             value={alarm}
           />
         </View>
         <TouchableOpacity style={styles.submitBtn} onPress={submitPost}>
-          <Text style={{color:"#ffffff", fontWeight:"bold"}}>게임 등록</Text>
+          <Text style={{ color: "#ffffff", fontWeight: "bold" }}>
+            게임 등록
+          </Text>
         </TouchableOpacity>
       </ScrollView>
     </View>
@@ -234,65 +228,65 @@ export default function CreateClubPostPage() {
 }
 
 const styles = StyleSheet.create({
-  createClubPostPageView:{
-    backgroundColor:"#ffffff",
+  createClubPostPageView: {
+    backgroundColor: "#ffffff",
   },
-  createPageLabel:{
-    fontWeight:"bold",
-    fontSize:20,
+  createPageLabel: {
+    fontWeight: "bold",
+    fontSize: 20,
   },
   input: {
     height: 40,
     margin: 12,
-    backgroundColor:"#eeeeee",
+    backgroundColor: "#eeeeee",
     padding: 10,
   },
-  inputDate:{
+  inputDate: {
     height: 40,
     marginTop: 12,
-    marginBottom:12,
-    marginRight:5,
-    backgroundColor:"#eeeeee",
+    marginBottom: 12,
+    marginRight: 5,
+    backgroundColor: "#eeeeee",
     padding: 10,
-    flex:1,
+    flex: 1,
   },
-  inputArea:{
+  inputArea: {
     height: 80,
     margin: 12,
-    backgroundColor:"#eeeeee",
+    backgroundColor: "#eeeeee",
     padding: 10,
   },
-  timeBtnView:{
-    flexDirection:"row",
-    flex:5,
-    marginTop:8,
-    justifyContent:"center"
+  timeBtnView: {
+    flexDirection: "row",
+    flex: 5,
+    marginTop: 8,
+    justifyContent: "center",
   },
-  timeBtn:{
-    flex:1,
-    height:"50px"
+  timeBtn: {
+    flex: 1,
+    height: "50px",
   },
-  inputTime:{
+  inputTime: {
     height: 40,
     margin: 12,
-    backgroundColor:"#eeeeee",
+    backgroundColor: "#eeeeee",
     padding: 10,
-    flex:1,
+    flex: 1,
   },
-  createPageSubLabel:{
-    fontSize:12,
-    color:"#bbbbbb",
+  createPageSubLabel: {
+    fontSize: 12,
+    color: "#bbbbbb",
   },
-  submitBtn:{
+  submitBtn: {
     ...theme.centerStyle,
-    backgroundColor:theme.psColor,
-    width:"90%",
-    marginLeft:"auto",
-    marginRight:"auto",
-    padding:20,
-    borderRadius:15,
-    marginBottom:32,
-    marginTop:32
+    backgroundColor: theme.psColor,
+    width: "90%",
+    marginLeft: "auto",
+    marginRight: "auto",
+    padding: 20,
+    borderRadius: 15,
+    marginBottom: 32,
+    marginTop: 32,
   },
   centeredView: {
     flex: 1,
@@ -300,12 +294,12 @@ const styles = StyleSheet.create({
   },
   modalView: {
     margin: 20,
-    backgroundColor: '#dddddd',
+    backgroundColor: "#dddddd",
     borderRadius: 20,
     padding: 35,
-    width:"90%",
-    height:"100%",
-    shadowColor: '#000',
+    width: "90%",
+    height: "100%",
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -319,20 +313,20 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   buttonOpen: {
-    backgroundColor: '#eeeeee',
+    backgroundColor: "#eeeeee",
   },
   buttonClose: {
     backgroundColor: theme.psColor,
-    borderRadius:10,
+    borderRadius: 10,
   },
   textStyle: {
-    color: 'gray',
+    color: "gray",
   },
-  textStyleModal:{
-    color:"#ffffff",
+  textStyleModal: {
+    color: "#ffffff",
   },
   modalText: {
     marginBottom: 15,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });
