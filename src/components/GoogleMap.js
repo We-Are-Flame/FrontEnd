@@ -19,6 +19,7 @@ const GoogleMap = () => {
         initialRegion={initialRegion}
         provider={PROVIDER_GOOGLE}
         region={region}
+        scrollEnabled={false}
         pointerEvents="none"
       >
         <Marker
