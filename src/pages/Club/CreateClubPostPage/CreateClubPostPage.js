@@ -20,6 +20,7 @@ import {
 } from "expo-image-picker";
 import { Entypo } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/core";
+import axios from "axios";
 
 import Dropdown from "../../../components/Dropdown";
 import ImageViewer from "../../../components/ImageViewer";
@@ -27,6 +28,7 @@ import { timeArr, category } from "../../../utils/StaticData";
 import Button from "../../../utils/StaticData";
 import lion from "../../../../assets/lion.webp";
 import theme from "../../../styles/theme";
+import { REST_API_KEY } from "@env";
 export default function CreateClubPostPage({ route }) {
   const [sDate, setSDate] = useState("");
   const [eDate, setEDate] = useState("");
@@ -47,6 +49,8 @@ export default function CreateClubPostPage({ route }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [thumbnailImageUrl, setThumbnailImageUrl] = useState("");
   const [data, setData] = useState({});
+  const [latitude, setLatitude] = useState(0);
+  const [longitude, setLongitude] = useState(0);
 
   const [status, requestPermission] = useMediaLibraryPermissions();
   const navigation = useNavigation();
@@ -81,6 +85,21 @@ export default function CreateClubPostPage({ route }) {
     });
   };
 
+  const getCoordinate = async (placeAddress) => {
+    const url =
+      "https://dapi.kakao.com/v2/local/search/address.json?query=" +
+      encodeURI(placeAddress);
+    const axiosResult = await axios({
+      url: url,
+      method: "get",
+      headers: {
+        Authorization: `KakaoAK ${REST_API_KEY}`,
+      },
+    }).then((res) => {
+      setLatitude(res.data.documents[0].address.y);
+      setLongitude(res.data.documents[0].address.x);
+    });
+  };
   const extractNumberFromString = (str) => {
     const matches = str.match(/\d+/);
     return matches ? parseInt(matches[0], 10) : null;
@@ -122,6 +141,20 @@ export default function CreateClubPostPage({ route }) {
     console.log(data);
     //여기서 통신 조건문으로 데이터 하나라도 없으면 안되도록 처리
   }, [data]);
+
+  // 위치 등록하는 hook 만약 parmas가 없다면 빈문자
+  useEffect(() => {
+    if (route.params?.address) {
+      setLocation(route.params.address);
+    }
+  }, [route.params]);
+
+  // 좌표 가져와서 등록하는 hook
+  useEffect(() => {
+    if (location != "") {
+      getCoordinate(location);
+    }
+  }, [location]);
 
   useEffect(() => {
     let calHour = parseInt(hour) + extractNumberFromString(time);
