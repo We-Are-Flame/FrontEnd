@@ -11,11 +11,11 @@ import axios from 'axios';
 import { headers } from './../../../utils/StaticData';
 
 
-export default function HomeContent() {
+export default function HomeContent({selectedSort}) {
   const [homeList,setHomeList] = useState([]);
 
   useEffect(()=>{
-    axios.get(`http://118.67.128.48/api/meetings?start=0&end=10&sort=soon`,null,
+    axios.get(`http://118.67.128.48/api/meetings?start=0&end=10&sort=${selectedSort}`,null,
     {headers:headers})
     .then((res)=>{
       setHomeList(res.data.content);
@@ -23,7 +23,7 @@ export default function HomeContent() {
     .catch((err)=>{
       console.log(err);
     })
-  },[])
+  },[selectedSort]);
 
   return (
     <View style={styles.homeContentView}>

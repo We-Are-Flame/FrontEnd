@@ -146,7 +146,7 @@ export default function CreateClubPostPage() {
           </Pressable>
         </View>
         <Text style={styles.createPageLabel}>카테고리</Text>
-        <Dropdown dropDownItem={category} setData={setCategoryData}/>
+        <Dropdown dropDownItem={category} setData={setCategoryData} label="카테고리를 선택해주세요"/>
         <Text style={styles.createPageLabel}>일시</Text>
         <View style={{flexDirection:"row", flex:1}}>
           <TextInput

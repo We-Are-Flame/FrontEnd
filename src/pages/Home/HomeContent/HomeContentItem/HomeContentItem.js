@@ -87,7 +87,7 @@ export default function HomeContentItem({ state }) {
         </View>
         <View style={styles.homeContentItemContent}>
           <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-            {state.info.name}
+            {state.info.title}
           </Text>
           <View>
             <Text style={{ color: "#848484", marginLeft: 50 }}>

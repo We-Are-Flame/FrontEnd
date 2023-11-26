@@ -260,3 +260,7 @@ export const commentData = {
 export const headers = {
   "Content-Type": `application/json`,
 };
+
+export const sort = [
+  "soon","new","title"
+];

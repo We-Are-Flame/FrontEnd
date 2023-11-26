@@ -19,12 +19,16 @@ import theme from "../../styles/theme";
 import Header from "../../components/Header";
 import HomeContent from "./HomeContent/HomeContent";
 import HomeCategory from "./HomeCategory/HomeCategory";
+import Dropdown from '../../components/Dropdown';
 
 import { Ionicons } from "@expo/vector-icons";
+
+import { sort } from '../../utils/StaticData';
 
 export default function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [selectedSort,setSelectedSort] = useState(sort[0]);
   const navigation = useNavigation();
 
   const onRefresh = useCallback(() => {
@@ -54,8 +58,11 @@ export default function HomeScreen() {
             <Text style={styles.homeScreenCategoryText}>확인해 보세요!</Text>
             <HomeCategory />
           </View>
+          <View style={styles.homeScreenSort}>
+            <Dropdown dropDownItem={sort} setData={setSelectedSort} label="정렬 선택" widthProps={150}/>
+          </View>
           <View style={styles.homeScreenContent}>
-            <HomeContent />
+            <HomeContent selectedSort={selectedSort}/>
           </View>
         </ScrollView>
       </View>
@@ -106,6 +113,7 @@ const styles = StyleSheet.create({
   },
   homeScreenCategory: {
     margin: 30,
+    marginBottom:0,
   },
   homeScreenCategoryText: {
     fontSize: 18,
@@ -169,4 +177,7 @@ const styles = StyleSheet.create({
     color: "black",
     // 텍스트 스타일
   },
+  homeScreenSort:{
+    alignItems:"flex-end",
+  }
 });

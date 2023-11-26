@@ -66,6 +66,8 @@ export default function HomeDetailPage({ route }) {
 
       // 모든 해시태그를 공백으로 구분하여 하나의 문자열로 결합
       setHashtagString(formattedHashtags.join(' '));
+
+      setImageSource(detailData.host.profile_image ? { uri: detailData.host.profile_image } : null);
     }
   },[detailData.hashtags]);
 
@@ -107,7 +109,15 @@ export default function HomeDetailPage({ route }) {
           <ScrollView style={styles.homeDetailScrollView}>
             <View style={styles.homeDetailTitle}>
               <View style={{ flexDirection: "row" }}>
-                <Ionicons name="person" size={30} color="black" />
+              {imageSource ? (
+                <Image
+                  source={imageSource}
+                  style={{ width: 24, height: 24,marginTop:3, marginRight:5 }} // 예시 크기, 원하는 대로 조절
+                  resizeMode="cover" // 또는 "contain", "stretch" 등
+                />
+              ) : (
+                <Ionicons name="person" size={24} color="black" />
+              )}
                 <View>
                   <View style={{ flexDirection: "row" }}>
                     <Text style={{ fontWeight: "bold", fontSize: 10 }}>
