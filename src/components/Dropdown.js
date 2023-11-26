@@ -2,17 +2,20 @@ import React, { useState } from 'react';
 import { View, Text } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 
-const Dropdown = ({dropDownItem,setData}) => {
+const Dropdown = ({dropDownItem,setData,label,widthProps}) => {
 
   return (
-    <View>
+    <View style={(widthProps) ? {width:widthProps} : {}}>
       <RNPickerSelect
         onValueChange={(value) => setData(value)}
         items={
-          dropDownItem.map((item)=>{
-            return {label: item, value: item};
+          dropDownItem.map((item,index)=>{
+            return {label: item, value: item, key: index.toString()};
           })
         }
+        placeholder={{
+          label: label,
+        }}
       />
     </View>
   );

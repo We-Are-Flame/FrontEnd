@@ -1,6 +1,7 @@
 /** @format */
 
-import * as React from "react";
+import React,{useState,useEffect} from "react";
+import { Image } from "expo-image";
 import {
   StyleSheet,
   Text,
@@ -9,11 +10,22 @@ import {
   ScrollView,
 } from "react-native";
 
-import { commentData } from '../../../../utils/StaticData';
-
 import HomeDetailCommentItem from './HomeDetailCommentItem';
+import axios from 'axios';
+import { headers } from './../../../../utils/StaticData';
 
-export default function HomeDetailComment() {
+import Spinner from "../../../../../assets/loading_spinner.svg";
+import { API_URL } from "@env";
+
+export default function HomeDetailComment({id}) {
+  const [comment,setComment] = useState({});
+
+  useEffect(()=>{
+    axios.get(`${API_URL}/api/meetings/${id}/comments`,null,{headers:headers})
+    .then((res)=>setComment(res.data))
+    .catch((err)=>console.log(err))
+  });
+
   return (
     <>
       <View style={styles.homeDetailCommentView}>
@@ -21,13 +33,17 @@ export default function HomeDetailComment() {
           댓글
         </Text>
         <Text style={{fontWeight:"bold", marginLeft:10, marginTop:2}}>
-          {commentData.data.length}개
+          {comment.count}개
         </Text>
       </View>
       {
-        (commentData.data).map((data,index)=>{
+        (comment.comment_responses) ? 
+        (comment.comment_responses).map((data,index)=>{
           return <HomeDetailCommentItem data={data} key={index} />
-        })
+        }) : <Image
+          source={Spinner}
+          contentFit="cover" // 또는 fill
+        />
       }
       
     </>

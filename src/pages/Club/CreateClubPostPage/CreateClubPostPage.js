@@ -9,8 +9,14 @@ import {
   Switch,
   Modal,
   Pressable,
+  Dimensions
 } from "react-native";
 import { useState } from "react";
+import {
+  MediaTypeOptions,
+  launchImageLibraryAsync,
+  useMediaLibraryPermissions,
+} from "expo-image-picker";
 
 import { timeArr } from "../../../utils/StaticData";
 import Button from "../../../utils/StaticData";
@@ -19,33 +25,40 @@ import { TouchableOpacity } from "react-native";
 import theme from "../../../styles/theme";
 import { useNavigation } from "@react-navigation/native";
 import { category } from "../../../utils/StaticData";
+import lion from "../../../../assets/lion.webp";
+import { Entypo } from "@expo/vector-icons";
 
-import Dropdown from "../../../components/Dropdown";
-import GooglePlacesInput from "../../../components/GooglePlacesInput";
+import Dropdown from '../../../components/Dropdown';
+import GooglePlacesInput from '../../../components/GooglePlacesInput';
+import ImageViewer from '../../../components/ImageViewer';
 
-export default function CreateClubPostPage({ route }) {
-  const [sDate, setSDate] = useState("");
-  const [eDate, setEDate] = useState("");
-  const [year, setYear] = useState("");
-  const [month, setMonth] = useState("");
-  const [day, setDay] = useState("");
-  const [hour, setHour] = useState("");
-  const [min, setMin] = useState("");
-  const [location, setLocation] = useState("");
-  const [detailLocation, setDetailLocation] = useState("");
-  const [people, setPeople] = useState("");
-  const [title, setTitle] = useState("");
-  const [introduce, setIntroduce] = useState("");
-  const [time, setTime] = useState("");
-  const [alarm, setAlarm] = useState(false);
-  const [hashtags, setHashtags] = useState([]);
-  const [categoryData, setCategoryData] = useState("");
+
+export default function CreateClubPostPage() {
+  const [sDate,setSDate] = useState("");
+  const [eDate,setEDate] = useState("");
+  const [year,setYear] = useState("");
+  const [month,setMonth] = useState("");
+  const [day,setDay] = useState("");
+  const [hour,setHour] = useState("");
+  const [min,setMin] = useState("");
+  const [location,setLocation] = useState("");
+  const [detailLocation,setDetailLocation] = useState("");
+  const [people,setPeople] = useState("");
+  const [title,setTitle] = useState("");
+  const [introduce,setIntroduce] = useState("");
+  const [time,setTime] = useState("");
+  const [alarm,setAlarm] = useState(false);
+  const [hashtags,setHashtags] = useState([]);
+  const [categoryData,setCategoryData] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
-  const [data, setData] = useState({});
-  const navigation = useNavigation();
-  const toggleSwitch = () => setAlarm((alarm) => !alarm);
+  const [thumbnailImageUrl, setThumbnailImageUrl] = useState("");
+  const [data,setData] = useState({});
 
-  const submitPost = () => {
+  const [status, requestPermission] = useMediaLibraryPermissions();
+
+  const toggleSwitch = () => setAlarm(alarm => !alarm);
+  
+  const submitPost = ()=>{
     setData({
       alarm: alarm,
       category: categoryData,
@@ -67,6 +80,13 @@ export default function CreateClubPostPage({ route }) {
         thumbnail_url: "썸네일 url",
         image_urls: ["image.jpg", "image.jpg"],
       },
+      image:{
+        thumbnail_url:thumbnailImageUrl,
+        image_urls:[
+          "image.jpg",
+          "image.jpg",
+        ]
+      }
     });
   };
   
@@ -81,7 +101,29 @@ export default function CreateClubPostPage({ route }) {
     return hashTags;
   };
 
-  useEffect(() => {
+  const uploadImage = async () => {
+    if (!status.granted) {
+      const permission = await requestPermission();
+      if (!permission.granted) {
+        return null;
+      }
+    }
+
+    const result = await launchImageLibraryAsync({
+      mediaTypes: MediaTypeOptions.Images,
+      allowsEditing: false,
+      quality: 1,
+      aspect: [3, 1],
+    });
+
+    if (!result.canceled) {
+      setThumbnailImageUrl(result.assets[0].uri);
+    } else {
+      return null;
+    }
+  };
+
+  useEffect(()=>{
     setHashtags(extractHashTags(introduce));
   }, [introduce]);
 
@@ -98,11 +140,27 @@ export default function CreateClubPostPage({ route }) {
 
   return (
     <View style={styles.createClubPostPageView}>
-      <ScrollView
-        style={{ borderTopColor: "#cccccc", borderTopWidth: 1, padding: 16 }}
-      >
+      <ScrollView style={{borderTopColor:"#cccccc" , borderTopWidth: 1, padding:16}}>
+      <Text style={styles.createPageLabel}>썸네일</Text>
+        <View style={styles.imageContainer}>
+          <Pressable onPress={uploadImage}>
+            <View style={{ position: "relative" }}>
+              <View style={styles.imageWrapper}>
+                <ImageViewer
+                  placeholderImageSource={lion}
+                  selectedImage={thumbnailImageUrl}
+                  widthProps="100%"
+                  heightProps="100%"
+                />
+              </View>
+              <View style={styles.iconContainer}>
+                <Entypo name="camera" size={17} color="black" />
+              </View>
+              </View>
+          </Pressable>
+        </View>
         <Text style={styles.createPageLabel}>카테고리</Text>
-        <Dropdown dropDownItem={category} setData={setCategoryData} />
+        <Dropdown dropDownItem={category} setData={setCategoryData} label="카테고리를 선택해주세요"/>
         <Text style={styles.createPageLabel}>일시</Text>
         <View style={{ flexDirection: "row", flex: 1 }}>
           <TextInput
@@ -328,5 +386,20 @@ const styles = StyleSheet.create({
   modalText: {
     marginBottom: 15,
     textAlign: "center",
+  },
+  imageContainer: {
+    flex: 0.5,
+    // backgroundColor: "red",
+    ...theme.centerStyle,
+    position: "relative",
+  },
+  imageWrapper: {
+    borderWidth: 1,
+    borderColor: theme.profileBorderColor,
+    width: Dimensions.get('window').width - 50,
+    height: (Dimensions.get('window').width - 50)/2,
+    borderRadius: theme.screenWidth / 6,
+    ...theme.centerStyle,
+    overflow: "hidden",
   },
 });
