@@ -15,12 +15,13 @@ import axios from 'axios';
 import { headers } from './../../../../utils/StaticData';
 
 import Spinner from "../../../../../assets/loading_spinner.svg";
+import { API_URL } from "@env";
 
 export default function HomeDetailComment({id}) {
   const [comment,setComment] = useState({});
 
   useEffect(()=>{
-    axios.get(`http://118.67.128.48/api/meetings/${id}/comments`,null,{headers:headers})
+    axios.get(`${API_URL}/api/meetings/${id}/comments`,null,{headers:headers})
     .then((res)=>setComment(res.data))
     .catch((err)=>console.log(err))
   });

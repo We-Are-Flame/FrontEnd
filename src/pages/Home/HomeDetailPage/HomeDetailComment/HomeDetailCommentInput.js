@@ -14,12 +14,13 @@ import {
 import theme from './../../../../styles/theme';
 import { post_headers } from '../../../../utils/StaticData';
 import axios from 'axios';
+import { API_URL } from "@env";
 
 export default function HomeDetailCommentInput({id}) {
   const [text,setText] = useState("");
 
   const submitComment = ()=>{
-    axios.post(`http://118.67.128.48/api/meetings/${id}/comments`,
+    axios.post(`${API_URL}/api/meetings/${id}/comments`,
     {description:text},
     {headers:post_headers}
     )

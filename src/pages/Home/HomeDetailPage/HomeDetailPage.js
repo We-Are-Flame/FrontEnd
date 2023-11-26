@@ -21,6 +21,7 @@ import HomeDetailComment from './HomeDetailComment/HomeDetailComment';
 import HomeDetailCommentInput from './HomeDetailComment/HomeDetailCommentInput';
 import axios from 'axios';
 import { headers } from './../../../utils/StaticData';
+import { API_URL } from "@env";
 
 export default function HomeDetailPage({ route }) {
   const [detailData,setDetailData] = useState({});
@@ -50,7 +51,7 @@ export default function HomeDetailPage({ route }) {
   };
 
   useEffect(()=>{
-    axios.get(`http://118.67.128.48/api/meetings/${stateId}`,null,{headers:headers})
+    axios.get(`${API_URL}/api/meetings/${stateId}`,null,{headers:headers})
     .then((res)=>{
       setDetailData(res.data);
     })

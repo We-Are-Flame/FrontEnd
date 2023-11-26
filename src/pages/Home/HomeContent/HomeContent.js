@@ -9,13 +9,14 @@ import Spinner from "../../../../assets/loading_spinner.svg";
 import HomeContentItem from './HomeContentItem/HomeContentItem';
 import axios from 'axios';
 import { headers } from './../../../utils/StaticData';
+import { API_URL } from "@env";
 
 
 export default function HomeContent({selectedSort}) {
   const [homeList,setHomeList] = useState([]);
 
   useEffect(()=>{
-    axios.get(`http://118.67.128.48/api/meetings?start=0&end=10&sort=${selectedSort}`,null,
+    axios.get(`${API_URL}/api/meetings?start=0&end=10&sort=${selectedSort}`,null,
     {headers:headers})
     .then((res)=>{
       setHomeList(res.data.content);
