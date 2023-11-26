@@ -4,6 +4,7 @@ import { View, StyleSheet } from "react-native";
 import axios from "axios";
 import Postcode from "@actbase/react-daum-postcode";
 import { useNavigation } from "@react-navigation/core";
+import { REST_API_KEY } from "@env";
 export default function FindAddress() {
   const navigation = useNavigation();
 
@@ -21,7 +22,7 @@ export default function FindAddress() {
             url: url,
             method: "get",
             headers: {
-              Authorization: "KakaoAK 6f4ebd50a7864e00f7a85b690e3cc694", //KakaoAK 뒤에 위에서 얻은 REST API KEY를 입력
+              Authorization: `KakaoAK ${REST_API_KEY}`,
             },
           }).then((res) => {
             console.log(`${placeAddress} 이거임 진짜로`);
