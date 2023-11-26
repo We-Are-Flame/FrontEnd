@@ -6,7 +6,7 @@ import { useNavigation } from "@react-navigation/core";
 import { WebView } from "react-native-webview";
 import { REST_API_KEY, REDIRECT_URI } from "@env";
 import axios from "axios";
-
+import { API_URL } from "@env";
 const INJECTED_JAVASCRIPT = `window.ReactNativeWebView.postMessage('message from webView')`;
 
 const KaKaoLogin = () => {
@@ -23,29 +23,6 @@ const KaKaoLogin = () => {
     // }
   }
 
-  const requestToken = async (authorize_code) => {
-    let AccessToken = "none";
-    axios({
-      method: "post",
-      url: "https://kauth.kakao.com/oauth/token",
-      params: {
-        grant_type: "authorization_code",
-        client_id: REST_API_KEY,
-        redirect_uri: REDIRECT_URI,
-        code: authorize_code,
-      },
-    })
-      .then((response) => {
-        AccessToken = response.data.access_token;
-        // console.log(AccessToken);
-        // requestUserInfo(AccessToken);
-        storeaData(AccessToken);
-      })
-      .catch((err) => {
-        console.log("error", error);
-      });
-    navigation.navigate("Login", { screen: "Login" });
-  };
 
   return (
     <View style={Styles.container}>
@@ -54,7 +31,7 @@ const KaKaoLogin = () => {
         originWhitelist={["*"]}
         scalesPageToFit={false}
         source={{
-          uri: `http://118.67.128.48/api/login/kakao`,
+          uri: `${API_URL}/api/login/kakao`,
         }}
         injectedJavaScript={INJECTED_JAVASCRIPT}
         javaScriptEnabled
