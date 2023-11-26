@@ -23,7 +23,7 @@ import { category } from "../../../utils/StaticData";
 import Dropdown from "../../../components/Dropdown";
 import GooglePlacesInput from "../../../components/GooglePlacesInput";
 
-export default function CreateClubPostPage() {
+export default function CreateClubPostPage({ route }) {
   const [sDate, setSDate] = useState("");
   const [eDate, setEDate] = useState("");
   const [year, setYear] = useState("");
@@ -42,9 +42,7 @@ export default function CreateClubPostPage() {
   const [categoryData, setCategoryData] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [data, setData] = useState({});
-
   const navigation = useNavigation();
-
   const toggleSwitch = () => setAlarm((alarm) => !alarm);
 
   const submitPost = () => {
@@ -71,7 +69,7 @@ export default function CreateClubPostPage() {
       },
     });
   };
-
+  
   const extractNumberFromString = (str) => {
     const matches = str.match(/\d+/);
     return matches ? parseInt(matches[0], 10) : null;
@@ -151,7 +149,7 @@ export default function CreateClubPostPage() {
           }}
           editable={false}
           style={styles.input}
-          value={location}
+          value={route.params.address || ""}
           placeholder="예) 거의동 423-2"
         />
 
