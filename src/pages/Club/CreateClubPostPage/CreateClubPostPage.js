@@ -22,13 +22,15 @@ import { Entypo } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/core";
 import axios from "axios";
 
+import { API_URL } from "@env";
 import Dropdown from "../../../components/Dropdown";
 import ImageViewer from "../../../components/ImageViewer";
-import { timeArr, category } from "../../../utils/StaticData";
+import { timeArr, category, post_headers } from "../../../utils/StaticData";
 import Button from "../../../utils/StaticData";
 import lion from "../../../../assets/lion.webp";
 import theme from "../../../styles/theme";
 import { REST_API_KEY } from "@env";
+
 export default function CreateClubPostPage({ route }) {
   const [sDate, setSDate] = useState("");
   const [eDate, setEDate] = useState("");
@@ -48,6 +50,7 @@ export default function CreateClubPostPage({ route }) {
   const [categoryData, setCategoryData] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [thumbnailImageUrl, setThumbnailImageUrl] = useState("");
+  const [thumbnailImageResponseUrl, setThumbnailImageResponseUrl] = useState("");
   const [data, setData] = useState({});
   const [latitude, setLatitude] = useState(0);
   const [longitude, setLongitude] = useState(0);
@@ -58,11 +61,11 @@ export default function CreateClubPostPage({ route }) {
 
   const submitPost = () => {
     setData({
-      alarm: alarm,
+      // alarm: alarm,
       category: categoryData,
       hashtags: hashtags,
       info: {
-        name: title,
+        title: title,
         max_participants: people,
         description: introduce,
       },
@@ -75,11 +78,7 @@ export default function CreateClubPostPage({ route }) {
         end_time: eDate,
       },
       image: {
-        thumbnail_url: "썸네일 url",
-        image_urls: ["image.jpg", "image.jpg"],
-      },
-      image: {
-        thumbnail_url: thumbnailImageUrl,
+        thumbnail_url: thumbnailImageResponseUrl,
         image_urls: ["image.jpg", "image.jpg"],
       },
     });
@@ -139,8 +138,37 @@ export default function CreateClubPostPage({ route }) {
 
   useEffect(() => {
     console.log(data);
-    //여기서 통신 조건문으로 데이터 하나라도 없으면 안되도록 처리
+    axios.post(`${API_URL}/api/meetings`, data, {headers:post_headers})
+    .then((res)=>{
+      console.log(res.data);
+      navigation.navigate("Home");
+    })
+    .catch((err)=>console.log(err))
   }, [data]);
+
+  useEffect(()=>{
+    console.log(thumbnailImageUrl);
+    // 마지막 '.'의 위치를 찾기
+    const lastIndex = thumbnailImageUrl.lastIndexOf('.');
+    // '.' 이후의 문자열(확장자)를 추출
+    const extension = thumbnailImageUrl.substring(lastIndex + 1);
+    if(thumbnailImageUrl !== ""){
+      axios.post(`${API_URL}/api/presigned`, {
+        image_list: [{
+          file_name: thumbnailImageUrl,
+          file_type: "image/"+extension,
+        }]
+      }, { headers: post_headers })
+      .then((res)=> {
+        console.log(res.data.image_list[0]);
+        setThumbnailImageResponseUrl(res.data.image_list[0].image_url);
+      })
+      .catch((err)=>{
+        console.log('3');
+        console.log(err.message);
+      })
+    }
+  },[thumbnailImageUrl]);
 
   // 위치 등록하는 hook 만약 parmas가 없다면 빈문자
   useEffect(() => {
