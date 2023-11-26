@@ -16,7 +16,7 @@ import HomeDetailPage from "./src/pages/Home/HomeDetailPage/HomeDetailPage";
 
 import ProfileSetting from "./src/pages/Profile/ProfileSetting/ProfileSetting";
 import CreateClubPostPage from "./src/pages/Club/CreateClubPostPage/CreateClubPostPage";
-
+import FindAddress from "./src/components/FindAddress";
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -68,6 +68,17 @@ export default function App() {
             gestureEnabled: true,
             headerShown: true,
             title: "모임만들기",
+            headerBackTitle: " ",
+            headerTintColor: "black",
+          })}
+        />
+        <Stack.Screen
+          name="FindAddress"
+          component={FindAddress}
+          options={({ route }) => ({
+            gestureEnabled: true,
+            headerShown: true,
+            title: " ",
             headerBackTitle: " ",
             headerTintColor: "black",
           })}
