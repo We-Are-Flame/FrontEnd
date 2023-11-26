@@ -202,6 +202,7 @@ export default function CreateClubPostPage({ route }) {
           onPressIn={() => {
             navigation.navigate("FindAddress", { screen: "FindAddress" });
           }}
+          editable={null}
           style={styles.input}
           value={route.params?.address || ""}
           placeholder="예) 거의동 423-2"
