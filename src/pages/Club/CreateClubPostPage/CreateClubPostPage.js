@@ -14,13 +14,13 @@ import { useEffect } from 'react';
 import { TouchableOpacity } from 'react-native';
 import theme from '../../../styles/theme';
 
-import { category } from '../../utils/StaticData';
-import lion from "../../../assets/lion.webp"
+import { category } from '../../../utils/StaticData';
+import lion from "../../../../assets/lion.webp";
 import { Entypo } from "@expo/vector-icons";
 
-import Dropdown from '../../components/Dropdown';
-import GooglePlacesInput from '../../components/GooglePlacesInput';
-import ImageViewer from '../../components/ImageViewer';
+import Dropdown from '../../../components/Dropdown';
+import GooglePlacesInput from '../../../components/GooglePlacesInput';
+import ImageViewer from '../../../components/ImageViewer';
 
 
 export default function CreateClubPostPage() {
