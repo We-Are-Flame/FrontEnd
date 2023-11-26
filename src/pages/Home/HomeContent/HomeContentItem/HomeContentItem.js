@@ -1,7 +1,13 @@
 /** @format */
 
 import { useState, useEffect } from "react";
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  Pressable,
+} from "react-native";
 import { Image } from "expo-image";
 import { useNavigation } from "@react-navigation/native";
 
@@ -78,7 +84,7 @@ export default function HomeContentItem({ state }) {
   }, [startTime]);
 
   return (
-    <TouchableOpacity
+    <Pressable
       onPress={() => {
         navigation.navigate("HomeDetailPage", {
           id: state.id,
@@ -154,7 +160,7 @@ export default function HomeContentItem({ state }) {
           </Text>
         </View>
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 }
 
@@ -167,6 +173,14 @@ const styles = StyleSheet.create({
     padding: 15,
     flex: 1,
     height: 350,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   homeContentItemTitle: {
     flex: 1,
