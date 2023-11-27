@@ -22,8 +22,13 @@ import {
 import DefaultImg from "../../../assets/user.png";
 import theme from "../../styles/theme";
 import ImageViewer from "../../components/ImageViewer";
-export default function ProfileEditModal({ visible, hideModal, info }) {
-  const [nickname, setNickname] = useState(info.nickname);
+export default function ProfileEditModal({
+  visible,
+  hideModal,
+  info,
+  userInfo,
+}) {
+  const [nickname, setNickname] = useState(userInfo.nickname);
   const [isNicknameValid, setIsNicknameValid] = useState(true);
   const [isNicknameChange, setIsNicknameChange] = useState(false);
   const [isProfileImgChange, setIsProfileImgChange] = useState(false);
@@ -142,7 +147,7 @@ export default function ProfileEditModal({ visible, hideModal, info }) {
               <View style={{ position: "relative" }}>
                 <View style={styles.imageWrapper}>
                   <ImageViewer
-                    placeholderImageSource={info.profile}
+                    placeholderImageSource={userInfo.profile_image}
                     selectedImage={imageUrl}
                   />
                 </View>
