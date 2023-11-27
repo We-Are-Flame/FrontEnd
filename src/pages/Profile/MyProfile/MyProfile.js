@@ -83,6 +83,7 @@ export default function MyProfile({ userInfo }) {
         </View>
       </View>
       <ProfileEditModal
+        userInfo={userInfo}
         visible={modalVisible}
         hideModal={hideModal}
         info={info}
