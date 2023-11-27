@@ -2,7 +2,8 @@
 
 import * as React from "react";
 import theme from "../../../styles/theme";
-import { useState, Fragment } from "react";
+import axios from "axios";
+import { useState, Fragment, useEffect } from "react";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import { myclubData } from "../../../utils/StaticData";
 import {
@@ -13,6 +14,7 @@ import {
   ScrollView,
 } from "react-native";
 import ClubCard from "../ClubCard/ClubCard";
+import { API_URL } from "@env";
 
 const FirstRoute = () => (
   <ScrollView contentContainerStyle={{ flex: 1 }}>
@@ -57,12 +59,27 @@ const renderTabBar = (props) => (
   />
 );
 
-export default function MyClub() {
+export default function MyClub({ userToken }) {
   const [index, setIndex] = useState(0);
   const [routes] = useState([
     { key: "first", title: "내가 생성한 모임" },
     { key: "second", title: "내가 참여한 모임" },
   ]);
+  // useEffect(() => {
+  //   axios
+  //     .get(`${API_URL}/api/meetings/my`, {
+  //       headers: {
+  //         "Content-Type": `application/json`,
+  //         Authorization: "Bearer " + `${userToken}`,
+  //       },
+  //     })
+  //     .then((res) => {
+  //       console.log(res.data);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // }, []);
 
   return (
     <View style={styles.myClubView}>

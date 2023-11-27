@@ -8,7 +8,7 @@ import theme from "../../../styles/theme";
 import LionProfile from "../../../../assets/lion.webp";
 import ProfileEditModal from "../../../modals/ProfileEditModal/ProfileEditModal";
 
-export default function MyProfile() {
+export default function MyProfile({ userInfo }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [isAuth, setIsAuth] = useState(false);
   const info = {
@@ -27,7 +27,11 @@ export default function MyProfile() {
     <View style={styles.myProfileView}>
       <View style={styles.myProfileViewTop}>
         <View style={styles.myProfileImgContainer}>
-          <Image style={styles.image} source={LionProfile} contentFit="cover" />
+          <Image
+            style={styles.image}
+            source={userInfo.profile_image}
+            contentFit="cover"
+          />
         </View>
         <View style={styles.myPrfoileNameContainer}>
           <View
@@ -37,7 +41,9 @@ export default function MyProfile() {
               justifyContent: "center",
             }}
           >
-            <Text style={{ fontWeight: "bold", fontSize: 16 }}>닉네임</Text>
+            <Text style={{ fontWeight: "bold", fontSize: 16 }}>
+              {userInfo.nickname}
+            </Text>
           </View>
         </View>
       </View>
@@ -52,11 +58,15 @@ export default function MyProfile() {
         <View style={styles.myProfileStat}>
           <View style={{ ...styles.stateItems }}>
             <Text>나의 모임</Text>
-            <Text style={{ fontSize: 18, fontWeight: "bold" }}>0 개</Text>
+            <Text style={{ fontSize: 18, fontWeight: "bold" }}>
+              {userInfo.my_meetings} 개
+            </Text>
           </View>
           <View style={styles.stateItems}>
             <Text>불꽃온도</Text>
-            <Text style={{ fontSize: 18, fontWeight: "bold" }}>90 º</Text>
+            <Text style={{ fontSize: 18, fontWeight: "bold" }}>
+              {userInfo.temperature} º
+            </Text>
           </View>
           <View style={{ ...styles.stateItems, borderRightWidth: 0 }}>
             <Text>학교 인증</Text>

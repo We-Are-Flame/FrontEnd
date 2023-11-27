@@ -11,9 +11,9 @@ import theme from "../styles/theme";
 import { useRoute } from "@react-navigation/core";
 import { useState, useEffect } from "react";
 
-export default function Header() {
-  // const [isLogin, setIsLogin] = useState(true);
-  const [isLogin, setIsLogin] = useState(false);
+export default function Header({ userToken }) {
+  const [isLogin, setIsLogin] = useState(true);
+  // const [isLogin, setIsLogin] = useState(false);
   const [logoName, setLogoName] = useState("");
   const route = useRoute();
   const navigation = useNavigation();
