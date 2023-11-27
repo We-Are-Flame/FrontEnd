@@ -137,7 +137,11 @@ export default function HomeDetailPage({ route }) {
     <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={60}
+      keyboardVerticalOffset={
+        Platform.OS === "ios"
+          ? theme.screenHeight / 15
+          : theme.screenHeight / 10
+      }
     >
       <View style={styles.homeDetailPageView}>
         <View style={styles.homeDetailContentView}>
