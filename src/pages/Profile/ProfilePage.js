@@ -1,7 +1,7 @@
 /** @format */
 
 import * as React from "react";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import theme from "../../styles/theme";
 import Header from "../../components/Header";
 import {
@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import MyProfile from "./MyProfile/MyProfile";
 import MyClub from "./MyClub/MyClub";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function ProfilePage() {
   const [refreshing, setRefreshing] = useState(false);
@@ -23,14 +24,27 @@ export default function ProfilePage() {
       setRefreshing(false);
     }, 1000);
   }, []);
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const value = await AsyncStorage.getItem("userAccessToken");
+        if (value !== null) {
+          console.log(value);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    getData();
+  }, []);
   return (
     <View style={styles.profilePageView}>
       <View
         style={{ flex: theme.headerSpace, backgroundColor: theme.psColor }}
       ></View>
-      <View style={styles.profilePageHeader}>
-        <Header />
-      </View>
+
+      <Header />
 
       <View style={styles.profilePageMain}>
         <ScrollView
