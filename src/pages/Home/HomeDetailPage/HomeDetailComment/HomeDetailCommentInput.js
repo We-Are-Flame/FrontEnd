@@ -16,7 +16,7 @@ import { post_headers } from '../../../../utils/StaticData';
 import axios from 'axios';
 import { API_URL } from "@env";
 
-export default function HomeDetailCommentInput({id}) {
+export default function HomeDetailCommentInput({id,scrollViewRef}) {
   const [text,setText] = useState("");
 
   const submitComment = ()=>{
@@ -27,6 +27,7 @@ export default function HomeDetailCommentInput({id}) {
     .then((res)=>{
       console.log(res.data);
       setText("");
+      scrollViewRef.current.scrollToEnd({ animated: true })
     })
     .catch((err)=>{
       console.log(err);

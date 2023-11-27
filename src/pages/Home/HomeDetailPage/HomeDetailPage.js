@@ -1,6 +1,6 @@
 /** @format */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useRef } from "react";
 import {
   StyleSheet,
   Text,
@@ -33,6 +33,7 @@ export default function HomeDetailPage({ route }) {
   const [endTime, setEndTime] = useState("");
 
   const navigation = useNavigation();
+  const scrollViewRef = useRef();
   const stateId = route.params.id;
 
   const formatTime = (timeString) => {
@@ -117,7 +118,7 @@ export default function HomeDetailPage({ route }) {
   return Object.keys(detailData).length !== 0 ? (
     <View style={styles.homeDetailPageView}>
       <View style={styles.homeDetailContentView}>
-        <ScrollView style={styles.homeDetailScrollView}>
+        <ScrollView style={styles.homeDetailScrollView} ref={scrollViewRef}>
           <View style={styles.homeDetailTitle}>
             <View style={{ flexDirection: "row" }}>
               {imageSource ? (
@@ -312,7 +313,7 @@ export default function HomeDetailPage({ route }) {
           <HomeDetailComment id={stateId} />
         </ScrollView>
       </View>
-      <HomeDetailCommentInput id={stateId} />
+      <HomeDetailCommentInput id={stateId} scrollViewRef={scrollViewRef}/>
     </View>
   ) : (
     <Image
