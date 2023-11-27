@@ -2,8 +2,8 @@
 
 import * as React from "react";
 import { useState, useCallback, useEffect } from "react";
-import theme from "../../styles/theme";
-import Header from "../../components/Header";
+import axios from "axios";
+
 import {
   View,
   Text,
@@ -11,12 +11,16 @@ import {
   ScrollView,
   RefreshControl,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { API_URL } from "@env";
 import MyProfile from "./MyProfile/MyProfile";
 import MyClub from "./MyClub/MyClub";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import theme from "../../styles/theme";
+import Header from "../../components/Header";
 export default function ProfilePage() {
   const [refreshing, setRefreshing] = useState(false);
+  const [userInfo, setUserInfo] = useState({});
+  const [userToken, setUserToken] = useState("");
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -28,9 +32,23 @@ export default function ProfilePage() {
   useEffect(() => {
     const getData = async () => {
       try {
-        const value = await AsyncStorage.getItem("userAccessToken");
-        if (value !== null) {
-          console.log(value);
+        const token = await AsyncStorage.getItem("userAccessToken");
+        if (token !== null) {
+          setUserToken(token);
+          axios
+            .get(`${API_URL}/api/user`, {
+              headers: {
+                "Content-Type": `application/json`,
+                Authorization: "Bearer " + `${token}`,
+              },
+            })
+            .then((res) => {
+              console.log(res.data);
+              setUserInfo(res.data);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
         }
       } catch (err) {
         console.log(err);
@@ -44,7 +62,7 @@ export default function ProfilePage() {
         style={{ flex: theme.headerSpace, backgroundColor: theme.psColor }}
       ></View>
 
-      <Header />
+      <Header userToken={userToken} />
 
       <View style={styles.profilePageMain}>
         <ScrollView
@@ -54,11 +72,11 @@ export default function ProfilePage() {
           contentContainerStyle={{ flex: 1 }}
         >
           <View style={styles.profilePageMainTop}>
-            <MyProfile />
+            <MyProfile userInfo={userInfo} />
           </View>
           <View style={styles.profilePageMainBottom}>
             <View style={{ flex: 0.02, backgroundColor: theme.subColor }} />
-            <MyClub />
+            <MyClub userToken={userToken} />
           </View>
         </ScrollView>
       </View>
