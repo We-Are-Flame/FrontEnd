@@ -21,6 +21,7 @@ export default function ProfilePage() {
   const [refreshing, setRefreshing] = useState(false);
   const [userInfo, setUserInfo] = useState({});
   const [userToken, setUserToken] = useState("");
+  const [isLogin, setIsLogin] = useState(false);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -29,40 +30,54 @@ export default function ProfilePage() {
     }, 1000);
   }, []);
 
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const token = await AsyncStorage.getItem("userAccessToken");
-        if (token !== null) {
-          setUserToken(token);
-          axios
-            .get(`${API_URL}/api/user`, {
-              headers: {
-                "Content-Type": `application/json`,
-                Authorization: "Bearer " + `${token}`,
-              },
-            })
-            .then((res) => {
-              console.log(res.data);
-              setUserInfo(res.data);
-            })
-            .catch((err) => {
-              console.log(err);
-            });
+  const fetchData = async () => {
+    try {
+      const token = await AsyncStorage.getItem("userAccessToken");
+      if (token !== null) {
+        const tokenValidationResponse = await axios.get(
+          `${API_URL}/api/user/notification`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token,
+            },
+          }
+        );
+
+        if (tokenValidationResponse.status === 200) {
+          console.log(
+            "토큰 유효함",
+            tokenValidationResponse.data.is_user_notification
+          );
+          const userInfoResponse = await axios.get(`${API_URL}/api/user`, {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token,
+            },
+          });
+          setUserInfo(userInfoResponse.data);
+          setIsLogin(true);
+        } else {
+          console.log("유효하지 않은 토큰", tokenValidationResponse.status);
+          setIsLogin(false);
         }
-      } catch (err) {
-        console.log(err);
       }
-    };
-    getData();
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
   }, []);
+
   return (
     <View style={styles.profilePageView}>
       <View
         style={{ flex: theme.headerSpace, backgroundColor: theme.psColor }}
       ></View>
 
-      <Header userToken={userToken} />
+      <Header isLogin={isLogin} />
 
       <View style={styles.profilePageMain}>
         <ScrollView
