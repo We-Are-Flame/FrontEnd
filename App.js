@@ -42,6 +42,7 @@ export default function App() {
           name="HomeDetailPage"
           component={HomeDetailPage}
           options={({ route }) => ({
+            gestureEnabled: false,
             headerShown: true,
             title: route.params?.hostName,
             headerBackTitle: " ",
