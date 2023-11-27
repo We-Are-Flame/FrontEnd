@@ -12,7 +12,8 @@ import { useRoute } from "@react-navigation/core";
 import { useState, useEffect } from "react";
 
 export default function Header() {
-  const [isLogin, setIsLogin] = useState(true);
+  // const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(false);
   const [logoName, setLogoName] = useState("");
   const route = useRoute();
   const navigation = useNavigation();
@@ -21,17 +22,50 @@ export default function Header() {
     console.log(route.name);
     selectLogoText(route.name);
   }, []);
+
   const setIcons = (routeName, isLogin) => {
     if (!isLogin) {
-      return <View style={styles.headerIconView}></View>;
+      return (
+        <View
+          style={{ ...styles.headerIconView, justifyContent: "space-between" }}
+        >
+          {routeName === "홈" ? (
+            <TouchableOpacity style={{ flex: 0.5 }}>
+              <AntDesign name="search1" size={24} color="white" />
+            </TouchableOpacity>
+          ) : (
+            <View style={{ flex: 0.5 }} />
+          )}
+          <TouchableOpacity>
+            <View
+              style={{
+                backgroundColor: "white",
+                width: 70,
+                borderRadius: 20,
+                height: 30,
+                ...theme.centerStyle,
+              }}
+            >
+              <Text
+                style={{
+                  color: theme.psColor,
+                  fontWeight: "600",
+                  fontSize: 16,
+                }}
+              >
+                로그인
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      );
     }
     let icons;
     if (routeName == "마이") {
       icons = (
-        <View style={styles.headerIconView}>
+        <View style={{ ...styles.headerIconView, justifyContent: "flex-end" }}>
           <View style={{ flex: 1 }} />
           <TouchableOpacity
-            style={{ flex: 1 }}
             onPress={() =>
               navigation.navigate("ProfileSetting", {
                 screen: "ProfileSetting",
@@ -77,9 +111,10 @@ export default function Header() {
           <Text style={styles.headerLogoText}>{logoName}</Text>
         </TouchableOpacity>
       </View>
-      <View style={styles.headerCenter}></View>
-      <View style={styles.headerCenter}></View>
+      <View style={styles.headerCenter} />
+      <View style={styles.headerCenter} />
       {setIcons(route.name, isLogin)}
+      <View style={{ flex: 0.4 }} />
     </View>
   );
 }
@@ -87,13 +122,13 @@ export default function Header() {
 const styles = StyleSheet.create({
   headerView: {
     // marginTop: 30,
-    flex: 1,
+    flex: 0.8,
     flexDirection: "row",
     justifyContent: "space-between",
     backgroundColor: theme.psColor,
   },
   headerCenter: {
-    flex: 2,
+    flex: 1,
   },
   headerLogoView: {
     flex: 3,
@@ -109,7 +144,7 @@ const styles = StyleSheet.create({
   },
   headerIconView: {
     flexDirection: "row",
-    flex: 2,
+    flex: 2.5,
     justifyContent: "space-evenly",
     alignItems: "center",
   },
