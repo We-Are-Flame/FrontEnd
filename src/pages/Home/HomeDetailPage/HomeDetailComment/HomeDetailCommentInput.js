@@ -21,6 +21,9 @@ export default function HomeDetailCommentInput({ id, token }) {
   const [isFocused, setIsFocused] = useState(false);
 
   const submitComment = () => {
+    if (text.trim() === "") {
+      return;
+    }
     axios
       .post(
         `${API_URL}/api/meetings/${id}/comments`,
@@ -62,7 +65,11 @@ export default function HomeDetailCommentInput({ id, token }) {
             onPress={submitComment}
           >
             <Text
-              style={{ color: theme.psColor, fontWeight: "600", fontSize: 18 }}
+              style={{
+                color: theme.psColor,
+                fontWeight: "600",
+                fontSize: theme.screenWidth / 23,
+              }}
             >
               전송
             </Text>
@@ -75,7 +82,7 @@ export default function HomeDetailCommentInput({ id, token }) {
 
 const styles = StyleSheet.create({
   homeDetailCommentInputView: {
-    height: 100,
+    height: theme.screenHeight / 8,
     backgroundColor: "#ffffff",
     padding: 10,
     flexDirection: "row",
