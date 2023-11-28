@@ -11,7 +11,6 @@ import {
   TextInput,
 } from "react-native";
 import { useState, useEffect } from "react";
-import { Image } from "expo-image";
 import { AntDesign, EvilIcons, Entypo } from "@expo/vector-icons";
 import {
   MediaTypeOptions,
@@ -19,11 +18,19 @@ import {
   useMediaLibraryPermissions,
 } from "expo-image-picker";
 
-import DefaultImg from "../../../assets/user.png";
 import theme from "../../styles/theme";
 import ImageViewer from "../../components/ImageViewer";
-export default function ProfileEditModal({ visible, hideModal, info }) {
-  const [nickname, setNickname] = useState(info.nickname);
+import axios from "axios";
+import { API_URL } from "@env";
+
+export default function ProfileEditModal({
+  visible,
+  hideModal,
+  userInfo,
+  userToken,
+  setUpdated,
+}) {
+  const [nickname, setNickname] = useState(userInfo.nickname);
   const [isNicknameValid, setIsNicknameValid] = useState(true);
   const [isNicknameChange, setIsNicknameChange] = useState(false);
   const [isProfileImgChange, setIsProfileImgChange] = useState(false);
@@ -31,12 +38,16 @@ export default function ProfileEditModal({ visible, hideModal, info }) {
   const [status, requestPermission] = useMediaLibraryPermissions();
 
   useEffect(() => {
-    if (info.nickname == nickname) {
+    if (userInfo.nickname == nickname) {
       setIsNicknameChange(false);
     } else {
       setIsNicknameChange(true);
     }
   }, [nickname]);
+  
+  useEffect(() => {
+    setNickname(userInfo.nickname);
+  }, [userInfo]);
 
   useEffect(() => {
     if (imageUrl != "") {
@@ -46,6 +57,13 @@ export default function ProfileEditModal({ visible, hideModal, info }) {
     }
   }, [imageUrl]);
 
+  const resetState = () => {
+    setNickname(userInfo.nickname);
+    setIsNicknameValid(true);
+    setIsNicknameChange(false);
+    setIsProfileImgChange(false);
+    setImageUrl("");
+  };
   const uploadImage = async () => {
     if (!status.granted) {
       const permission = await requestPermission();
@@ -93,9 +111,26 @@ export default function ProfileEditModal({ visible, hideModal, info }) {
       hideModal();
     } else if (isNicknameValid && isNicknameChange) {
       /*  닉네임만 바뀜*/
-      console.log("닉네임 변경됨");
+      axios
+        .put(
+          `${API_URL}/api/user/nickname`,
+          { nickname: nickname },
+          {
+            headers: {
+              "Content-Type": `application/json`,
+              Authorization: "Bearer " + `${userToken}`,
+            },
+          }
+        )
+        .then((res) => {
+          console.log("닉네임 변경됨");
+          setUpdated();
+          hideModal();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
       /* 완료시에 로직 수행*/
-      hideModal();
     }
   };
   return (
@@ -108,7 +143,12 @@ export default function ProfileEditModal({ visible, hideModal, info }) {
         <View style={{ flex: 0.14 }} />
         <View style={styles.modalHeaderContainer}>
           <View style={styles.modalHeader}>
-            <Pressable onPress={hideModal}>
+            <Pressable
+              onPress={() => {
+                hideModal();
+                resetState();
+              }}
+            >
               <EvilIcons name="close" size={30} color="black" />
             </Pressable>
 
@@ -142,7 +182,7 @@ export default function ProfileEditModal({ visible, hideModal, info }) {
               <View style={{ position: "relative" }}>
                 <View style={styles.imageWrapper}>
                   <ImageViewer
-                    placeholderImageSource={info.profile}
+                    placeholderImageSource={userInfo.profile_image}
                     selectedImage={imageUrl}
                   />
                 </View>

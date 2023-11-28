@@ -35,6 +35,7 @@ export default function HomeDetailPage({ route }) {
   const [imageSource, setImageSource] = useState("");
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
+  const [addedComment, setAddedComment] = useState([]);
   const [userToken, setUserToken] = useState("");
 
   const navigation = useNavigation();
@@ -134,11 +135,19 @@ export default function HomeDetailPage({ route }) {
     getData();
   }, []);
 
+  const addComment = (newComment) => {
+    setAddedComment((prevComments) => [...prevComments, newComment]);
+  };
+
   return Object.keys(detailData).length !== 0 ? (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={60}
+      keyboardVerticalOffset={
+        Platform.OS === "ios"
+          ? theme.screenHeight / 15
+          : theme.screenHeight / 10
+      }
     >
       <View style={styles.homeDetailPageView}>
         <View style={styles.homeDetailContentView}>
@@ -338,10 +347,15 @@ export default function HomeDetailPage({ route }) {
 
             <View style={styles.homeDetailSpace} />
 
-            <HomeDetailComment id={stateId} />
+            <HomeDetailComment addedComment={addedComment} id={stateId} />
           </ScrollView>
         </View>
-        <HomeDetailCommentInput id={stateId} token={userToken} scrollViewRef={scrollViewRef}/>
+        <HomeDetailCommentInput
+          id={stateId}
+          token={userToken}
+          scrollViewRef={scrollViewRef}
+          setAddedComment={addComment}
+        />
       </View>
     </KeyboardAvoidingView>
   ) : (

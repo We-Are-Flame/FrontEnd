@@ -24,7 +24,7 @@ export default function KaKaoLogin() {
     var condition = data.indexOf(exp);
     if (condition != -1) {
       var access_token = data.substring(condition + exp.length);
-      navigation.navigate("Login", { screen: "Login" });
+      navigation.navigate("Home", { screen: "Home" });
       storeData(access_token);
     }
   };

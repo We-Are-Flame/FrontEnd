@@ -2,11 +2,15 @@
 
 import * as React from "react";
 import { View, Text } from "react-native";
-
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
-
+import { API_URL } from "@env";
+import { useState, useEffect } from "react";
 import { useTheme } from "react-native-paper";
+
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import theme from "../styles/theme";
 import HomeScreen from "../pages/Home/HomeScreen";
 import RandomPage from "../pages/Random/RandomScreen";
@@ -20,8 +24,39 @@ const profileName = "마이";
 
 const Tab = createMaterialBottomTabNavigator();
 
-export default function NavContainer() {
+export default function NavContainer({ route }) {
   const custheme = useTheme();
+  const [isLogin, setIsLogin] = useState(route.params.isLogin);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const token = await AsyncStorage.getItem("userAccessToken");
+  //       if (token !== null) {
+  //         const response = await axios.get(`${API_URL}/api/user/notification`, {
+  //           headers: {
+  //             "Content-Type": `application/json`,
+  //             Authorization: "Bearer " + `${token}`,
+  //           },
+  //         });
+
+  //         if (response.status === 200) {
+  //           console.log("Success:", response.data);
+  //           setIsLogin(true);
+  //         } else {
+  //           console.log("Unexpected status code:", response.status);
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.log("error", error);
+  //     }
+  //   };
+  //   fetchData();
+  // }, []);
+
+  useEffect(() => {
+    console.log(`로그인 되어있나? ${isLogin}`);
+  }, [isLogin]);
+
   custheme.colors.secondaryContainer = "transparent";
   return (
     <Tab.Navigator
@@ -53,10 +88,14 @@ export default function NavContainer() {
         },
       })}
     >
-      <Tab.Screen name={homeName} component={HomeScreen} />
+      <Tab.Screen name={homeName}>
+        {() => <HomeScreen isLogin={isLogin} />}
+      </Tab.Screen>
       <Tab.Screen name={chatName} component={ChatScreen} />
       <Tab.Screen name={randomName} component={RandomPage} />
-      <Tab.Screen name={profileName} component={ProfilePage} />
+      <Tab.Screen name={profileName}>
+        {() => <ProfilePage isLogin={isLogin} />}
+      </Tab.Screen>
     </Tab.Navigator>
   );
 }

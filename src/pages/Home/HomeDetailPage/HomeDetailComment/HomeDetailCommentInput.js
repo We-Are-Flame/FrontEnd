@@ -16,11 +16,15 @@ import { post_headers } from "../../../../utils/StaticData";
 import axios from "axios";
 import { API_URL } from "@env";
 
-export default function HomeDetailCommentInput({ id, token, scrollViewRef}) {
+
+export default function HomeDetailCommentInput({ id, token, scrollViewRef, setAddedComment }) {
   const [text, setText] = useState("");
   const [isFocused, setIsFocused] = useState(false);
 
   const submitComment = () => {
+    if (text.trim() === "") {
+      return;
+    }
     axios
       .post(
         `${API_URL}/api/meetings/${id}/comments`,
@@ -35,6 +39,7 @@ export default function HomeDetailCommentInput({ id, token, scrollViewRef}) {
       .then((res) => {
         console.log(res.data);
         setText("");
+        setAddedComment(text);
         scrollViewRef.current.scrollToEnd({ animated: true })
       })
       .catch((err) => {
@@ -63,7 +68,11 @@ export default function HomeDetailCommentInput({ id, token, scrollViewRef}) {
             onPress={submitComment}
           >
             <Text
-              style={{ color: theme.psColor, fontWeight: "600", fontSize: 18 }}
+              style={{
+                color: theme.psColor,
+                fontWeight: "600",
+                fontSize: theme.screenWidth / 23,
+              }}
             >
               전송
             </Text>
@@ -76,7 +85,7 @@ export default function HomeDetailCommentInput({ id, token, scrollViewRef}) {
 
 const styles = StyleSheet.create({
   homeDetailCommentInputView: {
-    height: 100,
+    height: theme.screenHeight / 8,
     backgroundColor: "#ffffff",
     padding: 10,
     flexDirection: "row",

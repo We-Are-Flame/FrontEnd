@@ -2,8 +2,8 @@
 
 import * as React from "react";
 import { useState, useCallback, useEffect } from "react";
-import theme from "../../styles/theme";
-import Header from "../../components/Header";
+import axios from "axios";
+
 import {
   View,
   Text,
@@ -11,12 +11,18 @@ import {
   ScrollView,
   RefreshControl,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { API_URL } from "@env";
 import MyProfile from "./MyProfile/MyProfile";
 import MyClub from "./MyClub/MyClub";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
-export default function ProfilePage() {
+import theme from "../../styles/theme";
+import Header from "../../components/Header";
+export default function ProfilePage({ isLogin }) {
   const [refreshing, setRefreshing] = useState(false);
+  const [userInfo, setUserInfo] = useState({});
+  const [userToken, setUserToken] = useState("");
+  const [myClubData, setMyClubData] = useState({});
+  const [updated, setUpdated] = useState(false);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -25,26 +31,69 @@ export default function ProfilePage() {
     }, 1000);
   }, []);
 
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const value = await AsyncStorage.getItem("userAccessToken");
-        if (value !== null) {
-          console.log(value);
+  const fetchData = async () => {
+    try {
+      const token = await AsyncStorage.getItem("userAccessToken");
+      if (token !== null) {
+        const tokenValidationResponse = await axios.get(
+          `${API_URL}/api/user/notification`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token,
+            },
+          }
+        );
+
+        if (tokenValidationResponse.status === 200) {
+          console.log(
+            "토큰 유효함",
+            tokenValidationResponse.data.is_user_notification
+          );
+          const userInfoResponse = await axios.get(`${API_URL}/api/user`, {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token,
+            },
+          });
+          const mymeetings = await axios.get(`${API_URL}/api/meetings/my`, {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token,
+            },
+          });
+          setMyClubData(mymeetings.data);
+          setUserToken(token);
+          setUserInfo(userInfoResponse.data);
+          resetProfileUpdateStatuts();
+        } else {
+          console.log("유효하지 않은 토큰", tokenValidationResponse.status);
         }
-      } catch (err) {
-        console.log(err);
       }
-    };
-    getData();
-  }, []);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  const updateProfileStatus = () => {
+    setUpdated(true);
+  };
+  const resetProfileUpdateStatuts = () => {
+    setUpdated(false);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [updated]);
+
+
   return (
     <View style={styles.profilePageView}>
       <View
         style={{ flex: theme.headerSpace, backgroundColor: theme.psColor }}
       ></View>
 
-      <Header />
+      <Header isLogin={isLogin} />
 
       <View style={styles.profilePageMain}>
         <ScrollView
@@ -54,11 +103,15 @@ export default function ProfilePage() {
           contentContainerStyle={{ flex: 1 }}
         >
           <View style={styles.profilePageMainTop}>
-            <MyProfile />
+            <MyProfile
+              setUpdated={updateProfileStatus}
+              userToken={userToken}
+              userInfo={userInfo}
+            />
           </View>
           <View style={styles.profilePageMainBottom}>
             <View style={{ flex: 0.02, backgroundColor: theme.subColor }} />
-            <MyClub />
+            <MyClub myClubData={myClubData} />
           </View>
         </ScrollView>
       </View>
