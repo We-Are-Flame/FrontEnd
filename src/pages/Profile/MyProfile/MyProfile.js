@@ -11,11 +11,6 @@ import ProfileEditModal from "../../../modals/ProfileEditModal/ProfileEditModal"
 export default function MyProfile({ userInfo }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [isAuth, setIsAuth] = useState(false);
-  const info = {
-    nickname: "히어로",
-    profile:
-      "https://i.namu.wiki/i/MIdKf35SuzXJmr3tDx_pRotdE4w0qZXXjjpkOWBRbRMyNrPEqcR1j5qycTSTaan4_zDcWX50JbpCb8jmGIbY9PQuCGff_BpbOjXlNZnZsbglilvkpm2N5INbRTyrZWhQmFq6eqKLQWaYHdoAZEQ98Q.webp",
-  };
 
   const showModal = () => {
     setModalVisible(true);
@@ -86,7 +81,6 @@ export default function MyProfile({ userInfo }) {
         userInfo={userInfo}
         visible={modalVisible}
         hideModal={hideModal}
-        info={info}
       />
     </View>
   );
