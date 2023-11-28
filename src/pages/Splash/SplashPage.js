@@ -29,7 +29,7 @@ export default function SplashPage() {
       setAnimating(false);
 
       const token = await AsyncStorage.getItem("userAccessToken");
-
+      
       if (token !== null) {
         await axios
           .get(`${API_URL}/api/user/notification`, {
@@ -40,7 +40,7 @@ export default function SplashPage() {
           })
           .then((res) => {
             if (res.status === 200) {
-              navigation.replace("Home", { isLogin: true });
+              navigation.replace("Home", { isLogin: true, token: token });
             } else {
               navigation.replace("Login");
             }
@@ -72,7 +72,7 @@ export default function SplashPage() {
         />
         <ActivityIndicator
           animating={animating}
-          color="black" 
+          color="black"
           size="large"
           style={styles.activityIndicator}
         />

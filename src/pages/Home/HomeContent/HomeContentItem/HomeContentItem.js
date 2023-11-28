@@ -17,7 +17,7 @@ import dummy1 from "../../../../../assets/dummyImage.jpg";
 import { Ionicons, Entypo, AntDesign } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 
-export default function HomeContentItem({ state }) {
+export default function HomeContentItem({ state, userToken }) {
   const navigation = useNavigation();
   const [duration, setDuration] = useState(0);
   const [timeString, setTimeString] = useState("");
@@ -89,6 +89,7 @@ export default function HomeContentItem({ state }) {
         navigation.navigate("HomeDetailPage", {
           id: state.id,
           hostName: state.host.name,
+          userToken: userToken,
         });
       }}
     >

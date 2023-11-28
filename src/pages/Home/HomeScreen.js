@@ -23,7 +23,7 @@ import HomeCategory from "./HomeCategory/HomeCategory";
 import Dropdown from "../../components/Dropdown";
 import { sort } from "../../utils/StaticData";
 
-export default function HomeScreen({ isLogin }) {
+export default function HomeScreen({ isLogin, userToken }) {
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedSort, setSelectedSort] = useState(sort[0]);
@@ -66,7 +66,7 @@ export default function HomeScreen({ isLogin }) {
             />
           </View>
           <View style={styles.homeScreenContent}>
-            <HomeContent selectedSort={selectedSort} />
+            <HomeContent userToken={userToken} selectedSort={selectedSort} />
           </View>
         </ScrollView>
       </View>

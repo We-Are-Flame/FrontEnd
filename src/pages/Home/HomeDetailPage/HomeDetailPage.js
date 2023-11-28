@@ -36,7 +36,7 @@ export default function HomeDetailPage({ route }) {
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [addedComment, setAddedComment] = useState([]);
-  const [userToken, setUserToken] = useState("");
+  const [userToken, setUserToken] = useState(route.params.userToken);
 
   const navigation = useNavigation();
   const scrollViewRef = useRef();
@@ -59,9 +59,15 @@ export default function HomeDetailPage({ route }) {
 
   useEffect(() => {
     axios
-      .get(`${API_URL}/api/meetings/${stateId}`, null, { headers: headers })
+      .get(`${API_URL}/api/meetings/${stateId}`, {
+        headers: {
+          "Content-Type": `application/json`,
+          Authorization: "Bearer " + `${userToken}`,
+        },
+      })
       .then((res) => {
         setDetailData(res.data);
+        console.log(res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -120,20 +126,6 @@ export default function HomeDetailPage({ route }) {
       setEndTime(new Date(detailData.time.end_time));
     }
   }, [detailData]);
-
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const value = await AsyncStorage.getItem("userAccessToken");
-        if (value !== null) {
-          setUserToken(value);
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    getData();
-  }, []);
 
   const addComment = (newComment) => {
     setAddedComment((prevComments) => [...prevComments, newComment]);
