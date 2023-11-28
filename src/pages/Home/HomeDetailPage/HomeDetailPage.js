@@ -1,6 +1,6 @@
 /** @format */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   StyleSheet,
   Text,
@@ -39,6 +39,7 @@ export default function HomeDetailPage({ route }) {
   const [userToken, setUserToken] = useState("");
 
   const navigation = useNavigation();
+  const scrollViewRef = useRef();
   const stateId = route.params.id;
 
   const formatTime = (timeString) => {
@@ -150,7 +151,7 @@ export default function HomeDetailPage({ route }) {
     >
       <View style={styles.homeDetailPageView}>
         <View style={styles.homeDetailContentView}>
-          <ScrollView style={styles.homeDetailScrollView}>
+          <ScrollView style={styles.homeDetailScrollView} ref={scrollViewRef}>
             <View style={styles.homeDetailTitle}>
               <View style={{ flexDirection: "row" }}>
                 {imageSource ? (
@@ -352,6 +353,7 @@ export default function HomeDetailPage({ route }) {
         <HomeDetailCommentInput
           id={stateId}
           token={userToken}
+          scrollViewRef={scrollViewRef}
           setAddedComment={addComment}
         />
       </View>

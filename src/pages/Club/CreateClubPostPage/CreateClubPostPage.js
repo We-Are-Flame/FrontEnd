@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useState, useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   MediaTypeOptions,
   launchImageLibraryAsync,
@@ -22,13 +23,16 @@ import { Entypo } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/core";
 import axios from "axios";
 
+import { API_URL } from "@env";
 import Dropdown from "../../../components/Dropdown";
 import ImageViewer from "../../../components/ImageViewer";
-import { timeArr, category } from "../../../utils/StaticData";
+import { timeArr, category, post_headers } from "../../../utils/StaticData";
 import Button from "../../../utils/StaticData";
-import lion from "../../../../assets/lion.webp";
+import kitchingLogo from "../../../../assets/kitchingLogo.png";
 import theme from "../../../styles/theme";
 import { REST_API_KEY } from "@env";
+import { headers } from './../../../utils/StaticData';
+
 export default function CreateClubPostPage({ route }) {
   const [sDate, setSDate] = useState("");
   const [eDate, setEDate] = useState("");
@@ -48,9 +52,13 @@ export default function CreateClubPostPage({ route }) {
   const [categoryData, setCategoryData] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [thumbnailImageUrl, setThumbnailImageUrl] = useState("");
+  const [thumbnailImageResponseUrl, setThumbnailImageResponseUrl] = useState("");
+  const [imageUrl,setImageUrl] = useState("");
   const [data, setData] = useState({});
   const [latitude, setLatitude] = useState(0);
   const [longitude, setLongitude] = useState(0);
+
+  const [userToken, setUserToken] = useState("");
 
   const [status, requestPermission] = useMediaLibraryPermissions();
   const navigation = useNavigation();
@@ -58,28 +66,26 @@ export default function CreateClubPostPage({ route }) {
 
   const submitPost = () => {
     setData({
-      alarm: alarm,
+      // alarm: alarm,
       category: categoryData,
       hashtags: hashtags,
       info: {
-        name: title,
+        title: title,
         max_participants: people,
         description: introduce,
       },
       location: {
         location: location,
         detail_location: detailLocation,
+        latitude:latitude,
+        longitude:longitude,
       },
       time: {
         start_time: sDate,
         end_time: eDate,
       },
       image: {
-        thumbnail_url: "썸네일 url",
-        image_urls: ["image.jpg", "image.jpg"],
-      },
-      image: {
-        thumbnail_url: thumbnailImageUrl,
+        thumbnail_url: imageUrl,
         image_urls: ["image.jpg", "image.jpg"],
       },
     });
@@ -119,7 +125,7 @@ export default function CreateClubPostPage({ route }) {
       }
     }
 
-    const result = await launchImageLibraryAsync({
+    let result = await launchImageLibraryAsync({
       mediaTypes: MediaTypeOptions.Images,
       allowsEditing: false,
       quality: 1,
@@ -128,9 +134,64 @@ export default function CreateClubPostPage({ route }) {
 
     if (!result.canceled) {
       setThumbnailImageUrl(result.assets[0].uri);
+
+      try {
+        // 마지막 '.'의 위치를 찾기
+        const lastIndex = result.assets[0].uri.lastIndexOf('.');
+        // '.' 이후의 문자열(확장자)를 추출
+        const extension = result.assets[0].uri.substring(lastIndex + 1);
+        let res = await axios.post(`${API_URL}/api/presigned`, {
+          image_list: [{
+            file_name: generateRandomString(10),
+            file_type: "image/"+extension,
+          }]
+        }, {
+          headers: {
+            "Content-Type": `application/json`,
+          },
+        })
+        setImageUrl(res.data.image_list[0].image_url);
+        console.log(res.data.image_list[0].presigned_url);
+        console.log(res.data.image_list[0].image_url);
+
+        // 이미지의 URI로부터 바이너리 데이터를 가져옵니다.
+        const response = await fetch(result.assets[0].uri);
+        const blob = await response.blob();
+        const binaryDataArray = await blobToArrayBuffer(blob); //[121, 52, 12, 53]
+    
+        if (!res.data.image_list[0].presigned_url) {
+          console.error("사전 서명된 URL이 비어 있습니다.");
+          return;
+        }
+        // axios를 사용하여 바이너리 데이터를 서버에 업로드합니다.
+        const r = await axios.put(res.data.image_list[0].presigned_url, binaryDataArray, {
+          headers: {
+            'Content-Type': blob.type, // 혹은 해당 이미지의 MIME 타입에 맞게 설정
+          },
+        });
+    
+        console.log("이미지 업로드 성공");
+      } catch (error) {
+        console.error("이미지 업로드 중 오류 발생", error);
+      }
     } else {
       return null;
     }
+  };
+  
+  const blobToArrayBuffer = (blob) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsArrayBuffer(blob);
+      reader.onloadend = () => {
+        const arrayBuffer = reader.result;
+        const uint8Array = new Uint8Array(arrayBuffer);
+        resolve(uint8Array);
+      };
+      reader.onerror = (error) => {
+        reject(error);
+      };
+    });
   };
 
   useEffect(() => {
@@ -139,8 +200,30 @@ export default function CreateClubPostPage({ route }) {
 
   useEffect(() => {
     console.log(data);
-    //여기서 통신 조건문으로 데이터 하나라도 없으면 안되도록 처리
+    axios.post(`${API_URL}/api/meetings`, data, {
+      headers: {
+        "Content-Type": `application/json`,
+        Authorization: "Bearer " + `${userToken}`,
+      },
+    })
+    .then((res)=>{
+      console.log(res.data);
+      navigation.navigate("Home");
+    })
+    .catch((err)=>console.log(err))
   }, [data]);
+
+  function generateRandomString(length) {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    const charactersLength = characters.length;
+  
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+  
+    return result;
+  };
 
   // 위치 등록하는 hook 만약 parmas가 없다면 빈문자
   useEffect(() => {
@@ -162,6 +245,20 @@ export default function CreateClubPostPage({ route }) {
     setEDate(`${year}-${month}-${day}T${calHour}:${min}:00Z`);
   }, [year, month, day, hour, min, time]);
 
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const value = await AsyncStorage.getItem("userAccessToken");
+        if (value !== null) {
+          setUserToken(value);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    getData();
+  }, []);
+
   return (
     <View style={styles.createClubPostPageView}>
       <ScrollView
@@ -173,10 +270,10 @@ export default function CreateClubPostPage({ route }) {
             <View style={{ position: "relative" }}>
               <View style={styles.imageWrapper}>
                 <ImageViewer
-                  placeholderImageSource={lion}
+                  placeholderImageSource={kitchingLogo}
                   selectedImage={thumbnailImageUrl}
-                  widthProps="100%"
-                  heightProps="100%"
+                  widthProps="80%"
+                  heightProps="80%"
                 />
               </View>
               <View style={styles.iconContainer}>

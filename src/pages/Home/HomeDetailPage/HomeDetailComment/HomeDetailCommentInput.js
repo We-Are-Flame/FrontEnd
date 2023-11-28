@@ -16,7 +16,8 @@ import { post_headers } from "../../../../utils/StaticData";
 import axios from "axios";
 import { API_URL } from "@env";
 
-export default function HomeDetailCommentInput({ id, token, setAddedComment }) {
+
+export default function HomeDetailCommentInput({ id, token, scrollViewRef, setAddedComment }) {
   const [text, setText] = useState("");
   const [isFocused, setIsFocused] = useState(false);
 
@@ -39,6 +40,7 @@ export default function HomeDetailCommentInput({ id, token, setAddedComment }) {
         console.log(res.data);
         setText("");
         setAddedComment(text);
+        scrollViewRef.current.scrollToEnd({ animated: true })
       })
       .catch((err) => {
         console.log(err);
