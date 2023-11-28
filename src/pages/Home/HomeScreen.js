@@ -43,9 +43,9 @@ export default function HomeScreen() {
       <View
         style={{ flex: theme.headerSpace, backgroundColor: theme.psColor }}
       ></View>
-      <View style={styles.homeScreenHeader}>
-        <Header />
-      </View>
+
+      <Header />
+
       <View style={{ flex: 7 }}>
         <ScrollView
           refreshControl={
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   homeScreenHeader: {
-    flex: 1,
+    flex: 0.8,
     backgroundColor: theme.psColor,
   },
   homeScreenCategory: {

@@ -20,7 +20,6 @@ export default function HomeContent({selectedSort}) {
     {headers:headers})
     .then((res)=>{
       setHomeList(res.data.content);
-      console.log(res.data.content);
     })
     .catch((err)=>{
       console.log(err);

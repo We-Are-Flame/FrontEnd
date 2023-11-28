@@ -4,25 +4,30 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/core";
 import { WebView } from "react-native-webview";
-import { REST_API_KEY, REDIRECT_URI } from "@env";
 import axios from "axios";
 import { API_URL } from "@env";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const INJECTED_JAVASCRIPT = `window.ReactNativeWebView.postMessage('message from webView')`;
 
-const KaKaoLogin = () => {
+export default function KaKaoLogin() {
   const navigation = useNavigation();
-  function KakaoLoginWebView(data) {
-    // const exp = "code=";
-    console.log(data);
-    navigation.navigate("Login", { screen: "Login" });
-    // var condition = data.indexOf(exp);
-    // if (condition != -1) {
-    //   var authorize_code = data.substring(condition + exp.length);
-    //   console.log(authorize_code);
-    //   requestToken(authorize_code);
-    // }
-  }
 
+  const storeData = async (access_token) => {
+    try {
+      await AsyncStorage.setItem("userAccessToken", access_token);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  const KakaoLoginWebView = (data) => {
+    const exp = "token=";
+    var condition = data.indexOf(exp);
+    if (condition != -1) {
+      var access_token = data.substring(condition + exp.length);
+      navigation.navigate("Login", { screen: "Login" });
+      storeData(access_token);
+    }
+  };
 
   return (
     <View style={Styles.container}>
@@ -41,9 +46,7 @@ const KaKaoLogin = () => {
       />
     </View>
   );
-};
-
-export default KaKaoLogin;
+}
 
 const Styles = StyleSheet.create({
   container: {
