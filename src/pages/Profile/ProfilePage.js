@@ -21,6 +21,8 @@ export default function ProfilePage({ isLogin }) {
   const [refreshing, setRefreshing] = useState(false);
   const [userInfo, setUserInfo] = useState({});
   const [userToken, setUserToken] = useState("");
+  const [myClubData, setMyClubData] = useState({});
+  const [updated, setUpdated] = useState(false);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -54,7 +56,16 @@ export default function ProfilePage({ isLogin }) {
               Authorization: "Bearer " + token,
             },
           });
+          const mymeetings = await axios.get(`${API_URL}/api/meetings/my`, {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token,
+            },
+          });
+          setMyClubData(mymeetings.data);
+          setUserToken(token);
           setUserInfo(userInfoResponse.data);
+          resetProfileUpdateStatuts();
         } else {
           console.log("유효하지 않은 토큰", tokenValidationResponse.status);
         }
@@ -64,9 +75,17 @@ export default function ProfilePage({ isLogin }) {
     }
   };
 
+  const updateProfileStatus = () => {
+    setUpdated(true);
+  };
+  const resetProfileUpdateStatuts = () => {
+    setUpdated(false);
+  };
+
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [updated]);
+
 
   return (
     <View style={styles.profilePageView}>
@@ -84,11 +103,15 @@ export default function ProfilePage({ isLogin }) {
           contentContainerStyle={{ flex: 1 }}
         >
           <View style={styles.profilePageMainTop}>
-            <MyProfile userInfo={userInfo} />
+            <MyProfile
+              setUpdated={updateProfileStatus}
+              userToken={userToken}
+              userInfo={userInfo}
+            />
           </View>
           <View style={styles.profilePageMainBottom}>
             <View style={{ flex: 0.02, backgroundColor: theme.subColor }} />
-            <MyClub userToken={userToken} />
+            <MyClub myClubData={myClubData} />
           </View>
         </ScrollView>
       </View>
