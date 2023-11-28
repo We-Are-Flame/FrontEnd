@@ -20,9 +20,11 @@ import axios from "axios";
 import LoginModal from "../../modals/LoginModal/LoginModal";
 import theme from "../../styles/theme";
 import Logo from "../../../assets/kitchingLogo.png";
+import userStore from "../../store/userStore";
 
 export default function SplashPage() {
   const [animating, setAnimating] = useState(true);
+  const { setUserToken } = userStore();
   const navigation = useNavigation();
   useEffect(() => {
     setTimeout(async () => {
@@ -40,7 +42,9 @@ export default function SplashPage() {
           })
           .then((res) => {
             if (res.status === 200) {
-              navigation.replace("Home", { isLogin: true });
+              setUserToken(token);
+
+              navigation.replace("Home", { isLogin: true, token: token });
             } else {
               navigation.replace("Login");
             }
@@ -72,7 +76,7 @@ export default function SplashPage() {
         />
         <ActivityIndicator
           animating={animating}
-          color="black" 
+          color="black"
           size="large"
           style={styles.activityIndicator}
         />

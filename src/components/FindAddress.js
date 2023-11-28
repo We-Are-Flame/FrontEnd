@@ -3,7 +3,7 @@
 import { View, StyleSheet } from "react-native";
 import Postcode from "@actbase/react-daum-postcode";
 import { useNavigation } from "@react-navigation/core";
-export default function FindAddress() {
+export default function FindAddress({ route }) {
   const navigation = useNavigation();
 
   return (
@@ -14,6 +14,7 @@ export default function FindAddress() {
           placeAddress = data["address"];
           navigation.navigate("CreateClubPostPage", {
             address: placeAddress,
+            isLogin: route.params.isLogin,
           });
         }}
       />

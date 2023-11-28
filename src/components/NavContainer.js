@@ -27,31 +27,6 @@ const Tab = createMaterialBottomTabNavigator();
 export default function NavContainer({ route }) {
   const custheme = useTheme();
   const [isLogin, setIsLogin] = useState(route.params.isLogin);
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const token = await AsyncStorage.getItem("userAccessToken");
-  //       if (token !== null) {
-  //         const response = await axios.get(`${API_URL}/api/user/notification`, {
-  //           headers: {
-  //             "Content-Type": `application/json`,
-  //             Authorization: "Bearer " + `${token}`,
-  //           },
-  //         });
-
-  //         if (response.status === 200) {
-  //           console.log("Success:", response.data);
-  //           setIsLogin(true);
-  //         } else {
-  //           console.log("Unexpected status code:", response.status);
-  //         }
-  //       }
-  //     } catch (error) {
-  //       console.log("error", error);
-  //     }
-  //   };
-  //   fetchData();
-  // }, []);
 
   useEffect(() => {
     console.log(`로그인 되어있나? ${isLogin}`);

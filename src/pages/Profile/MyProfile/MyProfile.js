@@ -7,7 +7,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import theme from "../../../styles/theme";
 import ProfileEditModal from "../../../modals/ProfileEditModal/ProfileEditModal";
 
-export default function MyProfile({ userInfo, userToken, setUpdated }) {
+export default function MyProfile({ userInfo, setUpdated }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [isAuth, setIsAuth] = useState(false);
 
@@ -80,7 +80,6 @@ export default function MyProfile({ userInfo, userToken, setUpdated }) {
         userInfo={userInfo}
         visible={modalVisible}
         hideModal={hideModal}
-        userToken={userToken}
         setUpdated={setUpdated}
       />
     </View>

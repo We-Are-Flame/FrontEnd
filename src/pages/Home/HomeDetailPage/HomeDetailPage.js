@@ -11,21 +11,24 @@ import {
   KeyboardAvoidingView,
   Platform,
   SafeAreaView,
+  Dimensions,
 } from "react-native";
 import * as Linking from "expo-linking";
 import { Image } from "expo-image";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import { Ionicons, AntDesign, MaterialIcons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import kitchingLogo from "../../../../assets/dummyImage.jpg";
 
 import Spinner from "../../../../assets/loading_spinner.svg";
 import theme from "../../../styles/theme";
 import HomeDetailComment from "./HomeDetailComment/HomeDetailComment";
 import HomeDetailCommentInput from "./HomeDetailComment/HomeDetailCommentInput";
-import { headers } from "./../../../utils/StaticData";
+import MyCarousel from '../../../components/MyCarousel';
+
 import GoogleMap from "../../../components/GoogleMap";
 import { API_URL } from "@env";
+import userStore from "../../../store/userStore";
 
 export default function HomeDetailPage({ route }) {
   const [detailData, setDetailData] = useState({});
@@ -36,7 +39,9 @@ export default function HomeDetailPage({ route }) {
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [addedComment, setAddedComment] = useState([]);
-  const [userToken, setUserToken] = useState("");
+  const { userToken } = userStore();
+
+  const carouselArr = [kitchingLogo,kitchingLogo,kitchingLogo];
 
   const navigation = useNavigation();
   const scrollViewRef = useRef();
@@ -59,9 +64,15 @@ export default function HomeDetailPage({ route }) {
 
   useEffect(() => {
     axios
-      .get(`${API_URL}/api/meetings/${stateId}`, null, { headers: headers })
+      .get(`${API_URL}/api/meetings/${stateId}`, {
+        headers: {
+          "Content-Type": `application/json`,
+          Authorization: "Bearer " + `${userToken}`,
+        },
+      })
       .then((res) => {
         setDetailData(res.data);
+        console.log(res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -120,20 +131,6 @@ export default function HomeDetailPage({ route }) {
       setEndTime(new Date(detailData.time.end_time));
     }
   }, [detailData]);
-
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const value = await AsyncStorage.getItem("userAccessToken");
-        if (value !== null) {
-          setUserToken(value);
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    getData();
-  }, []);
 
   const addComment = (newComment) => {
     setAddedComment((prevComments) => [...prevComments, newComment]);
@@ -213,6 +210,8 @@ export default function HomeDetailPage({ route }) {
                 {detailData.info.description}
               </Text>
               <Text style={{ color: theme.psColor }}>{hashtagString}</Text>
+              
+              <MyCarousel entries={carouselArr} widthProps={Dimensions.get('window').width} heightProps={200} layout="default"/>
 
               {/* 여기에 종료된게임, 참가신청, 참가취소 버튼 추가 */}
               {detailData.status.is_expire ? (
@@ -352,7 +351,6 @@ export default function HomeDetailPage({ route }) {
         </View>
         <HomeDetailCommentInput
           id={stateId}
-          token={userToken}
           scrollViewRef={scrollViewRef}
           setAddedComment={addComment}
         />

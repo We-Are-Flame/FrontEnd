@@ -15,12 +15,16 @@ import theme from "./../../../../styles/theme";
 import { post_headers } from "../../../../utils/StaticData";
 import axios from "axios";
 import { API_URL } from "@env";
+import userStore from "../../../../store/userStore";
 
-
-export default function HomeDetailCommentInput({ id, token, scrollViewRef, setAddedComment }) {
+export default function HomeDetailCommentInput({
+  id,
+  scrollViewRef,
+  setAddedComment,
+}) {
   const [text, setText] = useState("");
   const [isFocused, setIsFocused] = useState(false);
-
+  const { userToken } = userStore();
   const submitComment = () => {
     if (text.trim() === "") {
       return;
@@ -32,7 +36,7 @@ export default function HomeDetailCommentInput({ id, token, scrollViewRef, setAd
         {
           headers: {
             "Content-Type": `application/json`,
-            Authorization: "Bearer " + `${token}`,
+            Authorization: "Bearer " + `${userToken}`,
           },
         }
       )
@@ -40,7 +44,7 @@ export default function HomeDetailCommentInput({ id, token, scrollViewRef, setAd
         console.log(res.data);
         setText("");
         setAddedComment(text);
-        scrollViewRef.current.scrollToEnd({ animated: true })
+        scrollViewRef.current.scrollToEnd({ animated: true });
       })
       .catch((err) => {
         console.log(err);

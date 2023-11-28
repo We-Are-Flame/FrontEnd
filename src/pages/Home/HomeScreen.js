@@ -22,11 +22,12 @@ import HomeContent from "./HomeContent/HomeContent";
 import HomeCategory from "./HomeCategory/HomeCategory";
 import Dropdown from "../../components/Dropdown";
 import { sort } from "../../utils/StaticData";
-
+import userStore from "../../store/userStore";
 export default function HomeScreen({ isLogin }) {
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedSort, setSelectedSort] = useState(sort[0]);
+  const [loginStatus, setLoginStatus] = useState(isLogin);
 
   const navigation = useNavigation();
 
@@ -95,7 +96,9 @@ export default function HomeScreen({ isLogin }) {
             {/* 모달 내용 */}
             <TouchableOpacity
               onPress={() => {
-                navigation.navigate("CreateClubPostPage");
+                navigation.navigate("CreateClubPostPage", {
+                  isLogin: loginStatus,
+                });
                 setModalVisible(false);
               }}
               hitSlop={{ top: 32, bottom: 32, left: 32, right: 32 }}

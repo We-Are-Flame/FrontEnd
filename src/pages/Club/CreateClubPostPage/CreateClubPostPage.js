@@ -31,8 +31,7 @@ import Button from "../../../utils/StaticData";
 import kitchingLogo from "../../../../assets/kitchingLogo.png";
 import theme from "../../../styles/theme";
 import { REST_API_KEY } from "@env";
-import { headers } from './../../../utils/StaticData';
-
+import userStore from "../../../store/userStore";
 export default function CreateClubPostPage({ route }) {
   const [sDate, setSDate] = useState("");
   const [eDate, setEDate] = useState("");
@@ -52,14 +51,13 @@ export default function CreateClubPostPage({ route }) {
   const [categoryData, setCategoryData] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [thumbnailImageUrl, setThumbnailImageUrl] = useState("");
-  const [thumbnailImageResponseUrl, setThumbnailImageResponseUrl] = useState("");
-  const [imageUrl,setImageUrl] = useState("");
+  const [thumbnailImageResponseUrl, setThumbnailImageResponseUrl] =
+    useState("");
+  const [imageUrl, setImageUrl] = useState("");
   const [data, setData] = useState({});
   const [latitude, setLatitude] = useState(0);
   const [longitude, setLongitude] = useState(0);
-
-  const [userToken, setUserToken] = useState("");
-
+  const { userToken } = userStore();
   const [status, requestPermission] = useMediaLibraryPermissions();
   const navigation = useNavigation();
   const toggleSwitch = () => setAlarm((alarm) => !alarm);
@@ -77,8 +75,8 @@ export default function CreateClubPostPage({ route }) {
       location: {
         location: location,
         detail_location: detailLocation,
-        latitude:latitude,
-        longitude:longitude,
+        latitude: latitude,
+        longitude: longitude,
       },
       time: {
         start_time: sDate,
@@ -137,19 +135,26 @@ export default function CreateClubPostPage({ route }) {
 
       try {
         // 마지막 '.'의 위치를 찾기
-        const lastIndex = result.assets[0].uri.lastIndexOf('.');
+        const lastIndex = result.assets[0].uri.lastIndexOf(".");
         // '.' 이후의 문자열(확장자)를 추출
         const extension = result.assets[0].uri.substring(lastIndex + 1);
-        let res = await axios.post(`${API_URL}/api/presigned`, {
-          image_list: [{
-            file_name: generateRandomString(10),
-            file_type: "image/"+extension,
-          }]
-        }, {
-          headers: {
-            "Content-Type": `application/json`,
+        console.log(extension);
+        let res = await axios.post(
+          `${API_URL}/api/presigned`,
+          {
+            image_list: [
+              {
+                file_name: generateRandomString(10),
+                file_type: "image/" + extension,
+              },
+            ],
           },
-        })
+          {
+            headers: {
+              "Content-Type": `application/json`,
+            },
+          }
+        );
         setImageUrl(res.data.image_list[0].image_url);
         console.log(res.data.image_list[0].presigned_url);
         console.log(res.data.image_list[0].image_url);
@@ -158,18 +163,22 @@ export default function CreateClubPostPage({ route }) {
         const response = await fetch(result.assets[0].uri);
         const blob = await response.blob();
         const binaryDataArray = await blobToArrayBuffer(blob); //[121, 52, 12, 53]
-    
+
         if (!res.data.image_list[0].presigned_url) {
           console.error("사전 서명된 URL이 비어 있습니다.");
           return;
         }
         // axios를 사용하여 바이너리 데이터를 서버에 업로드합니다.
-        const r = await axios.put(res.data.image_list[0].presigned_url, binaryDataArray, {
-          headers: {
-            'Content-Type': blob.type, // 혹은 해당 이미지의 MIME 타입에 맞게 설정
-          },
-        });
-    
+        const r = await axios.put(
+          res.data.image_list[0].presigned_url,
+          binaryDataArray,
+          {
+            headers: {
+              "Content-Type": "image/" + extension, // 혹은 해당 이미지의 MIME 타입에 맞게 설정
+            },
+          }
+        );
+
         console.log("이미지 업로드 성공");
       } catch (error) {
         console.error("이미지 업로드 중 오류 발생", error);
@@ -178,7 +187,7 @@ export default function CreateClubPostPage({ route }) {
       return null;
     }
   };
-  
+
   const blobToArrayBuffer = (blob) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -199,31 +208,34 @@ export default function CreateClubPostPage({ route }) {
   }, [introduce]);
 
   useEffect(() => {
-    console.log(data);
-    axios.post(`${API_URL}/api/meetings`, data, {
-      headers: {
-        "Content-Type": `application/json`,
-        Authorization: "Bearer " + `${userToken}`,
-      },
-    })
-    .then((res)=>{
-      console.log(res.data);
-      navigation.navigate("Home");
-    })
-    .catch((err)=>console.log(err))
+    axios
+      .post(`${API_URL}/api/meetings`, data, {
+        headers: {
+          "Content-Type": `application/json`,
+          Authorization: "Bearer " + `${userToken}`,
+        },
+      })
+      .then((res) => {
+        console.log(res.data);
+        navigation.replace("Home", { isLogin: route.params.isLogin });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, [data]);
 
   function generateRandomString(length) {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
+    const characters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let result = "";
     const charactersLength = characters.length;
-  
+
     for (let i = 0; i < length; i++) {
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
-  
+
     return result;
-  };
+  }
 
   // 위치 등록하는 hook 만약 parmas가 없다면 빈문자
   useEffect(() => {
@@ -244,20 +256,6 @@ export default function CreateClubPostPage({ route }) {
     setSDate(`${year}-${month}-${day}T${hour}:${min}:00Z`);
     setEDate(`${year}-${month}-${day}T${calHour}:${min}:00Z`);
   }, [year, month, day, hour, min, time]);
-
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const value = await AsyncStorage.getItem("userAccessToken");
-        if (value !== null) {
-          setUserToken(value);
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    getData();
-  }, []);
 
   return (
     <View style={styles.createClubPostPageView}>
@@ -330,7 +328,10 @@ export default function CreateClubPostPage({ route }) {
 
         <TextInput
           onPressIn={() => {
-            navigation.navigate("FindAddress", { screen: "FindAddress" });
+            navigation.navigate("FindAddress", {
+              screen: "FindAddress",
+              isLogin: route.params.isLogin,
+            });
           }}
           editable={null}
           style={styles.input}
