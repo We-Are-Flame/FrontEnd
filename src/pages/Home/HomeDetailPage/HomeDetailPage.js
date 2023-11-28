@@ -72,7 +72,6 @@ export default function HomeDetailPage({ route }) {
       })
       .then((res) => {
         setDetailData(res.data);
-        console.log(res.data);
       })
       .catch((err) => {
         console.log(err);

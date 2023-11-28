@@ -5,7 +5,7 @@ import {
   StyleSheet
 } from "react-native";
 
-
+//<MyCarousel entries={carouselArr} widthProps={Dimensions.get('window').width} heightProps={200} layout="default"/>
 export default function MyCarousel({entries,widthProps,heightProps,layout}) {
 
   const renderItem = ({item, index}) => {

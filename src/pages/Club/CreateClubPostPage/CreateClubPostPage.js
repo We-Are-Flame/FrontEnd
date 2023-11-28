@@ -32,6 +32,7 @@ import kitchingLogo from "../../../../assets/kitchingLogo.png";
 import theme from "../../../styles/theme";
 import { REST_API_KEY } from "@env";
 import userStore from "../../../store/userStore";
+import MyCarousel from '../../../components/MyCarousel';
 export default function CreateClubPostPage({ route }) {
   const [sDate, setSDate] = useState("");
   const [eDate, setEDate] = useState("");
@@ -51,9 +52,9 @@ export default function CreateClubPostPage({ route }) {
   const [categoryData, setCategoryData] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [thumbnailImageUrl, setThumbnailImageUrl] = useState("");
-  const [thumbnailImageResponseUrl, setThumbnailImageResponseUrl] =
-    useState("");
+  const [activityImages,setActivityImages] = useState([]);
   const [imageUrl, setImageUrl] = useState("");
+  const [multipleImage,setMultipleImage] = useState([]);
   const [data, setData] = useState({});
   const [latitude, setLatitude] = useState(0);
   const [longitude, setLongitude] = useState(0);
@@ -84,7 +85,7 @@ export default function CreateClubPostPage({ route }) {
       },
       image: {
         thumbnail_url: imageUrl,
-        image_urls: ["image.jpg", "image.jpg"],
+        image_urls: activityImages,
       },
     });
   };
@@ -128,58 +129,63 @@ export default function CreateClubPostPage({ route }) {
       allowsEditing: false,
       quality: 1,
       aspect: [3, 1],
+      allowsMultipleSelection: true, // 여러 이미지 선택 활성화
     });
 
     if (!result.canceled) {
       setThumbnailImageUrl(result.assets[0].uri);
-
+      setActivityImages(result.assets.slice(1).map(asset => asset.uri));
+      setMultipleImage(result.assets.map(asset => asset.uri));
+      console.log("asserts : "+result.assets);
       try {
-        // 마지막 '.'의 위치를 찾기
-        const lastIndex = result.assets[0].uri.lastIndexOf(".");
-        // '.' 이후의 문자열(확장자)를 추출
-        const extension = result.assets[0].uri.substring(lastIndex + 1);
-        console.log(extension);
-        let res = await axios.post(
-          `${API_URL}/api/presigned`,
-          {
-            image_list: [
-              {
-                file_name: generateRandomString(10),
-                file_type: "image/" + extension,
+        for(let i=0; i<result.assets.length; i++){
+          // 마지막 '.'의 위치를 찾기
+          const lastIndex = result.assets[i].uri.lastIndexOf(".");
+          // '.' 이후의 문자열(확장자)를 추출
+          const extension = result.assets[i].uri.substring(lastIndex + 1);
+          console.log(extension);
+          let res = await axios.post(
+            `${API_URL}/api/presigned`,
+            {
+              image_list: [
+                {
+                  file_name: generateRandomString(10),
+                  file_type: "image/" + extension,
+                },
+              ],
+            },
+            {
+              headers: {
+                "Content-Type": `application/json`,
               },
-            ],
-          },
-          {
-            headers: {
-              "Content-Type": `application/json`,
-            },
+            }
+          );
+          setImageUrl(res.data.image_list[0].image_url);
+          console.log(res.data.image_list[0].presigned_url);
+          console.log(res.data.image_list[0].image_url);
+
+          // 이미지의 URI로부터 바이너리 데이터를 가져옵니다.
+          const response = await fetch(result.assets[i].uri);
+          const blob = await response.blob();
+          const binaryDataArray = await blobToArrayBuffer(blob); //[121, 52, 12, 53]
+
+          if (!res.data.image_list[0].presigned_url) {
+            console.error("사전 서명된 URL이 비어 있습니다.");
+            return;
           }
-        );
-        setImageUrl(res.data.image_list[0].image_url);
-        console.log(res.data.image_list[0].presigned_url);
-        console.log(res.data.image_list[0].image_url);
+          // axios를 사용하여 바이너리 데이터를 서버에 업로드합니다.
+          const r = await axios.put(
+            res.data.image_list[0].presigned_url,
+            binaryDataArray,
+            {
+              headers: {
+                "Content-Type": "image/" + extension, // 혹은 해당 이미지의 MIME 타입에 맞게 설정
+              },
+            }
+          );
 
-        // 이미지의 URI로부터 바이너리 데이터를 가져옵니다.
-        const response = await fetch(result.assets[0].uri);
-        const blob = await response.blob();
-        const binaryDataArray = await blobToArrayBuffer(blob); //[121, 52, 12, 53]
-
-        if (!res.data.image_list[0].presigned_url) {
-          console.error("사전 서명된 URL이 비어 있습니다.");
-          return;
+          console.log("이미지 업로드 성공");
         }
-        // axios를 사용하여 바이너리 데이터를 서버에 업로드합니다.
-        const r = await axios.put(
-          res.data.image_list[0].presigned_url,
-          binaryDataArray,
-          {
-            headers: {
-              "Content-Type": "image/" + extension, // 혹은 해당 이미지의 MIME 타입에 맞게 설정
-            },
-          }
-        );
-
-        console.log("이미지 업로드 성공");
       } catch (error) {
         console.error("이미지 업로드 중 오류 발생", error);
       }
@@ -262,17 +268,27 @@ export default function CreateClubPostPage({ route }) {
       <ScrollView
         style={{ borderTopColor: "#cccccc", borderTopWidth: 1, padding: 16 }}
       >
-        <Text style={styles.createPageLabel}>썸네일</Text>
+        <View style={{flexDirection:"row"}}>
+          <Text style={styles.createPageLabel}>활동사진</Text>
+          <Text style={{fontSize:12,marginLeft:5,color:"#aaaaaa"}}>첫 번째로 선택 된 사진은 썸네일이 됩니다.</Text>
+        </View>
         <View style={styles.imageContainer}>
           <Pressable onPress={uploadImage}>
             <View style={{ position: "relative" }}>
               <View style={styles.imageWrapper}>
-                <ImageViewer
-                  placeholderImageSource={kitchingLogo}
-                  selectedImage={thumbnailImageUrl}
-                  widthProps="80%"
-                  heightProps="80%"
-                />
+                {
+                  multipleImage.map((image,index)=>{
+                    return (
+                      <ImageViewer
+                        placeholderImageSource={kitchingLogo}
+                        selectedImage={image}
+                        widthProps="80%"
+                        heightProps="80%"
+                        key={index}
+                      />
+                    )
+                  })
+                }
               </View>
               <View style={styles.iconContainer}>
                 <Entypo name="camera" size={17} color="black" />
@@ -529,5 +545,7 @@ const styles = StyleSheet.create({
     borderRadius: theme.screenWidth / 6,
     ...theme.centerStyle,
     overflow: "hidden",
+    flexDirection:"row",
+    
   },
 });

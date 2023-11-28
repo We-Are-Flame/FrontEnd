@@ -12,7 +12,7 @@ import { Image } from "expo-image";
 import { useNavigation } from "@react-navigation/native";
 
 import theme from "../../../../styles/theme";
-import dummy1 from "../../../../../assets/dummyImage.jpg";
+import dummy1 from "../../../../../assets/kitchingLogo.png";
 
 import { Ionicons, Entypo, AntDesign } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
