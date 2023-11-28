@@ -16,7 +16,7 @@ import { post_headers } from "../../../../utils/StaticData";
 import axios from "axios";
 import { API_URL } from "@env";
 
-export default function HomeDetailCommentInput({ id, token }) {
+export default function HomeDetailCommentInput({ id, token, setAddedComment }) {
   const [text, setText] = useState("");
   const [isFocused, setIsFocused] = useState(false);
 
@@ -38,6 +38,7 @@ export default function HomeDetailCommentInput({ id, token }) {
       .then((res) => {
         console.log(res.data);
         setText("");
+        setAddedComment(text);
       })
       .catch((err) => {
         console.log(err);

@@ -11,24 +11,23 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { FAB } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
 
 import theme from "../../styles/theme";
 import Header from "../../components/Header";
 import HomeContent from "./HomeContent/HomeContent";
 import HomeCategory from "./HomeCategory/HomeCategory";
 import Dropdown from "../../components/Dropdown";
-
-import { Ionicons } from "@expo/vector-icons";
-
 import { sort } from "../../utils/StaticData";
 
-export default function HomeScreen() {
+export default function HomeScreen({ isLogin }) {
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedSort, setSelectedSort] = useState(sort[0]);
+
   const navigation = useNavigation();
 
   const onRefresh = useCallback(() => {
@@ -44,7 +43,7 @@ export default function HomeScreen() {
         style={{ flex: theme.headerSpace, backgroundColor: theme.psColor }}
       ></View>
 
-      <Header />
+      <Header isLogin={isLogin} />
 
       <View style={{ flex: 7 }}>
         <ScrollView

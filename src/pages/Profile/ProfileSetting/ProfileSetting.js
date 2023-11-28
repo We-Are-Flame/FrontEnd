@@ -3,10 +3,30 @@
 import * as React from "react";
 import theme from "../../../styles/theme";
 import Header from "../../../components/Header";
+import { useNavigation } from "@react-navigation/core";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 
 export default function ProfileSetting() {
   const menus = ["계정정보", "알림설정", "문의하기", "로그아웃"];
+  const navigation = useNavigation();
+
+  const handleMenuPress = (menu) => {
+    switch (menu) {
+      case "계정정보":
+        navigation.navigate("AccountInfo");
+        break;
+      case "알림설정":
+        navigation.navigate("NotificationSettings");
+        break;
+      case "문의하기":
+        navigation.navigate("Inquiry");
+        break;
+      case "로그아웃":
+        break;
+      default:
+        break;
+    }
+  };
 
   return (
     <View style={styles.profileSettingView}>
@@ -14,6 +34,9 @@ export default function ProfileSetting() {
         <TouchableOpacity
           key={index}
           style={styles.profileSettingItemContainer}
+          onPress={() => {
+            handleMenuPress(data);
+          }}
         >
           <Text style={styles.profileSettingItem}>{data}</Text>
         </TouchableOpacity>
