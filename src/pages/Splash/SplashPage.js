@@ -45,11 +45,10 @@ export default function SplashPage() {
               setUserToken(token);
 
               navigation.replace("Home", { isLogin: true, token: token });
-            } else {
-              navigation.replace("Login");
             }
           })
           .catch((err) => {
+            navigation.replace("Login");
             console.log(err);
           });
       }
