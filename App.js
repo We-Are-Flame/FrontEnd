@@ -5,7 +5,7 @@ import { StyleSheet, Text, View } from "react-native";
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 import theme from "./src/styles/theme";
 import ClubManagePage from "./src/pages/Club/ClubManagePage";
@@ -16,6 +16,7 @@ import HomeDetailPage from "./src/pages/Home/HomeDetailPage/HomeDetailPage";
 
 import CreateClubPostPage from "./src/pages/Club/CreateClubPostPage/CreateClubPostPage";
 import FindAddress from "./src/components/FindAddress";
+import SplashPage from "./src/pages/Splash/SplashPage";
 import ProfileSetting from "./src/pages/Profile/ProfileSetting/ProfileSetting";
 import ContactUs from "./src/pages/Profile/ProfileSetting/ContactUs";
 import AlarmSetting from "./src/pages/Profile/ProfileSetting/AlarmSetting";
@@ -24,15 +25,21 @@ const Stack = createStackNavigator();
 
 export default function App() {
   const [isLogin, setIsLogin] = useState(false);
+  const [appIsReady, setAppIsReady] = useState(false);
 
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName={isLogin ? "Home" : "Login"}
+        initialRouteName="SplashPage"
         screenOptions={{
           headerShown: false,
         }}
       >
+        <Stack.Screen
+          name="SplashPage"
+          component={SplashPage}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen
           name="Login"
           component={LoginPage}
