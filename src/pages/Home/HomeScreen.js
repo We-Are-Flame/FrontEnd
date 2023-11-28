@@ -12,7 +12,7 @@ import {
   Alert,
 } from "react-native";
 import { useState, useCallback, useEffect } from "react";
-import { FAB } from "react-native-paper";
+import { FAB, PaperProvider } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -22,6 +22,7 @@ import HomeContent from "./HomeContent/HomeContent";
 import HomeCategory from "./HomeCategory/HomeCategory";
 import Dropdown from "../../components/Dropdown";
 import { sort } from "../../utils/StaticData";
+import LoginModal from "../../modals/LoginModal/LoginModal";
 import userStore from "../../store/userStore";
 export default function HomeScreen({ isLogin }) {
   const [refreshing, setRefreshing] = useState(false);
@@ -39,76 +40,77 @@ export default function HomeScreen({ isLogin }) {
   }, []);
 
   return (
-    <View style={styles.homeScreenView}>
-      <View
-        style={{ flex: theme.headerSpace, backgroundColor: theme.psColor }}
-      ></View>
+    <PaperProvider>
+      <View style={styles.homeScreenView}>
+        <View
+          style={{ flex: theme.headerSpace, backgroundColor: theme.psColor }}
+        ></View>
 
-      <Header isLogin={isLogin} />
+        <Header isLogin={isLogin} />
 
-      <View style={{ flex: 7 }}>
-        <ScrollView
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-          style={{ flex: 1 }}
+        <View style={{ flex: 7 }}>
+          <ScrollView
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+            style={{ flex: 1 }}
+          >
+            <View style={styles.homeScreenCategory}>
+              <Text style={styles.homeScreenCategoryText}>카테고리 별로</Text>
+              <Text style={styles.homeScreenCategoryText}>확인해 보세요!</Text>
+              <HomeCategory />
+            </View>
+            <View style={styles.homeScreenSort}>
+              <Dropdown
+                dropDownItem={sort}
+                setData={setSelectedSort}
+                label="정렬 선택"
+                widthProps={150}
+              />
+            </View>
+            <View style={styles.homeScreenContent}>
+              <HomeContent selectedSort={selectedSort} />
+            </View>
+          </ScrollView>
+        </View>
+        <FAB
+          style={styles.fab}
+          icon="plus"
+          color="#ffffff"
+          onPress={() => setModalVisible(!modalVisible)} // 'Pressed' 대신에 모달을 열도록 변경
+        />
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(!modalVisible);
+          }}
         >
-          <View style={styles.homeScreenCategory}>
-            <Text style={styles.homeScreenCategoryText}>카테고리 별로</Text>
-            <Text style={styles.homeScreenCategoryText}>확인해 보세요!</Text>
-            <HomeCategory />
-          </View>
-          <View style={styles.homeScreenSort}>
-            <Dropdown
-              dropDownItem={sort}
-              setData={setSelectedSort}
-              label="정렬 선택"
-              widthProps={150}
-            />
-          </View>
-          <View style={styles.homeScreenContent}>
-            <HomeContent selectedSort={selectedSort} />
-          </View>
-        </ScrollView>
+          <TouchableOpacity
+            style={styles.modalOverlay}
+            activeOpacity={1}
+            onPress={() => setModalVisible(!modalVisible)} // 이 부분이 모달 외부를 눌렀을 때 닫히도록 함
+          >
+            <Text style={styles.modalText}>모임 만들기</Text>
+
+            <View style={styles.modalView}>
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate("CreateClubPostPage", {
+                    isLogin: loginStatus,
+                  });
+                  setModalVisible(false);
+                }}
+                hitSlop={{ top: 32, bottom: 32, left: 32, right: 32 }}
+              >
+                <Ionicons name="baseball-outline" size={24} color="black" />
+              </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
+        </Modal>
       </View>
-      <FAB
-        style={styles.fab}
-        icon="plus"
-        color="#ffffff"
-        onPress={() => setModalVisible(!modalVisible)} // 'Pressed' 대신에 모달을 열도록 변경
-      />
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}
-      >
-        <TouchableOpacity
-          style={styles.modalOverlay}
-          activeOpacity={1}
-          onPress={() => setModalVisible(!modalVisible)} // 이 부분이 모달 외부를 눌렀을 때 닫히도록 함
-        >
-          <Text style={styles.modalText}>모임 만들기</Text>
-
-          <View style={styles.modalView}>
-            {/* 모달 내용 */}
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate("CreateClubPostPage", {
-                  isLogin: loginStatus,
-                });
-                setModalVisible(false);
-              }}
-              hitSlop={{ top: 32, bottom: 32, left: 32, right: 32 }}
-            >
-              <Ionicons name="baseball-outline" size={24} color="black" />
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-      </Modal>
-    </View>
+    </PaperProvider>
   );
 }
 

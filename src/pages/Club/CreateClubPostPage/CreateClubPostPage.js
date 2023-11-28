@@ -208,6 +208,7 @@ export default function CreateClubPostPage({ route }) {
   }, [introduce]);
 
   useEffect(() => {
+    console.log(data);
     axios
       .post(`${API_URL}/api/meetings`, data, {
         headers: {

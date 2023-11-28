@@ -24,14 +24,14 @@ import userStore from "../../store/userStore";
 
 export default function SplashPage() {
   const [animating, setAnimating] = useState(true);
-  const { setUserToken } = userStore();
+  const { setUserToken, setIsLogin } = userStore();
   const navigation = useNavigation();
   useEffect(() => {
     setTimeout(async () => {
       setAnimating(false);
 
       const token = await AsyncStorage.getItem("userAccessToken");
-
+      console.log(token);
       if (token !== null) {
         await axios
           .get(`${API_URL}/api/user/notification`, {
@@ -43,7 +43,7 @@ export default function SplashPage() {
           .then((res) => {
             if (res.status === 200) {
               setUserToken(token);
-
+              setIsLogin(true);
               navigation.replace("Home", { isLogin: true, token: token });
             }
           })

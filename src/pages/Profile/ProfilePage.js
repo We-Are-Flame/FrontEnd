@@ -20,8 +20,7 @@ import Header from "../../components/Header";
 import userStore from "../../store/userStore";
 export default function ProfilePage({ isLogin }) {
   const [refreshing, setRefreshing] = useState(false);
-  const [userInfo, setUserInfo] = useState({});
-  const { userToken } = userStore();
+  const { setUserData, userToken } = userStore();
   const [myClubData, setMyClubData] = useState({});
   const [updated, setUpdated] = useState(false);
 
@@ -63,8 +62,7 @@ export default function ProfilePage({ isLogin }) {
             },
           });
           setMyClubData(mymeetings.data);
-
-          setUserInfo(userInfoResponse.data);
+          setUserData(userInfoResponse.data);
           resetProfileUpdateStatuts();
         } else {
           console.log("유효하지 않은 토큰", tokenValidationResponse.status);
@@ -102,7 +100,7 @@ export default function ProfilePage({ isLogin }) {
           contentContainerStyle={{ flex: 1 }}
         >
           <View style={styles.profilePageMainTop}>
-            <MyProfile setUpdated={updateProfileStatus} userInfo={userInfo} />
+            <MyProfile setUpdated={updateProfileStatus} />
           </View>
           <View style={styles.profilePageMainBottom}>
             <View style={{ flex: 0.02, backgroundColor: theme.subColor }} />

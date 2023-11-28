@@ -7,9 +7,11 @@ import { WebView } from "react-native-webview";
 import axios from "axios";
 import { API_URL } from "@env";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import userStore from "../store/userStore";
 const INJECTED_JAVASCRIPT = `window.ReactNativeWebView.postMessage('message from webView')`;
 
 export default function KaKaoLogin() {
+  const { setIsLogin } = userStore();
   const navigation = useNavigation();
 
   const storeData = async (access_token) => {
@@ -24,8 +26,9 @@ export default function KaKaoLogin() {
     var condition = data.indexOf(exp);
     if (condition != -1) {
       var access_token = data.substring(condition + exp.length);
-      navigation.navigate("Home", { screen: "Home" });
+      navigation.replace("Home", { screen: "Home" });
       storeData(access_token);
+      setIsLogin(true);
     }
   };
 
