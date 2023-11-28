@@ -8,19 +8,20 @@ import Spinner from "../../../../assets/loading_spinner.svg";
 
 import HomeContentItem from "./HomeContentItem/HomeContentItem";
 import axios from "axios";
-import { headers } from "./../../../utils/StaticData";
+import userStore from "../../../store/userStore";
 import { API_URL } from "@env";
 
-export default function HomeContent({ selectedSort, userToken }) {
+export default function HomeContent({ selectedSort }) {
   const [homeList, setHomeList] = useState([]);
-
+  const { userToken } = userStore();
   useEffect(() => {
     axios
-      .get(
-        `${API_URL}/api/meetings?start=0&end=10&sort=${selectedSort}`,
-        null,
-        { headers: headers }
-      )
+      .get(`${API_URL}/api/meetings?start=0&end=10&sort=${selectedSort}`, {
+        headers: {
+          "Content-Type": `application/json`,
+          Authorization: "Bearer " + `${userToken}`,
+        },
+      })
       .then((res) => {
         setHomeList(res.data.content);
       })
@@ -38,9 +39,7 @@ export default function HomeContent({ selectedSort, userToken }) {
         />
       ) : (
         homeList.map((state, index) => {
-          return (
-            <HomeContentItem userToken={userToken} state={state} key={index} />
-          );
+          return <HomeContentItem state={state} key={index} />;
         })
       )}
     </View>

@@ -22,12 +22,13 @@ import HomeContent from "./HomeContent/HomeContent";
 import HomeCategory from "./HomeCategory/HomeCategory";
 import Dropdown from "../../components/Dropdown";
 import { sort } from "../../utils/StaticData";
-
-export default function HomeScreen({ isLogin, userToken }) {
+import userStore from "../../store/userStore";
+export default function HomeScreen({ isLogin }) {
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedSort, setSelectedSort] = useState(sort[0]);
   const [loginStatus, setLoginStatus] = useState(isLogin);
+
   const navigation = useNavigation();
 
   const onRefresh = useCallback(() => {
@@ -66,7 +67,7 @@ export default function HomeScreen({ isLogin, userToken }) {
             />
           </View>
           <View style={styles.homeScreenContent}>
-            <HomeContent userToken={userToken} selectedSort={selectedSort} />
+            <HomeContent selectedSort={selectedSort} />
           </View>
         </ScrollView>
       </View>

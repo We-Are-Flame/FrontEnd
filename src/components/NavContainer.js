@@ -27,7 +27,6 @@ const Tab = createMaterialBottomTabNavigator();
 export default function NavContainer({ route }) {
   const custheme = useTheme();
   const [isLogin, setIsLogin] = useState(route.params.isLogin);
-  const [userToken, setUserToken] = useState(route.params.token);
 
   useEffect(() => {
     console.log(`로그인 되어있나? ${isLogin}`);
@@ -65,7 +64,7 @@ export default function NavContainer({ route }) {
       })}
     >
       <Tab.Screen name={homeName}>
-        {() => <HomeScreen isLogin={isLogin} userToken={userToken} />}
+        {() => <HomeScreen isLogin={isLogin} />}
       </Tab.Screen>
       <Tab.Screen name={chatName} component={ChatScreen} />
       <Tab.Screen name={randomName} component={RandomPage} />

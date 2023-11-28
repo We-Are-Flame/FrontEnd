@@ -20,16 +20,18 @@ import axios from "axios";
 import LoginModal from "../../modals/LoginModal/LoginModal";
 import theme from "../../styles/theme";
 import Logo from "../../../assets/kitchingLogo.png";
+import userStore from "../../store/userStore";
 
 export default function SplashPage() {
   const [animating, setAnimating] = useState(true);
+  const { setUserToken } = userStore();
   const navigation = useNavigation();
   useEffect(() => {
     setTimeout(async () => {
       setAnimating(false);
 
       const token = await AsyncStorage.getItem("userAccessToken");
-      
+
       if (token !== null) {
         await axios
           .get(`${API_URL}/api/user/notification`, {
@@ -40,6 +42,8 @@ export default function SplashPage() {
           })
           .then((res) => {
             if (res.status === 200) {
+              setUserToken(token);
+
               navigation.replace("Home", { isLogin: true, token: token });
             } else {
               navigation.replace("Login");

@@ -17,10 +17,11 @@ import MyProfile from "./MyProfile/MyProfile";
 import MyClub from "./MyClub/MyClub";
 import theme from "../../styles/theme";
 import Header from "../../components/Header";
+import userStore from "../../store/userStore";
 export default function ProfilePage({ isLogin }) {
   const [refreshing, setRefreshing] = useState(false);
   const [userInfo, setUserInfo] = useState({});
-  const [userToken, setUserToken] = useState("");
+  const { userToken } = userStore();
   const [myClubData, setMyClubData] = useState({});
   const [updated, setUpdated] = useState(false);
 
@@ -33,14 +34,13 @@ export default function ProfilePage({ isLogin }) {
 
   const fetchData = async () => {
     try {
-      const token = await AsyncStorage.getItem("userAccessToken");
-      if (token !== null) {
+      if (userToken !== null) {
         const tokenValidationResponse = await axios.get(
           `${API_URL}/api/user/notification`,
           {
             headers: {
               "Content-Type": "application/json",
-              Authorization: "Bearer " + token,
+              Authorization: "Bearer " + userToken,
             },
           }
         );
@@ -53,17 +53,17 @@ export default function ProfilePage({ isLogin }) {
           const userInfoResponse = await axios.get(`${API_URL}/api/user`, {
             headers: {
               "Content-Type": "application/json",
-              Authorization: "Bearer " + token,
+              Authorization: "Bearer " + userToken,
             },
           });
           const mymeetings = await axios.get(`${API_URL}/api/meetings/my`, {
             headers: {
               "Content-Type": "application/json",
-              Authorization: "Bearer " + token,
+              Authorization: "Bearer " + userToken,
             },
           });
           setMyClubData(mymeetings.data);
-          setUserToken(token);
+
           setUserInfo(userInfoResponse.data);
           resetProfileUpdateStatuts();
         } else {
@@ -86,7 +86,6 @@ export default function ProfilePage({ isLogin }) {
     fetchData();
   }, [updated]);
 
-
   return (
     <View style={styles.profilePageView}>
       <View
@@ -103,11 +102,7 @@ export default function ProfilePage({ isLogin }) {
           contentContainerStyle={{ flex: 1 }}
         >
           <View style={styles.profilePageMainTop}>
-            <MyProfile
-              setUpdated={updateProfileStatus}
-              userToken={userToken}
-              userInfo={userInfo}
-            />
+            <MyProfile setUpdated={updateProfileStatus} userInfo={userInfo} />
           </View>
           <View style={styles.profilePageMainBottom}>
             <View style={{ flex: 0.02, backgroundColor: theme.subColor }} />
