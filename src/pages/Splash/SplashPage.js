@@ -72,7 +72,7 @@ export default function SplashPage() {
         />
         <ActivityIndicator
           animating={animating}
-          color={theme.psColor}
+          color="black" 
           size="large"
           style={styles.activityIndicator}
         />
