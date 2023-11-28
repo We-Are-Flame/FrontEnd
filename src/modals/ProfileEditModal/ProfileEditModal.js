@@ -22,12 +22,11 @@ import theme from "../../styles/theme";
 import ImageViewer from "../../components/ImageViewer";
 import axios from "axios";
 import { API_URL } from "@env";
-
+import userStore from "../../store/userStore";
 export default function ProfileEditModal({
   visible,
   hideModal,
   userInfo,
-  userToken,
   setUpdated,
 }) {
   const [nickname, setNickname] = useState(userInfo.nickname);
@@ -36,7 +35,7 @@ export default function ProfileEditModal({
   const [isProfileImgChange, setIsProfileImgChange] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
   const [status, requestPermission] = useMediaLibraryPermissions();
-
+  const { userToken } = userStore();
   useEffect(() => {
     if (userInfo.nickname == nickname) {
       setIsNicknameChange(false);
@@ -44,7 +43,7 @@ export default function ProfileEditModal({
       setIsNicknameChange(true);
     }
   }, [nickname]);
-  
+
   useEffect(() => {
     setNickname(userInfo.nickname);
   }, [userInfo]);

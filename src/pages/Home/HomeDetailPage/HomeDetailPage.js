@@ -23,9 +23,10 @@ import Spinner from "../../../../assets/loading_spinner.svg";
 import theme from "../../../styles/theme";
 import HomeDetailComment from "./HomeDetailComment/HomeDetailComment";
 import HomeDetailCommentInput from "./HomeDetailComment/HomeDetailCommentInput";
-import { headers } from "./../../../utils/StaticData";
+
 import GoogleMap from "../../../components/GoogleMap";
 import { API_URL } from "@env";
+import userStore from "../../../store/userStore";
 
 export default function HomeDetailPage({ route }) {
   const [detailData, setDetailData] = useState({});
@@ -36,7 +37,7 @@ export default function HomeDetailPage({ route }) {
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [addedComment, setAddedComment] = useState([]);
-  const [userToken, setUserToken] = useState(route.params.userToken);
+  const { userToken } = userStore();
 
   const navigation = useNavigation();
   const scrollViewRef = useRef();
@@ -344,7 +345,6 @@ export default function HomeDetailPage({ route }) {
         </View>
         <HomeDetailCommentInput
           id={stateId}
-          token={userToken}
           scrollViewRef={scrollViewRef}
           setAddedComment={addComment}
         />

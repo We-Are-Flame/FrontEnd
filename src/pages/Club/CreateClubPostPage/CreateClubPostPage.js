@@ -31,7 +31,7 @@ import Button from "../../../utils/StaticData";
 import kitchingLogo from "../../../../assets/kitchingLogo.png";
 import theme from "../../../styles/theme";
 import { REST_API_KEY } from "@env";
-
+import userStore from "../../../store/userStore";
 export default function CreateClubPostPage({ route }) {
   const [sDate, setSDate] = useState("");
   const [eDate, setEDate] = useState("");
@@ -57,9 +57,7 @@ export default function CreateClubPostPage({ route }) {
   const [data, setData] = useState({});
   const [latitude, setLatitude] = useState(0);
   const [longitude, setLongitude] = useState(0);
-
-  const [userToken, setUserToken] = useState("");
-
+  const { userToken } = userStore();
   const [status, requestPermission] = useMediaLibraryPermissions();
   const navigation = useNavigation();
   const toggleSwitch = () => setAlarm((alarm) => !alarm);
@@ -258,20 +256,6 @@ export default function CreateClubPostPage({ route }) {
     setSDate(`${year}-${month}-${day}T${hour}:${min}:00Z`);
     setEDate(`${year}-${month}-${day}T${calHour}:${min}:00Z`);
   }, [year, month, day, hour, min, time]);
-
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const value = await AsyncStorage.getItem("userAccessToken");
-        if (value !== null) {
-          setUserToken(value);
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    getData();
-  }, []);
 
   return (
     <View style={styles.createClubPostPageView}>
