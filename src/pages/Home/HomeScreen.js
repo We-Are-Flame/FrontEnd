@@ -15,8 +15,6 @@ import { useState, useCallback, useEffect } from "react";
 import { FAB } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
 
 import theme from "../../styles/theme";
 import Header from "../../components/Header";
@@ -24,12 +22,12 @@ import HomeContent from "./HomeContent/HomeContent";
 import HomeCategory from "./HomeCategory/HomeCategory";
 import Dropdown from "../../components/Dropdown";
 import { sort } from "../../utils/StaticData";
-import { API_URL } from "@env";
-export default function HomeScreen() {
+
+export default function HomeScreen({ isLogin }) {
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedSort, setSelectedSort] = useState(sort[0]);
-  const [isLogin, setIsLogin] = useState(false);
+
   const navigation = useNavigation();
 
   const onRefresh = useCallback(() => {
@@ -39,39 +37,13 @@ export default function HomeScreen() {
     }, 1000);
   }, []);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const token = await AsyncStorage.getItem("userAccessToken");
-        if (token !== null) {
-          const response = await axios.get(`${API_URL}/api/user/notification`, {
-            headers: {
-              "Content-Type": `application/json`,
-              Authorization: "Bearer " + `${token}`,
-            },
-          });
-
-          if (response.status === 200) {
-            console.log("Success:", response.data);
-            setIsLogin(true);
-          } else {
-            console.log("Unexpected status code:", response.status);
-          }
-        }
-      } catch (error) {
-        console.log("error", error);
-      }
-    };
-    fetchData();
-  }, []);
-
   return (
     <View style={styles.homeScreenView}>
       <View
         style={{ flex: theme.headerSpace, backgroundColor: theme.psColor }}
       ></View>
 
-      <Header isLogin={isLogin}/>
+      <Header isLogin={isLogin} />
 
       <View style={{ flex: 7 }}>
         <ScrollView
