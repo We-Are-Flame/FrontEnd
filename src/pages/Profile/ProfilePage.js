@@ -17,11 +17,10 @@ import MyProfile from "./MyProfile/MyProfile";
 import MyClub from "./MyClub/MyClub";
 import theme from "../../styles/theme";
 import Header from "../../components/Header";
-export default function ProfilePage() {
+export default function ProfilePage({ isLogin }) {
   const [refreshing, setRefreshing] = useState(false);
   const [userInfo, setUserInfo] = useState({});
   const [userToken, setUserToken] = useState("");
-  const [isLogin, setIsLogin] = useState(false);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -56,10 +55,8 @@ export default function ProfilePage() {
             },
           });
           setUserInfo(userInfoResponse.data);
-          setIsLogin(true);
         } else {
           console.log("유효하지 않은 토큰", tokenValidationResponse.status);
-          setIsLogin(false);
         }
       }
     } catch (error) {
