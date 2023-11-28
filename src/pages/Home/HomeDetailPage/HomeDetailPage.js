@@ -11,18 +11,20 @@ import {
   KeyboardAvoidingView,
   Platform,
   SafeAreaView,
+  Dimensions,
 } from "react-native";
 import * as Linking from "expo-linking";
 import { Image } from "expo-image";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import { Ionicons, AntDesign, MaterialIcons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import kitchingLogo from "../../../../assets/dummyImage.jpg";
 
 import Spinner from "../../../../assets/loading_spinner.svg";
 import theme from "../../../styles/theme";
 import HomeDetailComment from "./HomeDetailComment/HomeDetailComment";
 import HomeDetailCommentInput from "./HomeDetailComment/HomeDetailCommentInput";
+import MyCarousel from '../../../components/MyCarousel';
 
 import GoogleMap from "../../../components/GoogleMap";
 import { API_URL } from "@env";
@@ -38,6 +40,8 @@ export default function HomeDetailPage({ route }) {
   const [endTime, setEndTime] = useState("");
   const [addedComment, setAddedComment] = useState([]);
   const { userToken } = userStore();
+
+  const carouselArr = [kitchingLogo,kitchingLogo,kitchingLogo];
 
   const navigation = useNavigation();
   const scrollViewRef = useRef();
@@ -206,6 +210,8 @@ export default function HomeDetailPage({ route }) {
                 {detailData.info.description}
               </Text>
               <Text style={{ color: theme.psColor }}>{hashtagString}</Text>
+              
+              <MyCarousel entries={carouselArr} widthProps={Dimensions.get('window').width} heightProps={200} layout="default"/>
 
               {/* 여기에 종료된게임, 참가신청, 참가취소 버튼 추가 */}
               {detailData.status.is_expire ? (
