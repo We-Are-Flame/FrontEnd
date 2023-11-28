@@ -35,6 +35,7 @@ export default function HomeDetailPage({ route }) {
   const [imageSource, setImageSource] = useState("");
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
+  const [addedComment, setAddedComment] = useState([]);
   const [userToken, setUserToken] = useState("");
 
   const navigation = useNavigation();
@@ -132,6 +133,10 @@ export default function HomeDetailPage({ route }) {
     };
     getData();
   }, []);
+
+  const addComment = (newComment) => {
+    setAddedComment((prevComments) => [...prevComments, newComment]);
+  };
 
   return Object.keys(detailData).length !== 0 ? (
     <KeyboardAvoidingView
@@ -341,10 +346,14 @@ export default function HomeDetailPage({ route }) {
 
             <View style={styles.homeDetailSpace} />
 
-            <HomeDetailComment id={stateId} />
+            <HomeDetailComment addedComment={addedComment} id={stateId} />
           </ScrollView>
         </View>
-        <HomeDetailCommentInput id={stateId} token={userToken} />
+        <HomeDetailCommentInput
+          id={stateId}
+          token={userToken}
+          setAddedComment={addComment}
+        />
       </View>
     </KeyboardAvoidingView>
   ) : (
