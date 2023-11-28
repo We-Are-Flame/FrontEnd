@@ -34,7 +34,7 @@ export default function ProfilePage({ isLogin }) {
 
   const fetchData = async () => {
     try {
-      if (userToken !== null) {
+      if (userToken) {
         const tokenValidationResponse = await axios.get(
           `${API_URL}/api/user/notification`,
           {
