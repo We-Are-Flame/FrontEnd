@@ -11,6 +11,7 @@ import {
   Pressable,
   Dimensions,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import { useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -32,7 +33,7 @@ import kitchingLogo from "../../../../assets/kitchingLogo.png";
 import theme from "../../../styles/theme";
 import { REST_API_KEY } from "@env";
 import userStore from "../../../store/userStore";
-import MyCarousel from '../../../components/MyCarousel';
+
 export default function CreateClubPostPage({ route }) {
   const [sDate, setSDate] = useState("");
   const [eDate, setEDate] = useState("");
@@ -64,30 +65,102 @@ export default function CreateClubPostPage({ route }) {
   const toggleSwitch = () => setAlarm((alarm) => !alarm);
 
   const submitPost = () => {
-    setData({
-      // alarm: alarm,
-      category: categoryData,
-      hashtags: hashtags,
-      info: {
-        title: title,
-        max_participants: people,
-        description: introduce,
-      },
-      location: {
-        location: location,
-        detail_location: detailLocation,
-        latitude: latitude,
-        longitude: longitude,
-      },
-      time: {
-        start_time: sDate,
-        end_time: eDate,
-      },
-      image: {
-        thumbnail_url: imageUrl,
-        image_urls: activityImages,
-      },
-    });
+    let missingFields = [];
+    if (title === "") missingFields.push("모임명");
+    if(title.length > 7) {
+      Alert.alert(
+        "글쓰기 오류",
+        `모임 명은 8글자 미만입니다.`,
+        [
+          { text: "확인", onPress: () => console.log("확인됨") },
+        ],
+        { cancelable: false }
+      );
+    }
+    if (!validateTitle(title)) {
+      Alert.alert(
+        "글쓰기 오류",
+        `모임 명은 특수문자를 제한합니다.`,
+        [
+          { text: "확인", onPress: () => console.log("확인됨") },
+        ],
+        { cancelable: false }
+      );
+    }
+    if (categoryData === "") missingFields.push("카테고리");
+    if (people === "") missingFields.push("인원");
+    if(people < 1){
+      Alert.alert(
+        "글쓰기 오류",
+        `인원이 너무 적습니다.`,
+        [
+          { text: "확인", onPress: () => console.log("확인됨") },
+        ],
+        { cancelable: false }
+      );
+    }
+    const now = new Date(); // 현재 시간을 나타내는 Date 객체 생성
+    const startDate = new Date(sDate); // sDate를 Date 객체로 변환
+
+    if(startDate < now){
+      Alert.alert(
+        "글쓰기 오류",
+        `일시는 현재 시간보다 이후여야 합니다.`,
+        [
+          { text: "확인", onPress: () => console.log("확인됨") },
+        ],
+        { cancelable: false }
+      );
+    }
+    if (location === "") missingFields.push("위치");
+    if (location === "") missingFields.push("일시의 연");
+    if (month === "") missingFields.push("일시의 달");
+    if (day === "") missingFields.push("일시의 일");
+    if (hour === "") missingFields.push("일시의 시");
+    if (min === "") missingFields.push("일시의 분");
+
+    if (missingFields.length > 0) {
+      Alert.alert(
+        "글쓰기 오류",
+        `${missingFields.join(", ")}를 추가해주세요.`,
+        [
+          { text: "확인", onPress: () => console.log("확인됨") },
+        ],
+        { cancelable: false }
+      );
+    }else{
+      setData({
+        // alarm: alarm,
+        category: categoryData,
+        hashtags: hashtags,
+        info: {
+          title: title,
+          max_participants: people,
+          description: introduce,
+        },
+        location: {
+          location: location,
+          detail_location: detailLocation,
+          latitude: latitude,
+          longitude: longitude,
+        },
+        time: {
+          start_time: sDate,
+          end_time: eDate,
+        },
+        image: {
+          thumbnail_url: imageUrl,
+          image_urls: activityImages,
+        },
+      });
+    }
+  };
+
+  const validateTitle = (title) => {
+    // 정규 표현식을 사용하여 특수문자 제한
+    // 이 예시에서는 알파벳, 숫자, 공백, 하이픈, 밑줄, 마침표, 한글만 허용합니다.
+    const pattern = /^[A-Za-z0-9 _.-가-힣]+$/;
+    return pattern.test(title);
   };
 
   const getCoordinate = async (placeAddress) => {
@@ -106,7 +179,7 @@ export default function CreateClubPostPage({ route }) {
     });
   };
   const extractNumberFromString = (str) => {
-    const matches = str.match(/\d+/);
+    const matches = str.match(/^\d+/);
     return matches ? parseInt(matches[0], 10) : null;
   };
 
@@ -241,7 +314,24 @@ export default function CreateClubPostPage({ route }) {
     }
 
     return result;
-  }
+  };
+
+  function getDaysArray(year, month) {
+    const firstDay = new Date(year, month - 1, 1);
+    const lastDay = new Date(year, month, 0);
+  
+    // 해당 월의 일수 계산
+    const numDaysInMonth = lastDay.getDate();
+  
+    // 해당 월의 모든 일자를 담을 배열 생성
+    const daysArray = [];
+  
+    for (let day = 1; day <= numDaysInMonth; day++) {
+      daysArray.push(day);
+    }
+  
+    return daysArray;
+  };
 
   // 위치 등록하는 hook 만약 parmas가 없다면 빈문자
   useEffect(() => {
@@ -258,10 +348,23 @@ export default function CreateClubPostPage({ route }) {
   }, [location]);
 
   useEffect(() => {
-    let calHour = parseInt(hour) + extractNumberFromString(time);
-    setSDate(`${year}-${month}-${day}T${hour}:${min}:00Z`);
-    setEDate(`${year}-${month}-${day}T${calHour}:${min}:00Z`);
+    // 의존성 배열의 값 중 하나라도 빈 문자열이면 기능을 수행하지 않습니다.
+    if (!year || !month || !day || !hour || !min || !time) {
+      return;
+    }
+  
+    // Date 객체를 생성합니다. 월은 0부터 시작하므로 1을 빼줍니다.
+    let startDate = new Date(year, parseInt(month, 10) - 1, parseInt(day, 10), parseInt(hour, 10)+9, parseInt(min, 10));
+    console.log(startDate);
+    // 종료 시간을 계산하기 위해, 시작 시간에 시간을 더합니다.
+    let endDate = new Date(startDate);
+    endDate.setHours(startDate.getHours() + extractNumberFromString(time));
+  
+    // ISO 문자열 형식으로 변환합니다.
+    setSDate(startDate.toISOString());
+    setEDate(endDate.toISOString());
   }, [year, month, day, hour, min, time]);
+  
 
   return (
     <View style={styles.createClubPostPageView}>
@@ -303,43 +406,13 @@ export default function CreateClubPostPage({ route }) {
           label="카테고리를 선택해주세요"
         />
         <Text style={styles.createPageLabel}>일시</Text>
-        <View style={{ flexDirection: "row", flex: 1 }}>
-          <TextInput
-            style={styles.inputDate}
-            onChangeText={setYear}
-            value={year}
-            placeholder="YYYY"
-            keyboardType="number-pad"
-          />
-          <TextInput
-            style={styles.inputDate}
-            onChangeText={setMonth}
-            value={month}
-            placeholder="MM"
-            keyboardType="number-pad"
-          />
-          <TextInput
-            style={styles.inputDate}
-            onChangeText={setDay}
-            value={day}
-            placeholder="DD"
-            keyboardType="number-pad"
-          />
-          <TextInput
-            style={styles.inputDate}
-            onChangeText={setHour}
-            value={hour}
-            placeholder="HH"
-            keyboardType="number-pad"
-          />
-          <TextInput
-            style={styles.inputDate}
-            onChangeText={setMin}
-            value={min}
-            placeholder="mm"
-            keyboardType="number-pad"
-          />
-        </View>
+        <ScrollView style={{flexDirection:"row", flex: 1 }}>
+          <Dropdown dropDownItem={["2023","2024","2025"]} setData={setYear} label="연도" widthProps={(Dimensions.get("window").width)/3} />
+          <Dropdown dropDownItem={["01","02","03","04","05","06","07","08","09","10","11","12"]} setData={setMonth} label="월" widthProps={(Dimensions.get("window").width)/3} />
+          <Dropdown dropDownItem={getDaysArray(year,month).map(day => day.toString())} setData={setDay} label="일" widthProps={(Dimensions.get("window").width)/3} />
+          <Dropdown dropDownItem={Array.from({ length: 24 }, (_, i) => (i).toString())} setData={setHour} label="시" widthProps={(Dimensions.get("window").width)/3} />
+          <Dropdown dropDownItem={Array.from({ length: 60 }, (_, i) => (i).toString())} setData={setMin} label="분" widthProps={(Dimensions.get("window").width)/3} />
+        </ScrollView>
         <Text style={styles.createPageLabel}>위치</Text>
 
         <TextInput

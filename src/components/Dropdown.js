@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 
+//<Dropdown dropDownItem={sort} setData={setSelectedSort} label="정렬 선택" widthProps={150}/>
 const Dropdown = ({dropDownItem,setData,label,widthProps}) => {
 
   return (

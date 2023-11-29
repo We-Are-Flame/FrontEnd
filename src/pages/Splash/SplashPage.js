@@ -31,6 +31,7 @@ export default function SplashPage() {
       setAnimating(false);
 
       const token = await AsyncStorage.getItem("userAccessToken");
+      console.log(token);
 
       if (token !== null) {
         await axios
