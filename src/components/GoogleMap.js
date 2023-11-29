@@ -7,8 +7,8 @@ import MapView from "react-native-maps";
 
 const GoogleMap = ({ latitude, longitude }) => {
   const initialRegion = {
-    latitude: latitude,
-    longitude: longitude,
+    latitude: latitude ? latitude : 36.4250364688847,
+    longitude: longitude ? longitude : 128.167240393244,
     latitudeDelta: 0.005,
     longitudeDelta: 0.005,
   };
