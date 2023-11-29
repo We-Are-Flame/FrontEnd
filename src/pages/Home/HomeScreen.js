@@ -10,12 +10,13 @@ import {
   Modal,
   TouchableOpacity,
   Alert,
+  FlatList,
 } from "react-native";
+import axios from "axios";
 import { useState, useCallback, useEffect } from "react";
 import { FAB, PaperProvider } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
-
 import theme from "../../styles/theme";
 import Header from "../../components/Header";
 import HomeContent from "./HomeContent/HomeContent";
@@ -24,13 +25,18 @@ import Dropdown from "../../components/Dropdown";
 import { sort } from "../../utils/StaticData";
 import LoginModal from "../../modals/LoginModal/LoginModal";
 import userStore from "../../store/userStore";
+import { API_URL } from "@env";
+import { ActivityIndicator } from "react-native";
 
 export default function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [page, setPage] = useState(1);
+  const [clubList, setClubList] = useState({});
   const [selectedSort, setSelectedSort] = useState(sort[0]);
-  const [loginStatus, setLoginStatus] = useState(isLogin);
-  const { isLogin } = userStore();
+  const [pageLoading, setPageLoading] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const { isLogin, userToken } = userStore();
 
   const navigation = useNavigation();
 
@@ -40,6 +46,47 @@ export default function HomeScreen() {
       setRefreshing(false);
     }, 1000);
   }, []);
+
+  const fetchData = async () => {
+    setPageLoading(true);
+    const clubData = await axios.get(
+      `${API_URL}/api/meetings?start=0&end=10&sort=${selectedSort}`,
+      {
+        headers: {
+          "Content-Type": `application/json`,
+          Authorization: "Bearer " + `${userToken}`,
+        },
+      }
+    );
+    setClubList(clubData.data);
+    setPageLoading(false);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [selectedSort]);
+
+  const getData = async () => {
+    const result = await axios.get(
+      `${API_URL}/api/meetings?start=0&end=${
+        (page + 1) * 10
+      }&sort=${selectedSort}}`
+    );
+
+    if (result.data.size === clubList.length) {
+      setLoading(false);
+      return;
+    }
+
+    setClubList({ ...clubList, ...result.data });
+    setPage(page + 1);
+    setLoading(false);
+  };
+  const onEndReached = () => {
+    if (!loading) {
+      getData();
+    }
+  };
 
   return (
     <PaperProvider>
@@ -51,29 +98,62 @@ export default function HomeScreen() {
         <Header />
 
         <View style={{ flex: 7 }}>
-          <ScrollView
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-            style={{ flex: 1 }}
-          >
-            <View style={styles.homeScreenCategory}>
-              <Text style={styles.homeScreenCategoryText}>카테고리 별로</Text>
-              <Text style={styles.homeScreenCategoryText}>확인해 보세요!</Text>
-              <HomeCategory />
+          {pageLoading ? (
+            <ActivityIndicator />
+          ) : clubList.number_of_elements !== 0 ? (
+            <FlatList
+              onEndReached={onEndReached}
+              onEndReachedThreshold={0.6}
+              disableVirtualization={false}
+              ListFooterComponent={loading && <ActivityIndicator />}
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }
+              style={{ flex: 7 }}
+              data={[{ key: "category" }, { key: "sort" }, { key: "content" }]} // Dummy data for rendering different sections
+              renderItem={({ item }) => (
+                <View>
+                  {item.key === "category" && (
+                    <View style={styles.homeScreenCategory}>
+                      <Text style={styles.homeScreenCategoryText}>
+                        카테고리 별로
+                      </Text>
+                      <Text style={styles.homeScreenCategoryText}>
+                        확인해 보세요!
+                      </Text>
+                      <HomeCategory />
+                    </View>
+                  )}
+                  {item.key === "sort" && (
+                    <View style={styles.homeScreenSort}>
+                      <Dropdown
+                        dropDownItem={sort}
+                        setData={setSelectedSort}
+                        label="정렬 선택"
+                        widthProps={150}
+                      />
+                    </View>
+                  )}
+                  {item.key === "content" && (
+                    <View style={styles.homeScreenContent}>
+                      <HomeContent clubList={clubList} />
+                    </View>
+                  )}
+                </View>
+              )}
+            />
+          ) : (
+            <View
+              style={{
+                ...theme.centerStyle,
+                flex: 1,
+              }}
+            >
+              <Text style={{ fontSize: 16, color: "gray" }}>
+                {`아직 모임이 없어요. 새로운 모임을 만들어보세요!`}
+              </Text>
             </View>
-            <View style={styles.homeScreenSort}>
-              <Dropdown
-                dropDownItem={sort}
-                setData={setSelectedSort}
-                label="정렬 선택"
-                widthProps={150}
-              />
-            </View>
-            <View style={styles.homeScreenContent}>
-              <HomeContent selectedSort={selectedSort} />
-            </View>
-          </ScrollView>
+          )}
         </View>
         <FAB
           style={styles.fab}
