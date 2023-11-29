@@ -15,7 +15,7 @@ export default function ClubCard({ clubData }) {
         <View style={styles.cardCoverContainer}>
           <Card.Cover
             style={styles.cardImageStyle}
-            source={clubData.thumbnail_url}
+            source={{ uri: clubData.thumbnail_url }}
           />
         </View>
         <View style={styles.cardContentStyle}>

@@ -10,13 +10,15 @@ import theme from "../styles/theme";
 
 import { useRoute } from "@react-navigation/core";
 import { useState, useEffect } from "react";
-import LoginModal from "../modals/LoginModal/LoginModal";
+
 import modalHandleStore from "../store/modalHandleStore";
-import { PaperProvider } from "react-native-paper";
-export default function Header({ isLogin }) {
+import userStore from "../store/userStore";
+
+export default function Header() {
   const [logoName, setLogoName] = useState("");
   const route = useRoute();
   const navigation = useNavigation();
+  const { isLogin } = userStore();
   const { loginModal, setLoginModal } = modalHandleStore();
 
   useEffect(() => {

@@ -24,11 +24,13 @@ import Dropdown from "../../components/Dropdown";
 import { sort } from "../../utils/StaticData";
 import LoginModal from "../../modals/LoginModal/LoginModal";
 import userStore from "../../store/userStore";
-export default function HomeScreen({ isLogin }) {
+
+export default function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedSort, setSelectedSort] = useState(sort[0]);
   const [loginStatus, setLoginStatus] = useState(isLogin);
+  const { isLogin } = userStore();
 
   const navigation = useNavigation();
 
@@ -46,7 +48,7 @@ export default function HomeScreen({ isLogin }) {
           style={{ flex: theme.headerSpace, backgroundColor: theme.psColor }}
         ></View>
 
-        <Header isLogin={isLogin} />
+        <Header />
 
         <View style={{ flex: 7 }}>
           <ScrollView
@@ -97,9 +99,7 @@ export default function HomeScreen({ isLogin }) {
             <View style={styles.modalView}>
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate("CreateClubPostPage", {
-                    isLogin: loginStatus,
-                  });
+                  navigation.navigate("CreateClubPostPage");
                   setModalVisible(false);
                 }}
                 hitSlop={{ top: 32, bottom: 32, left: 32, right: 32 }}

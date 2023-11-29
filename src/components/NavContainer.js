@@ -17,6 +17,7 @@ import RandomPage from "../pages/Random/RandomScreen";
 import ProfilePage from "../pages/Profile/ProfilePage";
 import ChatScreen from "../pages/Chat/ChatScreen";
 import LoginModal from "../modals/LoginModal/LoginModal";
+import userStore from "../store/userStore";
 
 const homeName = "홈";
 const randomName = "랜덤";
@@ -27,8 +28,8 @@ const Tab = createMaterialBottomTabNavigator();
 
 export default function NavContainer({ route }) {
   const custheme = useTheme();
-  const [isLogin, setIsLogin] = useState(route.params.isLogin);
-
+  // const [isLogin, setIsLogin] = useState(route.params.isLogin);
+  const { isLogin } = userStore();
   useEffect(() => {
     console.log(`로그인 되어있나? ${isLogin}`);
   }, [isLogin]);
@@ -66,14 +67,10 @@ export default function NavContainer({ route }) {
           },
         })}
       >
-        <Tab.Screen name={homeName}>
-          {() => <HomeScreen isLogin={isLogin} />}
-        </Tab.Screen>
+        <Tab.Screen name={homeName} component={HomeScreen} />
         <Tab.Screen name={chatName} component={ChatScreen} />
         <Tab.Screen name={randomName} component={RandomPage} />
-        <Tab.Screen name={profileName}>
-          {() => <ProfilePage isLogin={isLogin} />}
-        </Tab.Screen>
+        <Tab.Screen name={profileName} component={ProfilePage} />
       </Tab.Navigator>
     </PaperProvider>
   );
