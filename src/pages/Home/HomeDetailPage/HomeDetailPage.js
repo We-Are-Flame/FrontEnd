@@ -285,7 +285,10 @@ export default function HomeDetailPage({ route }) {
             </View>
 
             <View style={styles.homeDetailMap}>
-              <GoogleMap />
+              <GoogleMap
+                latitude={detailData.location.latitude}
+                longitude={detailData.location.longitude}
+              />
             </View>
 
             <View
