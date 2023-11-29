@@ -13,7 +13,10 @@ export default function ClubCard({ clubData }) {
     <Card style={styles.manageCard}>
       <View style={{ flexDirection: "row", ...theme.centerStyle }}>
         <View style={styles.cardCoverContainer}>
-          <Card.Cover style={styles.cardImageStyle} source={ClubImg} />
+          <Card.Cover
+            style={styles.cardImageStyle}
+            source={clubData.thumbnail_url}
+          />
         </View>
         <View style={styles.cardContentStyle}>
           <View
@@ -30,7 +33,7 @@ export default function ClubCard({ clubData }) {
                 fontWeight: "400",
               }}
             >
-              {clubData.location}
+              {clubData.location.location}
             </Text>
             <View
               style={{
@@ -43,10 +46,12 @@ export default function ClubCard({ clubData }) {
           </View>
 
           <Text style={{ flex: 1, fontWeight: "600", fontSize: 16 }}>
-            {clubData.clubName}
+            {clubData.info.title}
           </Text>
 
-          <Text style={{ flex: 1, fontSize: 14 }}>{clubData.time}</Text>
+          <Text style={{ flex: 1, fontSize: 14 }}>
+            {clubData.time.start_time}
+          </Text>
         </View>
       </View>
     </Card>

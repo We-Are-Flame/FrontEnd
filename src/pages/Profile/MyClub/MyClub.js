@@ -17,32 +17,35 @@ import ClubCard from "../ClubCard/ClubCard";
 import { API_URL } from "@env";
 import { render } from "react-dom";
 
-const FirstRoute = ({ myClubData }) => (
-  <ScrollView contentContainerStyle={{ flex: 1 }}>
-    {myClubData && myClubData.count === 0 ? (
-      <View style={styles.clubCardView}>
-        <View style={{ width: "90%" }}>
-          {myClubData.map((day, index) => (
-            <Fragment key={index}>
-              <Text style={{ ...styles.clubDate, marginTop: 20 }}>
-                {day.date}
-              </Text>
-              {day.clubs.map((club, clubIndex) => (
-                <ClubCard key={clubIndex} clubData={club} />
-              ))}
-            </Fragment>
-          ))}
+const FirstRoute = ({ myClubData }) => {
+  console.log(
+    `맞아아니야 ${myClubData} ${myClubData && myClubData.count !== 0}`
+  ); // 확인용 로그
+  return (
+    <ScrollView contentContainerStyle={{ flex: 1 }}>
+      {Object.keys(myClubData).length !== 0 && myClubData.count !== 0 ? (
+        <View style={styles.clubCardView}>
+          <View style={{ width: "90%" }}>
+            {myClubData.content.map((meeting, index) => (
+              <Fragment key={index}>
+                <Text style={{ ...styles.clubDate, marginTop: 20 }}>
+                  {meeting.time.start_time}
+                </Text>
+                <ClubCard key={index} clubData={meeting} />
+              </Fragment>
+            ))}
+          </View>
         </View>
-      </View>
-    ) : (
-      <View style={{ flex: 1, ...theme.centerStyle }}>
-        <Text style={{ fontSize: 16, color: "lightgray" }}>
-          생성한 모임이 없습니다.
-        </Text>
-      </View>
-    )}
-  </ScrollView>
-);
+      ) : (
+        <View style={{ flex: 1, ...theme.centerStyle }}>
+          <Text style={{ fontSize: 16, color: "lightgray" }}>
+            생성한 모임이 없습니다.
+          </Text>
+        </View>
+      )}
+    </ScrollView>
+  );
+};
 
 const SecondRoute = ({ meetings }) => (
   <ScrollView contentContainerStyle={{ flex: 1 }}>
@@ -54,10 +57,10 @@ const SecondRoute = ({ meetings }) => (
   </ScrollView>
 );
 
-const renderScene = SceneMap({
-  first: FirstRoute,
-  second: SecondRoute,
-});
+// const renderScene = SceneMap({
+//   first: FirstRoute,
+//   second: SecondRoute,
+// });
 
 const renderTabBar = (props) => (
   <TabBar
@@ -69,6 +72,16 @@ const renderTabBar = (props) => (
 );
 
 export default function MyClub({ myClubData }) {
+  const renderScene = ({ route, jumpTo, myClubData }) => {
+    switch (route.key) {
+      case "first":
+        return <FirstRoute jumpTo={jumpTo} myClubData={myClubData} />;
+      case "second":
+        return <SecondRoute jumpTo={jumpTo} />;
+      default:
+        return null;
+    }
+  };
   const [index, setIndex] = useState(0);
   const [routes] = useState([
     { key: "first", title: "내가 생성한 모임" },
