@@ -18,9 +18,6 @@ import { API_URL } from "@env";
 import { render } from "react-dom";
 
 const FirstRoute = ({ myClubData }) => {
-  console.log(
-    `맞아아니야 ${myClubData} ${myClubData && myClubData.count !== 0}`
-  ); // 확인용 로그
   return (
     <ScrollView contentContainerStyle={{ flex: 1 }}>
       {Object.keys(myClubData).length !== 0 && myClubData.count !== 0 ? (

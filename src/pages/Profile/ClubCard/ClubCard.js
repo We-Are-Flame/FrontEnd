@@ -3,14 +3,24 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
 import theme from "../../../styles/theme";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import ClubImg from "../../../../assets/dummyImage.jpg";
+import { useNavigation } from "@react-navigation/core";
+
 import { Button, Card } from "react-native-paper";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-
+import userStore from "../../../store/userStore";
 export default function ClubCard({ clubData }) {
+  const { userData } = userStore();
+  const navigation = useNavigation();
   return (
-    <Card style={styles.manageCard}>
+    <Card
+      onPress={() => {
+        navigation.navigate("HomeDetailPage", {
+          id: clubData.id,
+          hostName: userData.nickname,
+        });
+      }}
+      style={styles.manageCard}
+    >
       <View style={{ flexDirection: "row", ...theme.centerStyle }}>
         <View style={styles.cardCoverContainer}>
           <Card.Cover
