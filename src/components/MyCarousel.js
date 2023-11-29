@@ -36,8 +36,6 @@ const styles = StyleSheet.create({
   imageView:{
     justifyContent:"center",
     alignItems:"center",
-    borderWidth:1,
-    borderColor:"#000000",
     borderRadius:10,
   }
 });

@@ -76,17 +76,18 @@ export default function CreateClubPostPage({ route }) {
         ],
         { cancelable: false }
       );
+      return;
     }
-    if (!validateTitle(title)) {
-      Alert.alert(
-        "글쓰기 오류",
-        `모임 명은 특수문자를 제한합니다.`,
-        [
-          { text: "확인", onPress: () => console.log("확인됨") },
-        ],
-        { cancelable: false }
-      );
-    }
+    // if (!validateTitle(title)) {
+    //   Alert.alert(
+    //     "글쓰기 오류",
+    //     `모임 명은 특수문자를 제한합니다.`,
+    //     [
+    //       { text: "확인", onPress: () => console.log("확인됨") },
+    //     ],
+    //     { cancelable: false }
+    //   );
+    // }
     if (categoryData === "") missingFields.push("카테고리");
     if (people === "") missingFields.push("인원");
     if(people < 1){
@@ -98,11 +99,13 @@ export default function CreateClubPostPage({ route }) {
         ],
         { cancelable: false }
       );
+      return;
     }
     const now = new Date(); // 현재 시간을 나타내는 Date 객체 생성
     const startDate = new Date(sDate); // sDate를 Date 객체로 변환
+    console.log("sDate : " + sDate); //이게 잘 안나옴 sDate기 인들어갔음
 
-    if(startDate < now){
+    if(startDate < now){ //잘안됨
       Alert.alert(
         "글쓰기 오류",
         `일시는 현재 시간보다 이후여야 합니다.`,
@@ -111,9 +114,10 @@ export default function CreateClubPostPage({ route }) {
         ],
         { cancelable: false }
       );
+      return;
     }
     if (location === "") missingFields.push("위치");
-    if (location === "") missingFields.push("일시의 연");
+    if (year === "") missingFields.push("일시의 연");
     if (month === "") missingFields.push("일시의 달");
     if (day === "") missingFields.push("일시의 일");
     if (hour === "") missingFields.push("일시의 시");
@@ -207,7 +211,6 @@ export default function CreateClubPostPage({ route }) {
 
     if (!result.canceled) {
       setThumbnailImageUrl(result.assets[0].uri);
-      setActivityImages(result.assets.slice(1).map(asset => asset.uri));
       setMultipleImage(result.assets.map(asset => asset.uri));
       console.log("asserts : "+result.assets);
       try {
@@ -233,7 +236,16 @@ export default function CreateClubPostPage({ route }) {
               },
             }
           );
-          setImageUrl(res.data.image_list[0].image_url);
+          console.log(res.data);
+          if(i===0){
+            setImageUrl(res.data.image_list[0].image_url);
+          }
+          else{
+            setActivityImages((preActivityImages) => [
+              ...preActivityImages,
+              res.data.image_list[0].image_url
+            ]);
+          }
           console.log(res.data.image_list[0].presigned_url);
           console.log(res.data.image_list[0].image_url);
 
@@ -287,6 +299,7 @@ export default function CreateClubPostPage({ route }) {
   }, [introduce]);
 
   useEffect(() => {
+    console.log(data);
     axios
       .post(`${API_URL}/api/meetings`, data, {
         headers: {
