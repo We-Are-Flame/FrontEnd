@@ -8,11 +8,11 @@ import theme from "../../../styles/theme";
 import ProfileEditModal from "../../../modals/ProfileEditModal/ProfileEditModal";
 import userStore from "../../../store/userStore";
 import modalHandleStore from "../../../store/modalHandleStore";
-export default function MyProfile({ userInfo, setUpdated }) {
-  const { profileEditModal, setProfileEditModal } = modalHandleStore();
-  const [modalVisible, setModalVisible] = useState(false);
+export default function MyProfile({ setUpdated }) {
+  const { setProfileEditModal } = modalHandleStore();
+
   const [isAuth, setIsAuth] = useState(false);
-  const { userData } = userStore();
+  const { isLogin, userData } = userStore();
 
   return (
     <View style={styles.myProfileView}>
@@ -32,24 +32,28 @@ export default function MyProfile({ userInfo, setUpdated }) {
               justifyContent: "center",
             }}
           >
-            <Text style={{ fontWeight: "bold", fontSize: 16 }}>
-              {userData.nickname}
+            <Text style={{ fontWeight: "bold", fontSize: isLogin ? 16 : 18 }}>
+              {isLogin
+                ? userData.nickname
+                : `로그인 후 다양한\n모임에 참여해보세요!`}
             </Text>
           </View>
         </View>
       </View>
       <View style={styles.myProfileViewBottom}>
         <View style={styles.myProfileEdit}>
-          <TouchableOpacity
-            style={styles.editBtn}
-            onPress={() => {
-              setProfileEditModal(true);
-            }}
-          >
-            <Text style={{ fontWeight: "bold", fontSize: 16 }}>
-              프로필 수정
-            </Text>
-          </TouchableOpacity>
+          {isLogin ? (
+            <TouchableOpacity
+              style={styles.editBtn}
+              onPress={() => {
+                setProfileEditModal(true);
+              }}
+            >
+              <Text style={{ fontWeight: "bold", fontSize: 16 }}>
+                프로필 수정
+              </Text>
+            </TouchableOpacity>
+          ) : null}
         </View>
         <View style={styles.myProfileStat}>
           <View style={{ ...styles.stateItems }}>
