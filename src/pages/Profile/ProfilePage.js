@@ -66,7 +66,6 @@ export default function ProfilePage({ isLogin }) {
           setMyClubData(mymeetings.data);
           setUserData(userInfoResponse.data);
           resetProfileUpdateStatuts();
-          setPageLoading(false);
         } else {
           console.log("유효하지 않은 토큰", tokenValidationResponse.status);
         }
@@ -74,6 +73,7 @@ export default function ProfilePage({ isLogin }) {
     } catch (error) {
       console.error("Error:", error);
     }
+    setPageLoading(false);
   };
 
   const updateProfileStatus = () => {
