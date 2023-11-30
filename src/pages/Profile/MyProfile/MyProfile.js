@@ -6,24 +6,21 @@ import { Image } from "expo-image";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import theme from "../../../styles/theme";
 import ProfileEditModal from "../../../modals/ProfileEditModal/ProfileEditModal";
+import userStore from "../../../store/userStore";
+import modalHandleStore from "../../../store/modalHandleStore";
+export default function MyProfile({ setUpdated }) {
+  const { setProfileEditModal } = modalHandleStore();
 
-export default function MyProfile({ userInfo, setUpdated }) {
-  const [modalVisible, setModalVisible] = useState(false);
   const [isAuth, setIsAuth] = useState(false);
+  const { isLogin, userData } = userStore();
 
-  const showModal = () => {
-    setModalVisible(true);
-  };
-  const hideModal = () => {
-    setModalVisible(false);
-  };
   return (
     <View style={styles.myProfileView}>
       <View style={styles.myProfileViewTop}>
         <View style={styles.myProfileImgContainer}>
           <Image
             style={styles.image}
-            source={userInfo.profile_image}
+            source={userData.profile_image}
             contentFit="cover"
           />
         </View>
@@ -35,31 +32,40 @@ export default function MyProfile({ userInfo, setUpdated }) {
               justifyContent: "center",
             }}
           >
-            <Text style={{ fontWeight: "bold", fontSize: 16 }}>
-              {userInfo.nickname}
+            <Text style={{ fontWeight: "bold", fontSize: isLogin ? 16 : 18 }}>
+              {isLogin
+                ? userData.nickname
+                : `로그인 후 다양한\n모임에 참여해보세요!`}
             </Text>
           </View>
         </View>
       </View>
       <View style={styles.myProfileViewBottom}>
         <View style={styles.myProfileEdit}>
-          <TouchableOpacity style={styles.editBtn} onPress={showModal}>
-            <Text style={{ fontWeight: "bold", fontSize: 16 }}>
-              프로필 수정
-            </Text>
-          </TouchableOpacity>
+          {isLogin ? (
+            <TouchableOpacity
+              style={styles.editBtn}
+              onPress={() => {
+                setProfileEditModal(true);
+              }}
+            >
+              <Text style={{ fontWeight: "bold", fontSize: 16 }}>
+                프로필 수정
+              </Text>
+            </TouchableOpacity>
+          ) : null}
         </View>
         <View style={styles.myProfileStat}>
           <View style={{ ...styles.stateItems }}>
             <Text>나의 모임</Text>
             <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-              {userInfo.my_meetings} 개
+              {userData.my_meetings} 개
             </Text>
           </View>
           <View style={styles.stateItems}>
             <Text>불꽃온도</Text>
             <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-              {userInfo.temperature} º
+              {userData.temperature} º
             </Text>
           </View>
           <View style={{ ...styles.stateItems, borderRightWidth: 0 }}>
@@ -76,12 +82,7 @@ export default function MyProfile({ userInfo, setUpdated }) {
           </View>
         </View>
       </View>
-      <ProfileEditModal
-        userInfo={userInfo}
-        visible={modalVisible}
-        hideModal={hideModal}
-        setUpdated={setUpdated}
-      />
+      <ProfileEditModal setUpdated={setUpdated} />
     </View>
   );
 }

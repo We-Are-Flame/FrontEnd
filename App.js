@@ -53,7 +53,13 @@ export default function App() {
         <Stack.Screen
           name="KaKaoLogin"
           component={KaKaoLogin}
-          options={{ gestureEnabled: false }}
+          options={{
+            gestureEnabled: false,
+            headerShown: true,
+            title: "",
+            headerBackTitle: " ",
+            headerTintColor: "black",
+          }}
         />
         <Stack.Screen
           name="ClubManagePage"

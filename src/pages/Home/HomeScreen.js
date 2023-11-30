@@ -10,24 +10,33 @@ import {
   Modal,
   TouchableOpacity,
   Alert,
+  FlatList,
 } from "react-native";
+import axios from "axios";
 import { useState, useCallback, useEffect } from "react";
-import { FAB } from "react-native-paper";
+import { FAB, PaperProvider } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
-
 import theme from "../../styles/theme";
 import Header from "../../components/Header";
 import HomeContent from "./HomeContent/HomeContent";
 import HomeCategory from "./HomeCategory/HomeCategory";
 import Dropdown from "../../components/Dropdown";
 import { sort } from "../../utils/StaticData";
+import LoginModal from "../../modals/LoginModal/LoginModal";
 import userStore from "../../store/userStore";
-export default function HomeScreen({ isLogin }) {
+import { API_URL } from "@env";
+import { ActivityIndicator } from "react-native";
+
+export default function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [page, setPage] = useState(1);
+  const [clubList, setClubList] = useState({});
   const [selectedSort, setSelectedSort] = useState(sort[0]);
-  const [loginStatus, setLoginStatus] = useState(isLogin);
+  const [pageLoading, setPageLoading] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const { isLogin, userToken } = userStore();
 
   const navigation = useNavigation();
 
@@ -38,77 +47,152 @@ export default function HomeScreen({ isLogin }) {
     }, 1000);
   }, []);
 
+  const fetchData = async () => {
+    setPageLoading(true);
+    const clubData = await axios.get(
+      `${API_URL}/api/meetings?start=0&end=10&sort=${selectedSort}`,
+      {
+        headers: {
+          "Content-Type": `application/json`,
+          Authorization: "Bearer " + `${userToken}`,
+        },
+      }
+    );
+    setClubList(clubData.data);
+    setPageLoading(false);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [selectedSort]);
+
+  const getData = async () => {
+    const result = await axios.get(
+      `${API_URL}/api/meetings?start=0&end=${
+        (page + 1) * 10
+      }&sort=${selectedSort}}`
+    );
+
+    if (result.data.size === clubList.length) {
+      setLoading(false);
+      return;
+    }
+
+    setClubList({ ...clubList, ...result.data });
+    setPage(page + 1);
+    setLoading(false);
+  };
+  const onEndReached = () => {
+    if (!loading) {
+      getData();
+    }
+  };
+
   return (
-    <View style={styles.homeScreenView}>
-      <View
-        style={{ flex: theme.headerSpace, backgroundColor: theme.psColor }}
-      ></View>
+    <PaperProvider>
+      <View style={styles.homeScreenView}>
+        <View
+          style={{ flex: theme.headerSpace, backgroundColor: theme.psColor }}
+        ></View>
 
-      <Header isLogin={isLogin} />
+        <Header />
 
-      <View style={{ flex: 7 }}>
-        <ScrollView
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-          style={{ flex: 1 }}
-        >
-          <View style={styles.homeScreenCategory}>
-            <Text style={styles.homeScreenCategoryText}>카테고리 별로</Text>
-            <Text style={styles.homeScreenCategoryText}>확인해 보세요!</Text>
-            <HomeCategory />
-          </View>
-          <View style={styles.homeScreenSort}>
-            <Dropdown
-              dropDownItem={sort}
-              setData={setSelectedSort}
-              label="정렬 선택"
-              widthProps={150}
+        <View style={{ flex: 7 }}>
+          {pageLoading ? (
+            <View style={{ flex: 1, ...theme.centerStyle }}>
+              <ActivityIndicator size="large" color="black" />
+            </View>
+          ) : clubList.number_of_elements !== 0 ? (
+            <FlatList
+              onEndReached={onEndReached}
+              onEndReachedThreshold={0.6}
+              disableVirtualization={false}
+              ListFooterComponent={loading && <ActivityIndicator />}
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }
+              style={{ flex: 7 }}
+              data={[{ key: "category" }, { key: "sort" }, { key: "content" }]} // Dummy data for rendering different sections
+              renderItem={({ item }) => (
+                <View>
+                  {item.key === "category" && (
+                    <View style={styles.homeScreenCategory}>
+                      <Text style={styles.homeScreenCategoryText}>
+                        카테고리 별로
+                      </Text>
+                      <Text style={styles.homeScreenCategoryText}>
+                        확인해 보세요!
+                      </Text>
+                      <HomeCategory />
+                    </View>
+                  )}
+                  {item.key === "sort" && (
+                    <View style={styles.homeScreenSort}>
+                      <Dropdown
+                        dropDownItem={sort}
+                        setData={setSelectedSort}
+                        label="정렬 선택"
+                        widthProps={150}
+                      />
+                    </View>
+                  )}
+                  {item.key === "content" && (
+                    <View style={styles.homeScreenContent}>
+                      <HomeContent clubList={clubList} />
+                    </View>
+                  )}
+                </View>
+              )}
             />
-          </View>
-          <View style={styles.homeScreenContent}>
-            <HomeContent selectedSort={selectedSort} />
-          </View>
-        </ScrollView>
-      </View>
-      <FAB
-        style={styles.fab}
-        icon="plus"
-        color="#ffffff"
-        onPress={() => setModalVisible(!modalVisible)} // 'Pressed' 대신에 모달을 열도록 변경
-      />
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}
-      >
-        <TouchableOpacity
-          style={styles.modalOverlay}
-          activeOpacity={1}
-          onPress={() => setModalVisible(!modalVisible)} // 이 부분이 모달 외부를 눌렀을 때 닫히도록 함
-        >
-          <Text style={styles.modalText}>모임 만들기</Text>
-
-          <View style={styles.modalView}>
-            {/* 모달 내용 */}
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate("CreateClubPostPage", {
-                  isLogin: loginStatus,
-                });
-                setModalVisible(false);
+          ) : (
+            <View
+              style={{
+                ...theme.centerStyle,
+                flex: 1,
               }}
-              hitSlop={{ top: 32, bottom: 32, left: 32, right: 32 }}
             >
-              <Ionicons name="baseball-outline" size={24} color="black" />
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-      </Modal>
-    </View>
+              <Text style={{ fontSize: 16, color: "gray" }}>
+                {`아직 모임이 없어요. 새로운 모임을 만들어보세요!`}
+              </Text>
+            </View>
+          )}
+        </View>
+        <FAB
+          style={styles.fab}
+          icon="plus"
+          color="#ffffff"
+          onPress={() => setModalVisible(!modalVisible)} // 'Pressed' 대신에 모달을 열도록 변경
+        />
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(!modalVisible);
+          }}
+        >
+          <TouchableOpacity
+            style={styles.modalOverlay}
+            activeOpacity={1}
+            onPress={() => setModalVisible(!modalVisible)} // 이 부분이 모달 외부를 눌렀을 때 닫히도록 함
+          >
+            <Text style={styles.modalText}>모임 만들기</Text>
+
+            <View style={styles.modalView}>
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate("CreateClubPostPage");
+                  setModalVisible(false);
+                }}
+                hitSlop={{ top: 32, bottom: 32, left: 32, right: 32 }}
+              >
+                <Ionicons name="baseball-outline" size={24} color="black" />
+              </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
+        </Modal>
+      </View>
+    </PaperProvider>
   );
 }
 

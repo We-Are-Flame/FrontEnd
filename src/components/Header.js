@@ -11,12 +11,15 @@ import theme from "../styles/theme";
 import { useRoute } from "@react-navigation/core";
 import { useState, useEffect } from "react";
 
-export default function Header({ isLogin }) {
-  // const [isLogin, setIsLogin] = useState(true);
-  // const [isLogin, setIsLogin] = useState(false);
+import modalHandleStore from "../store/modalHandleStore";
+import userStore from "../store/userStore";
+
+export default function Header() {
   const [logoName, setLogoName] = useState("");
   const route = useRoute();
   const navigation = useNavigation();
+  const { isLogin } = userStore();
+  const { loginModal, setLoginModal } = modalHandleStore();
 
   useEffect(() => {
     console.log(route.name);
@@ -36,7 +39,12 @@ export default function Header({ isLogin }) {
           ) : (
             <View style={{ flex: 0.5 }} />
           )}
-          <TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => {
+              setLoginModal(true);
+            }}
+          >
             <View
               style={{
                 backgroundColor: "white",
