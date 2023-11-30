@@ -23,8 +23,8 @@ import {
 import { Entypo } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/core";
 import axios from "axios";
-import { Stomp } from '@stomp/stompjs';
-import SockJS from 'sockjs-client/dist/sockjs';
+import { Stomp } from "@stomp/stompjs";
+import SockJS from "sockjs-client/dist/sockjs";
 
 import { API_URL } from "@env";
 import Dropdown from "../../../components/Dropdown";
@@ -55,9 +55,9 @@ export default function CreateClubPostPage({ route }) {
   const [categoryData, setCategoryData] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [thumbnailImageUrl, setThumbnailImageUrl] = useState("");
-  const [activityImages,setActivityImages] = useState([]);
+  const [activityImages, setActivityImages] = useState([]);
   const [imageUrl, setImageUrl] = useState("");
-  const [multipleImage,setMultipleImage] = useState([]);
+  const [multipleImage, setMultipleImage] = useState([]);
   const [data, setData] = useState({});
   const [latitude, setLatitude] = useState(0);
   const [longitude, setLongitude] = useState(0);
@@ -69,13 +69,11 @@ export default function CreateClubPostPage({ route }) {
   const submitPost = () => {
     let missingFields = [];
     if (title === "") missingFields.push("모임명");
-    if(title.length > 7) {
+    if (title.length > 7) {
       Alert.alert(
         "글쓰기 오류",
         `모임 명은 8글자 미만입니다.`,
-        [
-          { text: "확인", onPress: () => console.log("확인됨") },
-        ],
+        [{ text: "확인", onPress: () => console.log("확인됨") }],
         { cancelable: false }
       );
       return;
@@ -92,13 +90,11 @@ export default function CreateClubPostPage({ route }) {
     // }
     if (categoryData === "") missingFields.push("카테고리");
     if (people === "") missingFields.push("인원");
-    if(people < 1){
+    if (people < 1) {
       Alert.alert(
         "글쓰기 오류",
         `인원이 너무 적습니다.`,
-        [
-          { text: "확인", onPress: () => console.log("확인됨") },
-        ],
+        [{ text: "확인", onPress: () => console.log("확인됨") }],
         { cancelable: false }
       );
       return;
@@ -107,13 +103,12 @@ export default function CreateClubPostPage({ route }) {
     const startDate = new Date(sDate); // sDate를 Date 객체로 변환
     console.log("sDate : " + sDate); //이게 잘 안나옴 sDate기 인들어갔음
 
-    if(startDate < now){ //잘안됨
+    if (startDate < now) {
+      //잘안됨
       Alert.alert(
         "글쓰기 오류",
         `일시는 현재 시간보다 이후여야 합니다.`,
-        [
-          { text: "확인", onPress: () => console.log("확인됨") },
-        ],
+        [{ text: "확인", onPress: () => console.log("확인됨") }],
         { cancelable: false }
       );
       return;
@@ -129,12 +124,10 @@ export default function CreateClubPostPage({ route }) {
       Alert.alert(
         "글쓰기 오류",
         `${missingFields.join(", ")}를 추가해주세요.`,
-        [
-          { text: "확인", onPress: () => console.log("확인됨") },
-        ],
+        [{ text: "확인", onPress: () => console.log("확인됨") }],
         { cancelable: false }
       );
-    }else{
+    } else {
       setData({
         // alarm: alarm,
         category: categoryData,
@@ -198,30 +191,31 @@ export default function CreateClubPostPage({ route }) {
   //채팅방 소켓 연결
   function onConnected(room_id) {
     let roomId = room_id; //post할때 response값
-    let username = '이태헌'; //유저 닉네임
-    stompClient.subscribe('/sub/chat/room/' + roomId, onMessageReceived);
+    let username = "이태헌"; //유저 닉네임
+    stompClient.subscribe("/sub/chat/room/" + roomId, onMessageReceived);
 
-    stompClient.send("/pub/chat/enterUser",
+    stompClient.send(
+      "/pub/chat/enterUser",
       {},
       JSON.stringify({
-        "roomId": roomId,
+        roomId: roomId,
         sender: username,
         senderId: 2,
-        message: username + '님이 입장하셨습니다.',
+        message: username + "님이 입장하셨습니다.",
         time: new Date(),
-        messageType: 'ENTER'
+        messageType: "ENTER",
       })
-    )
-  };
+    );
+  }
 
   async function onMessageReceived(payload) {
     let chat = await JSON.parse(payload.body);
     console.log(chat.message);
-  };
+  }
 
-  const TextEncodingPolyfill = require('text-encoding');
+  const TextEncodingPolyfill = require("text-encoding");
 
-  Object.assign('global', {
+  Object.assign("global", {
     TextEncoder: TextEncodingPolyfill.TextEncoder,
     TextDecoder: TextEncodingPolyfill.TextDecoder,
   });
@@ -244,10 +238,10 @@ export default function CreateClubPostPage({ route }) {
 
     if (!result.canceled) {
       setThumbnailImageUrl(result.assets[0].uri);
-      setMultipleImage(result.assets.map(asset => asset.uri));
-      console.log("asserts : "+result.assets);
+      setMultipleImage(result.assets.map((asset) => asset.uri));
+      console.log("asserts : " + result.assets);
       try {
-        for(let i=0; i<result.assets.length; i++){
+        for (let i = 0; i < result.assets.length; i++) {
           // 마지막 '.'의 위치를 찾기
           const lastIndex = result.assets[i].uri.lastIndexOf(".");
           // '.' 이후의 문자열(확장자)를 추출
@@ -270,13 +264,12 @@ export default function CreateClubPostPage({ route }) {
             }
           );
           console.log(res.data);
-          if(i===0){
+          if (i === 0) {
             setImageUrl(res.data.image_list[0].image_url);
-          }
-          else{
+          } else {
             setActivityImages((preActivityImages) => [
               ...preActivityImages,
-              res.data.image_list[0].image_url
+              res.data.image_list[0].image_url,
             ]);
           }
           console.log(res.data.image_list[0].presigned_url);
@@ -342,22 +335,29 @@ export default function CreateClubPostPage({ route }) {
       })
       .then((res) => {
         console.log(res.data);
-        axios.post(`${API_URL}/api/chat/room`,{
-          meeting_id:res.data.id,
-          room_name:title
-        },{
-          headers: {
-            "Content-Type": `application/json`,
-            Authorization: "Bearer " + `${userToken}`,
-          }}
-        ).then((res)=>{
-          console.log(res.data);
-          stompClient = Stomp.over(function(){
-            return new SockJS("http://118.67.128.48/ws-stomp");
-          });
-          stompClient.connect({}, ()=>onConnected(res.roomId), {});
-          navigation.replace("Home");
-        }).catch((err)=>console.log(err))
+        axios
+          .post(
+            `${API_URL}/api/chat/room`,
+            {
+              meeting_id: res.data.id,
+              room_name: title,
+            },
+            {
+              headers: {
+                "Content-Type": `application/json`,
+                Authorization: "Bearer " + `${userToken}`,
+              },
+            }
+          )
+          .then((res) => {
+            console.log(res.data);
+            stompClient = Stomp.over(function () {
+              return new SockJS("http://118.67.128.48/ws-stomp");
+            });
+            stompClient.connect({}, () => onConnected(res.roomId), {});
+            navigation.replace("Home");
+          })
+          .catch((err) => console.log(err));
       })
       .catch((err) => {
         console.log(err);
@@ -375,24 +375,24 @@ export default function CreateClubPostPage({ route }) {
     }
 
     return result;
-  };
+  }
 
   function getDaysArray(year, month) {
     const firstDay = new Date(year, month - 1, 1);
     const lastDay = new Date(year, month, 0);
-  
+
     // 해당 월의 일수 계산
     const numDaysInMonth = lastDay.getDate();
-  
+
     // 해당 월의 모든 일자를 담을 배열 생성
     const daysArray = [];
-  
+
     for (let day = 1; day <= numDaysInMonth; day++) {
       daysArray.push(day);
     }
-  
+
     return daysArray;
-  };
+  }
 
   // 위치 등록하는 hook 만약 parmas가 없다면 빈문자
   useEffect(() => {
@@ -413,46 +413,51 @@ export default function CreateClubPostPage({ route }) {
     if (!year || !month || !day || !hour || !min || !time) {
       return;
     }
-  
+
     // Date 객체를 생성합니다. 월은 0부터 시작하므로 1을 빼줍니다.
-    let startDate = new Date(year, parseInt(month, 10) - 1, parseInt(day, 10), parseInt(hour, 10)+9, parseInt(min, 10));
+    let startDate = new Date(
+      year,
+      parseInt(month, 10) - 1,
+      parseInt(day, 10),
+      parseInt(hour, 10) + 9,
+      parseInt(min, 10)
+    );
     console.log(startDate);
     // 종료 시간을 계산하기 위해, 시작 시간에 시간을 더합니다.
     let endDate = new Date(startDate);
     endDate.setHours(startDate.getHours() + extractNumberFromString(time));
-  
+
     // ISO 문자열 형식으로 변환합니다.
     setSDate(startDate.toISOString());
     setEDate(endDate.toISOString());
   }, [year, month, day, hour, min, time]);
-  
 
   return (
     <View style={styles.createClubPostPageView}>
       <ScrollView
         style={{ borderTopColor: "#cccccc", borderTopWidth: 1, padding: 16 }}
       >
-        <View style={{flexDirection:"row"}}>
+        <View style={{ flexDirection: "row" }}>
           <Text style={styles.createPageLabel}>활동사진</Text>
-          <Text style={{fontSize:12,marginLeft:5,color:"#aaaaaa"}}>첫 번째로 선택 된 사진은 썸네일이 됩니다.</Text>
+          <Text style={{ fontSize: 12, marginLeft: 5, color: "#aaaaaa" }}>
+            첫 번째로 선택 된 사진은 썸네일이 됩니다.
+          </Text>
         </View>
         <View style={styles.imageContainer}>
           <Pressable onPress={uploadImage}>
             <View style={{ position: "relative" }}>
               <View style={styles.imageWrapper}>
-                {
-                  multipleImage.map((image,index)=>{
-                    return (
-                      <ImageViewer
-                        placeholderImageSource={kitchingLogo}
-                        selectedImage={image}
-                        widthProps="80%"
-                        heightProps="80%"
-                        key={index}
-                      />
-                    )
-                  })
-                }
+                {multipleImage.map((image, index) => {
+                  return (
+                    <ImageViewer
+                      placeholderImageSource={kitchingLogo}
+                      selectedImage={image}
+                      widthProps="80%"
+                      heightProps="80%"
+                      key={index}
+                    />
+                  );
+                })}
               </View>
               <View style={styles.iconContainer}>
                 <Entypo name="camera" size={17} color="black" />
@@ -467,12 +472,52 @@ export default function CreateClubPostPage({ route }) {
           label="카테고리를 선택해주세요"
         />
         <Text style={styles.createPageLabel}>일시</Text>
-        <ScrollView style={{flexDirection:"row", flex: 1 }}>
-          <Dropdown dropDownItem={["2023","2024","2025"]} setData={setYear} label="연도" widthProps={(Dimensions.get("window").width)/3} />
-          <Dropdown dropDownItem={["01","02","03","04","05","06","07","08","09","10","11","12"]} setData={setMonth} label="월" widthProps={(Dimensions.get("window").width)/3} />
-          <Dropdown dropDownItem={getDaysArray(year,month).map(day => day.toString())} setData={setDay} label="일" widthProps={(Dimensions.get("window").width)/3} />
-          <Dropdown dropDownItem={Array.from({ length: 24 }, (_, i) => (i).toString())} setData={setHour} label="시" widthProps={(Dimensions.get("window").width)/3} />
-          <Dropdown dropDownItem={Array.from({ length: 60 }, (_, i) => (i).toString())} setData={setMin} label="분" widthProps={(Dimensions.get("window").width)/3} />
+        <ScrollView style={{ flexDirection: "row", flex: 1 }}>
+          <Dropdown
+            dropDownItem={["2023", "2024", "2025"]}
+            setData={setYear}
+            label="연도"
+            widthProps={Dimensions.get("window").width / 3}
+          />
+          <Dropdown
+            dropDownItem={[
+              "01",
+              "02",
+              "03",
+              "04",
+              "05",
+              "06",
+              "07",
+              "08",
+              "09",
+              "10",
+              "11",
+              "12",
+            ]}
+            setData={setMonth}
+            label="월"
+            widthProps={Dimensions.get("window").width / 3}
+          />
+          <Dropdown
+            dropDownItem={getDaysArray(year, month).map((day) =>
+              day.toString()
+            )}
+            setData={setDay}
+            label="일"
+            widthProps={Dimensions.get("window").width / 3}
+          />
+          <Dropdown
+            dropDownItem={Array.from({ length: 24 }, (_, i) => i.toString())}
+            setData={setHour}
+            label="시"
+            widthProps={Dimensions.get("window").width / 3}
+          />
+          <Dropdown
+            dropDownItem={Array.from({ length: 60 }, (_, i) => i.toString())}
+            setData={setMin}
+            label="분"
+            widthProps={Dimensions.get("window").width / 3}
+          />
         </ScrollView>
         <Text style={styles.createPageLabel}>위치</Text>
 
@@ -678,7 +723,6 @@ const styles = StyleSheet.create({
     borderRadius: theme.screenWidth / 6,
     ...theme.centerStyle,
     overflow: "hidden",
-    flexDirection:"row",
-    
+    flexDirection: "row",
   },
 });
