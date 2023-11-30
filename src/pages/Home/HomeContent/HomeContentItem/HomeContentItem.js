@@ -108,7 +108,6 @@ export default function HomeContentItem({ state }) {
               {state.host.name}
             </Text>
           </View>
-          <AntDesign name="ellipsis1" size={24} color="black" />
         </View>
         <View style={styles.homeContentItemContent}>
           <Text style={{ fontSize: 20, fontWeight: "bold" }}>
