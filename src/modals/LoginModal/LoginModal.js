@@ -6,13 +6,17 @@ import theme from "../../styles/theme";
 import loginIcon from "../../../assets/kakao_login.png";
 import loginLarge from "../../../assets/kakao_login_large_wide.png";
 import { useNavigation } from "@react-navigation/native";
-const LoginModal = ({ visible, onDismiss }) => {
+import modalHandleStore from "../../store/modalHandleStore";
+const LoginModal = () => {
+  const { loginModal, setLoginModal } = modalHandleStore();
   const navigation = useNavigation();
   return (
     <Portal>
       <Modal
-        visible={visible}
-        onDismiss={onDismiss}
+        visible={loginModal}
+        onDismiss={() => {
+          setLoginModal(false);
+        }}
         contentContainerStyle={styles.modalContainer}
       >
         <View style={styles.modalContent}>
@@ -26,9 +30,10 @@ const LoginModal = ({ visible, onDismiss }) => {
           </View>
           <View style={styles.modalContentBottom}>
             <TouchableOpacity
-              onPress={() =>
-                navigation.navigate("KaKaoLogin", { screen: "KaKaoLogin" })
-              }
+              onPress={() => {
+                setLoginModal(false);
+                navigation.navigate("KaKaoLogin", { screen: "KaKaoLogin" });
+              }}
               style={{ width: "100%", height: "100%" }}
             >
               <Image

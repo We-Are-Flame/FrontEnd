@@ -61,7 +61,7 @@ export default function CreateClubPostPage({ route }) {
   const [data, setData] = useState({});
   const [latitude, setLatitude] = useState(0);
   const [longitude, setLongitude] = useState(0);
-  const { userToken } = userStore();
+  const { userToken, isLogin } = userStore();
   const [status, requestPermission] = useMediaLibraryPermissions();
   const navigation = useNavigation();
   const toggleSwitch = () => setAlarm((alarm) => !alarm);
@@ -356,7 +356,7 @@ export default function CreateClubPostPage({ route }) {
             return new SockJS("http://118.67.128.48/ws-stomp");
           });
           stompClient.connect({}, ()=>onConnected(res.roomId), {});
-          navigation.replace("Home", { isLogin: route.params.isLogin });
+          navigation.replace("Home");
         }).catch((err)=>console.log(err))
       })
       .catch((err) => {
@@ -480,7 +480,6 @@ export default function CreateClubPostPage({ route }) {
           onPressIn={() => {
             navigation.navigate("FindAddress", {
               screen: "FindAddress",
-              isLogin: route.params.isLogin,
             });
           }}
           editable={null}

@@ -15,17 +15,15 @@ import { useNavigation } from "@react-navigation/native";
 
 import LoginModal from "../../modals/LoginModal/LoginModal";
 import theme from "../../styles/theme";
-
+import modalHandleStore from "../../store/modalHandleStore";
 const LoginPage = () => {
-  const [visible, setVisible] = useState(false);
-  const showModal = () => setVisible(true);
-  const hideModal = () => setVisible(false);
+  const { setLoginModal } = modalHandleStore();
 
   const navigation = useNavigation();
 
   return (
     <PaperProvider>
-      <LoginModal visible={visible} onDismiss={hideModal} />
+      <LoginModal />
       <View style={styles.container}>
         <View style={styles.top}></View>
         <View style={styles.content}>
@@ -44,7 +42,12 @@ const LoginPage = () => {
         </View>
         <View style={styles.bottom}>
           <View style={styles.startContainer}>
-            <TouchableOpacity style={styles.startBtn} onPress={showModal}>
+            <TouchableOpacity
+              style={styles.startBtn}
+              onPress={() => {
+                setLoginModal(true);
+              }}
+            >
               <Text style={{ color: theme.psColor, fontWeight: "600" }}>
                 시작하기
               </Text>

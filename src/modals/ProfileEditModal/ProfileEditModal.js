@@ -23,30 +23,27 @@ import ImageViewer from "../../components/ImageViewer";
 import axios from "axios";
 import { API_URL } from "@env";
 import userStore from "../../store/userStore";
-export default function ProfileEditModal({
-  visible,
-  hideModal,
-  userInfo,
-  setUpdated,
-}) {
-  const [nickname, setNickname] = useState(userInfo.nickname);
+import modalHandleStore from "../../store/modalHandleStore";
+export default function ProfileEditModal({ setUpdated }) {
+  const { userToken, userData } = userStore();
+  const { profileEditModal, setProfileEditModal } = modalHandleStore();
+  const [originNickname, setOriginNickname] = useState(userData.nickname);
   const [isNicknameValid, setIsNicknameValid] = useState(true);
   const [isNicknameChange, setIsNicknameChange] = useState(false);
   const [isProfileImgChange, setIsProfileImgChange] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
   const [status, requestPermission] = useMediaLibraryPermissions();
-  const { userToken } = userStore();
   useEffect(() => {
-    if (userInfo.nickname == nickname) {
+    if (userData.nickname == originNickname) {
       setIsNicknameChange(false);
     } else {
       setIsNicknameChange(true);
     }
-  }, [nickname]);
+  }, [originNickname]);
 
   useEffect(() => {
-    setNickname(userInfo.nickname);
-  }, [userInfo]);
+    setOriginNickname(userData.nickname);
+  }, [userData]);
 
   useEffect(() => {
     if (imageUrl != "") {
@@ -57,7 +54,7 @@ export default function ProfileEditModal({
   }, [imageUrl]);
 
   const resetState = () => {
-    setNickname(userInfo.nickname);
+    setOriginNickname(userData.nickname);
     setIsNicknameValid(true);
     setIsNicknameChange(false);
     setIsProfileImgChange(false);
@@ -87,7 +84,7 @@ export default function ProfileEditModal({
   const handleNicknameChange = (changeName) => {
     const isValid = validateNickname(changeName);
     setIsNicknameValid(isValid);
-    setNickname(changeName);
+    setOriginNickname(changeName);
   };
 
   const validateNickname = (changeName) => {
@@ -100,20 +97,18 @@ export default function ProfileEditModal({
   const handleCompletePress = () => {
     if (isNicknameValid && isNicknameChange && isProfileImgChange) {
       /* 닉네임 프로필 이미지가 바뀌었을 때*/
-      console.log("닉네임 프로필 이미지 바뀜:", nickname);
+      console.log("닉네임 프로필 이미지 바뀜:", originNickname);
       /* 완료시에 로직 수행*/
-      hideModal();
     } else if (isProfileImgChange) {
       /*  프로필 이미지만 바뀜*/
       console.log("프로필 이미지 변경됨");
       /* 완료시에 로직 수행*/
-      hideModal();
     } else if (isNicknameValid && isNicknameChange) {
       /*  닉네임만 바뀜*/
       axios
         .put(
           `${API_URL}/api/user/nickname`,
-          { nickname: nickname },
+          { nickname: originNickname },
           {
             headers: {
               "Content-Type": `application/json`,
@@ -124,17 +119,18 @@ export default function ProfileEditModal({
         .then((res) => {
           console.log("닉네임 변경됨");
           setUpdated();
-          hideModal();
         })
         .catch((err) => {
           console.log(err);
         });
       /* 완료시에 로직 수행*/
     }
+    setProfileEditModal(false);
   };
+
   return (
     <Modal
-      visible={visible}
+      visible={profileEditModal}
       contentContainerStyle={styles.modalContainer}
       animationType="slide"
     >
@@ -144,7 +140,7 @@ export default function ProfileEditModal({
           <View style={styles.modalHeader}>
             <Pressable
               onPress={() => {
-                hideModal();
+                setProfileEditModal(false);
                 resetState();
               }}
             >
@@ -181,7 +177,7 @@ export default function ProfileEditModal({
               <View style={{ position: "relative" }}>
                 <View style={styles.imageWrapper}>
                   <ImageViewer
-                    placeholderImageSource={userInfo.profile_image}
+                    placeholderImageSource={userData.profile_image}
                     selectedImage={imageUrl}
                   />
                 </View>
@@ -198,7 +194,7 @@ export default function ProfileEditModal({
               dataDetectorTypes="phoneNumber"
               placeholder="닉네임을 입력해주세요."
               placeholderTextColor="lightgray"
-              value={nickname}
+              value={originNickname}
               onChangeText={handleNicknameChange}
               maxLength={6}
             />

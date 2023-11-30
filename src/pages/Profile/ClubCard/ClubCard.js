@@ -3,17 +3,30 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
 import theme from "../../../styles/theme";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import ClubImg from "../../../../assets/dummyImage.jpg";
+import { useNavigation } from "@react-navigation/core";
+
 import { Button, Card } from "react-native-paper";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-
+import userStore from "../../../store/userStore";
 export default function ClubCard({ clubData }) {
+  const { userData } = userStore();
+  const navigation = useNavigation();
   return (
-    <Card style={styles.manageCard}>
+    <Card
+      onPress={() => {
+        navigation.navigate("HomeDetailPage", {
+          id: clubData.id,
+          hostName: userData.nickname,
+        });
+      }}
+      style={styles.manageCard}
+    >
       <View style={{ flexDirection: "row", ...theme.centerStyle }}>
         <View style={styles.cardCoverContainer}>
-          <Card.Cover style={styles.cardImageStyle} source={ClubImg} />
+          <Card.Cover
+            style={styles.cardImageStyle}
+            source={{ uri: clubData.thumbnail_url }}
+          />
         </View>
         <View style={styles.cardContentStyle}>
           <View
@@ -30,7 +43,7 @@ export default function ClubCard({ clubData }) {
                 fontWeight: "400",
               }}
             >
-              {clubData.location}
+              {clubData.location.location}
             </Text>
             <View
               style={{
@@ -43,10 +56,12 @@ export default function ClubCard({ clubData }) {
           </View>
 
           <Text style={{ flex: 1, fontWeight: "600", fontSize: 16 }}>
-            {clubData.clubName}
+            {clubData.info.title}
           </Text>
 
-          <Text style={{ flex: 1, fontSize: 14 }}>{clubData.time}</Text>
+          <Text style={{ flex: 1, fontSize: 14 }}>
+            {clubData.time.start_time}
+          </Text>
         </View>
       </View>
     </Card>
