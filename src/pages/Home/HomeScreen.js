@@ -36,7 +36,7 @@ export default function HomeScreen() {
   const [pageLoading, setPageLoading] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { isLogin, userToken } = userStore();
+  const { isLogin, userToken, updatedState } = userStore();
 
   const navigation = useNavigation();
 
@@ -64,7 +64,7 @@ export default function HomeScreen() {
 
   useEffect(() => {
     fetchData();
-  }, [selectedSort]);
+  }, [selectedSort, updatedState]);
 
   const getData = async () => {
     const result = await axios.get(
