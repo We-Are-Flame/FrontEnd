@@ -19,11 +19,10 @@ import theme from "../../styles/theme";
 import Header from "../../components/Header";
 import userStore from "../../store/userStore";
 import { ActivityIndicator } from "react-native";
-export default function ProfilePage({ isLogin }) {
+export default function ProfilePage() {
   const [refreshing, setRefreshing] = useState(false);
-  const { setUserData, userToken } = userStore();
+  const { setUserData, userToken, updatedState } = userStore();
   const [myClubData, setMyClubData] = useState({});
-  const [updated, setUpdated] = useState(false);
   const [pageLoading, setPageLoading] = useState(null);
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -65,7 +64,6 @@ export default function ProfilePage({ isLogin }) {
           });
           setMyClubData(mymeetings.data);
           setUserData(userInfoResponse.data);
-          resetProfileUpdateStatuts();
         } else {
           console.log("유효하지 않은 토큰", tokenValidationResponse.status);
         }
@@ -76,16 +74,9 @@ export default function ProfilePage({ isLogin }) {
     setPageLoading(false);
   };
 
-  const updateProfileStatus = () => {
-    setUpdated(true);
-  };
-  const resetProfileUpdateStatuts = () => {
-    setUpdated(false);
-  };
-
   useEffect(() => {
     fetchData();
-  }, [updated]);
+  }, [updatedState]);
 
   return (
     <View style={styles.profilePageView}>
@@ -93,7 +84,7 @@ export default function ProfilePage({ isLogin }) {
         style={{ flex: theme.headerSpace, backgroundColor: theme.psColor }}
       ></View>
 
-      <Header isLogin={isLogin} />
+      <Header />
 
       <View style={styles.profilePageMain}>
         {pageLoading ? (
@@ -108,7 +99,7 @@ export default function ProfilePage({ isLogin }) {
             contentContainerStyle={{ flex: 1 }}
           >
             <View style={styles.profilePageMainTop}>
-              <MyProfile setUpdated={updateProfileStatus} />
+              <MyProfile />
             </View>
             <View style={styles.profilePageMainBottom}>
               <View style={{ flex: 0.02, backgroundColor: theme.subColor }} />
