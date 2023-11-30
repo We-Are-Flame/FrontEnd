@@ -11,6 +11,7 @@ import {
   Pressable,
   Dimensions,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import { useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -22,6 +23,8 @@ import {
 import { Entypo } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/core";
 import axios from "axios";
+import { Stomp } from '@stomp/stompjs';
+import SockJS from 'sockjs-client/dist/sockjs';
 
 import { API_URL } from "@env";
 import Dropdown from "../../../components/Dropdown";
@@ -32,6 +35,7 @@ import kitchingLogo from "../../../../assets/kitchingLogo.png";
 import theme from "../../../styles/theme";
 import { REST_API_KEY } from "@env";
 import userStore from "../../../store/userStore";
+
 export default function CreateClubPostPage({ route }) {
   const [sDate, setSDate] = useState("");
   const [eDate, setEDate] = useState("");
@@ -51,9 +55,9 @@ export default function CreateClubPostPage({ route }) {
   const [categoryData, setCategoryData] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [thumbnailImageUrl, setThumbnailImageUrl] = useState("");
-  const [thumbnailImageResponseUrl, setThumbnailImageResponseUrl] =
-    useState("");
+  const [activityImages,setActivityImages] = useState([]);
   const [imageUrl, setImageUrl] = useState("");
+  const [multipleImage,setMultipleImage] = useState([]);
   const [data, setData] = useState({});
   const [latitude, setLatitude] = useState(0);
   const [longitude, setLongitude] = useState(0);
@@ -63,30 +67,106 @@ export default function CreateClubPostPage({ route }) {
   const toggleSwitch = () => setAlarm((alarm) => !alarm);
 
   const submitPost = () => {
-    setData({
-      // alarm: alarm,
-      category: categoryData,
-      hashtags: hashtags,
-      info: {
-        title: title,
-        max_participants: people,
-        description: introduce,
-      },
-      location: {
-        location: location,
-        detail_location: detailLocation,
-        latitude: latitude,
-        longitude: longitude,
-      },
-      time: {
-        start_time: sDate,
-        end_time: eDate,
-      },
-      image: {
-        thumbnail_url: imageUrl,
-        image_urls: ["image.jpg", "image.jpg"],
-      },
-    });
+    let missingFields = [];
+    if (title === "") missingFields.push("모임명");
+    if(title.length > 7) {
+      Alert.alert(
+        "글쓰기 오류",
+        `모임 명은 8글자 미만입니다.`,
+        [
+          { text: "확인", onPress: () => console.log("확인됨") },
+        ],
+        { cancelable: false }
+      );
+      return;
+    }
+    // if (!validateTitle(title)) {
+    //   Alert.alert(
+    //     "글쓰기 오류",
+    //     `모임 명은 특수문자를 제한합니다.`,
+    //     [
+    //       { text: "확인", onPress: () => console.log("확인됨") },
+    //     ],
+    //     { cancelable: false }
+    //   );
+    // }
+    if (categoryData === "") missingFields.push("카테고리");
+    if (people === "") missingFields.push("인원");
+    if(people < 1){
+      Alert.alert(
+        "글쓰기 오류",
+        `인원이 너무 적습니다.`,
+        [
+          { text: "확인", onPress: () => console.log("확인됨") },
+        ],
+        { cancelable: false }
+      );
+      return;
+    }
+    const now = new Date(); // 현재 시간을 나타내는 Date 객체 생성
+    const startDate = new Date(sDate); // sDate를 Date 객체로 변환
+    console.log("sDate : " + sDate); //이게 잘 안나옴 sDate기 인들어갔음
+
+    if(startDate < now){ //잘안됨
+      Alert.alert(
+        "글쓰기 오류",
+        `일시는 현재 시간보다 이후여야 합니다.`,
+        [
+          { text: "확인", onPress: () => console.log("확인됨") },
+        ],
+        { cancelable: false }
+      );
+      return;
+    }
+    if (location === "") missingFields.push("위치");
+    if (year === "") missingFields.push("일시의 연");
+    if (month === "") missingFields.push("일시의 달");
+    if (day === "") missingFields.push("일시의 일");
+    if (hour === "") missingFields.push("일시의 시");
+    if (min === "") missingFields.push("일시의 분");
+
+    if (missingFields.length > 0) {
+      Alert.alert(
+        "글쓰기 오류",
+        `${missingFields.join(", ")}를 추가해주세요.`,
+        [
+          { text: "확인", onPress: () => console.log("확인됨") },
+        ],
+        { cancelable: false }
+      );
+    }else{
+      setData({
+        // alarm: alarm,
+        category: categoryData,
+        hashtags: hashtags,
+        info: {
+          title: title,
+          max_participants: people,
+          description: introduce,
+        },
+        location: {
+          location: location,
+          detail_location: detailLocation,
+          latitude: latitude,
+          longitude: longitude,
+        },
+        time: {
+          start_time: sDate,
+          end_time: eDate,
+        },
+        image: {
+          thumbnail_url: imageUrl,
+          image_urls: activityImages,
+        },
+      });
+    }
+  };
+
+  const validateTitle = (title) => {
+    // 정규 표현식을 사용하여 특수문자 제한
+    // 이 예시에서는 알파벳, 숫자, 공백, 하이픈, 밑줄, 마침표, 한글만 허용합니다.
+    const pattern = /^[A-Za-z0-9 _.-가-힣]+$/;
+    return pattern.test(title);
   };
 
   const getCoordinate = async (placeAddress) => {
@@ -105,7 +185,7 @@ export default function CreateClubPostPage({ route }) {
     });
   };
   const extractNumberFromString = (str) => {
-    const matches = str.match(/\d+/);
+    const matches = str.match(/^\d+/);
     return matches ? parseInt(matches[0], 10) : null;
   };
 
@@ -114,6 +194,37 @@ export default function CreateClubPostPage({ route }) {
     const hashTags = inputText.match(regex) || []; // 해시태그 추출
     return hashTags;
   };
+
+  //채팅방 소켓 연결
+  function onConnected(room_id) {
+    let roomId = room_id; //post할때 response값
+    let username = '이태헌'; //유저 닉네임
+    stompClient.subscribe('/sub/chat/room/' + roomId, onMessageReceived);
+
+    stompClient.send("/pub/chat/enterUser",
+      {},
+      JSON.stringify({
+        "roomId": roomId,
+        sender: username,
+        senderId: 2,
+        message: username + '님이 입장하셨습니다.',
+        time: new Date(),
+        messageType: 'ENTER'
+      })
+    )
+  };
+
+  async function onMessageReceived(payload) {
+    let chat = await JSON.parse(payload.body);
+    console.log(chat.message);
+  };
+
+  const TextEncodingPolyfill = require('text-encoding');
+
+  Object.assign('global', {
+    TextEncoder: TextEncodingPolyfill.TextEncoder,
+    TextDecoder: TextEncodingPolyfill.TextDecoder,
+  });
 
   const uploadImage = async () => {
     if (!status.granted) {
@@ -128,58 +239,71 @@ export default function CreateClubPostPage({ route }) {
       allowsEditing: false,
       quality: 1,
       aspect: [3, 1],
+      allowsMultipleSelection: true, // 여러 이미지 선택 활성화
     });
 
     if (!result.canceled) {
       setThumbnailImageUrl(result.assets[0].uri);
-
+      setMultipleImage(result.assets.map(asset => asset.uri));
+      console.log("asserts : "+result.assets);
       try {
-        // 마지막 '.'의 위치를 찾기
-        const lastIndex = result.assets[0].uri.lastIndexOf(".");
-        // '.' 이후의 문자열(확장자)를 추출
-        const extension = result.assets[0].uri.substring(lastIndex + 1);
-        console.log(extension);
-        let res = await axios.post(
-          `${API_URL}/api/presigned`,
-          {
-            image_list: [
-              {
-                file_name: generateRandomString(10),
-                file_type: "image/" + extension,
+        for(let i=0; i<result.assets.length; i++){
+          // 마지막 '.'의 위치를 찾기
+          const lastIndex = result.assets[i].uri.lastIndexOf(".");
+          // '.' 이후의 문자열(확장자)를 추출
+          const extension = result.assets[i].uri.substring(lastIndex + 1);
+          console.log(extension);
+          let res = await axios.post(
+            `${API_URL}/api/presigned`,
+            {
+              image_list: [
+                {
+                  file_name: generateRandomString(10),
+                  file_type: "image/" + extension,
+                },
+              ],
+            },
+            {
+              headers: {
+                "Content-Type": `application/json`,
               },
-            ],
-          },
-          {
-            headers: {
-              "Content-Type": `application/json`,
-            },
+            }
+          );
+          console.log(res.data);
+          if(i===0){
+            setImageUrl(res.data.image_list[0].image_url);
           }
-        );
-        setImageUrl(res.data.image_list[0].image_url);
-        console.log(res.data.image_list[0].presigned_url);
-        console.log(res.data.image_list[0].image_url);
+          else{
+            setActivityImages((preActivityImages) => [
+              ...preActivityImages,
+              res.data.image_list[0].image_url
+            ]);
+          }
+          console.log(res.data.image_list[0].presigned_url);
+          console.log(res.data.image_list[0].image_url);
 
-        // 이미지의 URI로부터 바이너리 데이터를 가져옵니다.
-        const response = await fetch(result.assets[0].uri);
-        const blob = await response.blob();
-        const binaryDataArray = await blobToArrayBuffer(blob); //[121, 52, 12, 53]
+          // 이미지의 URI로부터 바이너리 데이터를 가져옵니다.
+          const response = await fetch(result.assets[i].uri);
+          const blob = await response.blob();
+          const binaryDataArray = await blobToArrayBuffer(blob); //[121, 52, 12, 53]
 
-        if (!res.data.image_list[0].presigned_url) {
-          console.error("사전 서명된 URL이 비어 있습니다.");
-          return;
+          if (!res.data.image_list[0].presigned_url) {
+            console.error("사전 서명된 URL이 비어 있습니다.");
+            return;
+          }
+          // axios를 사용하여 바이너리 데이터를 서버에 업로드합니다.
+          const r = await axios.put(
+            res.data.image_list[0].presigned_url,
+            binaryDataArray,
+            {
+              headers: {
+                "Content-Type": "image/" + extension, // 혹은 해당 이미지의 MIME 타입에 맞게 설정
+              },
+            }
+          );
+
+          console.log("이미지 업로드 성공");
         }
-        // axios를 사용하여 바이너리 데이터를 서버에 업로드합니다.
-        const r = await axios.put(
-          res.data.image_list[0].presigned_url,
-          binaryDataArray,
-          {
-            headers: {
-              "Content-Type": "image/" + extension, // 혹은 해당 이미지의 MIME 타입에 맞게 설정
-            },
-          }
-        );
-
-        console.log("이미지 업로드 성공");
       } catch (error) {
         console.error("이미지 업로드 중 오류 발생", error);
       }
@@ -218,7 +342,22 @@ export default function CreateClubPostPage({ route }) {
       })
       .then((res) => {
         console.log(res.data);
-        navigation.replace("Home");
+        axios.post(`${API_URL}/api/chat/room`,{
+          meeting_id:res.data.id,
+          room_name:title
+        },{
+          headers: {
+            "Content-Type": `application/json`,
+            Authorization: "Bearer " + `${userToken}`,
+          }}
+        ).then((res)=>{
+          console.log(res.data);
+          stompClient = Stomp.over(function(){
+            return new SockJS("http://118.67.128.48/ws-stomp");
+          });
+          stompClient.connect({}, ()=>onConnected(res.roomId), {});
+          navigation.replace("Home");
+        }).catch((err)=>console.log(err))
       })
       .catch((err) => {
         console.log(err);
@@ -236,7 +375,24 @@ export default function CreateClubPostPage({ route }) {
     }
 
     return result;
-  }
+  };
+
+  function getDaysArray(year, month) {
+    const firstDay = new Date(year, month - 1, 1);
+    const lastDay = new Date(year, month, 0);
+  
+    // 해당 월의 일수 계산
+    const numDaysInMonth = lastDay.getDate();
+  
+    // 해당 월의 모든 일자를 담을 배열 생성
+    const daysArray = [];
+  
+    for (let day = 1; day <= numDaysInMonth; day++) {
+      daysArray.push(day);
+    }
+  
+    return daysArray;
+  };
 
   // 위치 등록하는 hook 만약 parmas가 없다면 빈문자
   useEffect(() => {
@@ -253,27 +409,50 @@ export default function CreateClubPostPage({ route }) {
   }, [location]);
 
   useEffect(() => {
-    let calHour = parseInt(hour) + extractNumberFromString(time);
-    setSDate(`${year}-${month}-${day}T${hour}:${min}:00Z`);
-    setEDate(`${year}-${month}-${day}T${calHour}:${min}:00Z`);
+    // 의존성 배열의 값 중 하나라도 빈 문자열이면 기능을 수행하지 않습니다.
+    if (!year || !month || !day || !hour || !min || !time) {
+      return;
+    }
+  
+    // Date 객체를 생성합니다. 월은 0부터 시작하므로 1을 빼줍니다.
+    let startDate = new Date(year, parseInt(month, 10) - 1, parseInt(day, 10), parseInt(hour, 10)+9, parseInt(min, 10));
+    console.log(startDate);
+    // 종료 시간을 계산하기 위해, 시작 시간에 시간을 더합니다.
+    let endDate = new Date(startDate);
+    endDate.setHours(startDate.getHours() + extractNumberFromString(time));
+  
+    // ISO 문자열 형식으로 변환합니다.
+    setSDate(startDate.toISOString());
+    setEDate(endDate.toISOString());
   }, [year, month, day, hour, min, time]);
+  
 
   return (
     <View style={styles.createClubPostPageView}>
       <ScrollView
         style={{ borderTopColor: "#cccccc", borderTopWidth: 1, padding: 16 }}
       >
-        <Text style={styles.createPageLabel}>썸네일</Text>
+        <View style={{flexDirection:"row"}}>
+          <Text style={styles.createPageLabel}>활동사진</Text>
+          <Text style={{fontSize:12,marginLeft:5,color:"#aaaaaa"}}>첫 번째로 선택 된 사진은 썸네일이 됩니다.</Text>
+        </View>
         <View style={styles.imageContainer}>
           <Pressable onPress={uploadImage}>
             <View style={{ position: "relative" }}>
               <View style={styles.imageWrapper}>
-                <ImageViewer
-                  placeholderImageSource={kitchingLogo}
-                  selectedImage={thumbnailImageUrl}
-                  widthProps="80%"
-                  heightProps="80%"
-                />
+                {
+                  multipleImage.map((image,index)=>{
+                    return (
+                      <ImageViewer
+                        placeholderImageSource={kitchingLogo}
+                        selectedImage={image}
+                        widthProps="80%"
+                        heightProps="80%"
+                        key={index}
+                      />
+                    )
+                  })
+                }
               </View>
               <View style={styles.iconContainer}>
                 <Entypo name="camera" size={17} color="black" />
@@ -288,43 +467,13 @@ export default function CreateClubPostPage({ route }) {
           label="카테고리를 선택해주세요"
         />
         <Text style={styles.createPageLabel}>일시</Text>
-        <View style={{ flexDirection: "row", flex: 1 }}>
-          <TextInput
-            style={styles.inputDate}
-            onChangeText={setYear}
-            value={year}
-            placeholder="YYYY"
-            keyboardType="number-pad"
-          />
-          <TextInput
-            style={styles.inputDate}
-            onChangeText={setMonth}
-            value={month}
-            placeholder="MM"
-            keyboardType="number-pad"
-          />
-          <TextInput
-            style={styles.inputDate}
-            onChangeText={setDay}
-            value={day}
-            placeholder="DD"
-            keyboardType="number-pad"
-          />
-          <TextInput
-            style={styles.inputDate}
-            onChangeText={setHour}
-            value={hour}
-            placeholder="HH"
-            keyboardType="number-pad"
-          />
-          <TextInput
-            style={styles.inputDate}
-            onChangeText={setMin}
-            value={min}
-            placeholder="mm"
-            keyboardType="number-pad"
-          />
-        </View>
+        <ScrollView style={{flexDirection:"row", flex: 1 }}>
+          <Dropdown dropDownItem={["2023","2024","2025"]} setData={setYear} label="연도" widthProps={(Dimensions.get("window").width)/3} />
+          <Dropdown dropDownItem={["01","02","03","04","05","06","07","08","09","10","11","12"]} setData={setMonth} label="월" widthProps={(Dimensions.get("window").width)/3} />
+          <Dropdown dropDownItem={getDaysArray(year,month).map(day => day.toString())} setData={setDay} label="일" widthProps={(Dimensions.get("window").width)/3} />
+          <Dropdown dropDownItem={Array.from({ length: 24 }, (_, i) => (i).toString())} setData={setHour} label="시" widthProps={(Dimensions.get("window").width)/3} />
+          <Dropdown dropDownItem={Array.from({ length: 60 }, (_, i) => (i).toString())} setData={setMin} label="분" widthProps={(Dimensions.get("window").width)/3} />
+        </ScrollView>
         <Text style={styles.createPageLabel}>위치</Text>
 
         <TextInput
@@ -529,5 +678,7 @@ const styles = StyleSheet.create({
     borderRadius: theme.screenWidth / 6,
     ...theme.centerStyle,
     overflow: "hidden",
+    flexDirection:"row",
+    
   },
 });

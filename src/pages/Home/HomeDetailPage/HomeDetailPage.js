@@ -11,18 +11,22 @@ import {
   KeyboardAvoidingView,
   Platform,
   SafeAreaView,
+  Dimensions,
+  Modal,
+  TouchableWithoutFeedback
 } from "react-native";
 import * as Linking from "expo-linking";
 import { Image } from "expo-image";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import { Ionicons, AntDesign, MaterialIcons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import kitchingLogo from "../../../../assets/kitchingLogo.png";
 
 import Spinner from "../../../../assets/loading_spinner.svg";
 import theme from "../../../styles/theme";
 import HomeDetailComment from "./HomeDetailComment/HomeDetailComment";
 import HomeDetailCommentInput from "./HomeDetailComment/HomeDetailCommentInput";
+import MyCarousel from '../../../components/MyCarousel';
 
 import GoogleMap from "../../../components/GoogleMap";
 import { API_URL } from "@env";
@@ -37,7 +41,11 @@ export default function HomeDetailPage({ route }) {
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [addedComment, setAddedComment] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [carouselImage,setCarouselImage] = useState([]);
   const { userToken } = userStore();
+
+  const carouselArr = [kitchingLogo,kitchingLogo,kitchingLogo];
 
   const navigation = useNavigation();
   const scrollViewRef = useRef();
@@ -68,7 +76,6 @@ export default function HomeDetailPage({ route }) {
       })
       .then((res) => {
         setDetailData(res.data);
-        console.log(res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -125,12 +132,42 @@ export default function HomeDetailPage({ route }) {
     if (detailData.time && detailData.time.start_time) {
       setStartTime(new Date(detailData.time.start_time));
       setEndTime(new Date(detailData.time.end_time));
+      setCarouselImage([detailData.image.thumbnail_url, ...detailData.image.image_urls]);
     }
   }, [detailData]);
+
+  useEffect(()=>{
+    console.log(carouselImage);
+    console.log(detailData.image);
+  },[carouselImage])
 
   const addComment = (newComment) => {
     setAddedComment((prevComments) => [...prevComments, newComment]);
   };
+  
+  const clickModify = ()=>{
+    console.log("수정");
+    setModalVisible(false);
+  };
+  
+  const clickDelete = ()=>{
+    
+    axios.delete(`${API_URL}/api/meetings/${detailData.id}`,
+      {
+        headers: {
+          "Content-Type": `application/json`,
+          Authorization: "Bearer " + `${userToken}`,
+        },
+      })
+    .then((res)=>{
+      console.log(res.data);
+      setModalVisible(false);
+      navigation.replace("Home");
+    })
+    .catch((err)=>{
+      console.log(err);
+    })
+  }
 
   return Object.keys(detailData).length !== 0 ? (
     <KeyboardAvoidingView
@@ -194,7 +231,51 @@ export default function HomeDetailPage({ route }) {
                 )}
               </View>
               <View>
-                <AntDesign name="ellipsis1" size={30} color="black" />
+                <Modal
+                  animationType="slide"
+                  transparent={true}
+                  visible={modalVisible}
+                  onRequestClose={() => {
+                    Alert.alert('Modal has been closed.');
+                    setModalVisible(!modalVisible);
+                  }}>
+                  <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
+                    <View style={styles.modalOverlay}>
+                      <View style={styles.centeredView}>
+                        <View style={styles.modalView}>
+                          <Pressable
+                            style={({ pressed }) => [
+                              {
+                                opacity: pressed ? 0.2 : 1
+                              },
+                            ]} onPress={clickModify}>
+                            <Text style={[styles.modalTextModify,styles.modalText]}>수정</Text>
+                          </Pressable>
+                          <Pressable
+                            style={({ pressed }) => [
+                              {
+                                opacity: pressed ? 0.2 : 1
+                              },
+                            ]} onPress={clickDelete}>
+                            <Text style={[styles.modalText,styles.modalTextDelete]}>삭제</Text>
+                          </Pressable>
+                          <Pressable
+                            style={({ pressed }) => [
+                              {
+                                opacity: pressed ? 0.2 : 1
+                              },
+                            ]} onPress={() => setModalVisible(false)}>
+                            <Text style={[styles.modalText, styles.modalTextClose]}>닫기</Text>
+                          </Pressable>
+                        </View>
+                      </View>
+                    </View>
+                  </TouchableWithoutFeedback>
+                </Modal>
+                <Pressable
+                  onPress={() => setModalVisible(true)}>
+                  <AntDesign name="ellipsis1" size={30} color="black" />
+                </Pressable>
               </View>
             </View>
 
@@ -206,6 +287,8 @@ export default function HomeDetailPage({ route }) {
                 {detailData.info.description}
               </Text>
               <Text style={{ color: theme.psColor }}>{hashtagString}</Text>
+              
+              <MyCarousel entries={(carouselImage.length !==0) ? carouselImage : carouselArr} widthProps={Dimensions.get('window').width} heightProps={200} layout="default"/>
 
               {/* 여기에 종료된게임, 참가신청, 참가취소 버튼 추가 */}
               {detailData.status.is_expire ? (
@@ -446,4 +529,70 @@ const styles = StyleSheet.create({
     backgroundColor: "#f5f5f5",
     height: 10,
   },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    paddingTop: 20,
+    paddingBottom: 30,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  buttonClose: {
+    backgroundColor: '#2196F3',
+  },
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // 반투명 배경
+  },
+  modalText: {
+    fontSize:25,
+    paddingRight:80,
+    paddingLeft:80,
+    marginTop:10,
+  },
+  modalTextModify:{
+    borderTopWidth:1,
+    borderTopColor:theme.psColor,
+    borderBottomWidth:1,
+    borderBottomColor:theme.psColor,
+    color:theme.psColor
+  },
+  modalTextDelete:{
+    borderTopWidth:1,
+    borderTopColor:"red",
+    borderBottomWidth:1,
+    borderBottomColor:"red",
+    color:"red"
+  },
+  modalTextClose:{
+    borderTopWidth:1,
+    borderTopColor:"#000000",
+    borderBottomWidth:1,
+    borderBottomColor:"#000000",
+  }
 });

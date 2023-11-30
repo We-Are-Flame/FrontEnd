@@ -30,7 +30,6 @@ import { ActivityIndicator } from "react-native";
 
 export default function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
   const [page, setPage] = useState(1);
   const [clubList, setClubList] = useState({});
   const [selectedSort, setSelectedSort] = useState(sort[0]);
