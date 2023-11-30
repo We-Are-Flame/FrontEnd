@@ -1,6 +1,7 @@
 import { create } from "zustand";
 
 const userStore = create((set) => ({
+  updatedState: false,
   userToken: "",
   isLogin: false,
   userData: {
@@ -20,6 +21,7 @@ const userStore = create((set) => ({
       userData: { ...state.userData, profile_image: profileImage },
     }));
   },
+  setUpdatedState: (isChange) => set({ updatedState: isChange }),
   setIsLogin: (isLogin) => set({ isLogin: isLogin }),
   setUserToken: (token) => set({ userToken: token }),
   setTemperature: (temperature) => set({ temperature: temperature }),
