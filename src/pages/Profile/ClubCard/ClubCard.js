@@ -25,7 +25,11 @@ export default function ClubCard({ clubData }) {
         <View style={styles.cardCoverContainer}>
           <Card.Cover
             style={styles.cardImageStyle}
-            source={{ uri: clubData.thumbnail_url }}
+            source={{
+              uri: clubData.thumbnail_url
+                ? clubData.thumbnail_url
+                : "https://kr.object.ncloudstorage.com/nanum-bucket/20231128155940_kitchingLogo.png",
+            }}
           />
         </View>
         <View style={styles.cardContentStyle}>
