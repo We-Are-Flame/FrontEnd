@@ -32,7 +32,7 @@ export default function SplashPage() {
 
       const token = await AsyncStorage.getItem("userAccessToken");
       console.log(token);
-      
+
       if (token !== null) {
         await axios
           .get(`${API_URL}/api/user/notification`, {
@@ -53,6 +53,7 @@ export default function SplashPage() {
             console.log(err);
           });
       }
+      navigation.replace("Login"); // 이슈 
     }, 2000);
   }, []);
 
