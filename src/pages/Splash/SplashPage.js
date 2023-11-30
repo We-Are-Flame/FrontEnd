@@ -51,6 +51,7 @@ export default function SplashPage() {
             }
           })
           .catch((err) => {
+            navigation.replace("Login");
             console.log(err);
           });
       }

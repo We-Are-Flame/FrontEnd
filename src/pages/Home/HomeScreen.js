@@ -26,7 +26,7 @@ import userStore from "../../store/userStore";
 export default function HomeScreen({ isLogin }) {
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedSort, setSelectedSort] = useState(sort[0]);
+  const [selectedSort, setSelectedSort] = useState("new");
   const [loginStatus, setLoginStatus] = useState(isLogin);
 
   const navigation = useNavigation();
