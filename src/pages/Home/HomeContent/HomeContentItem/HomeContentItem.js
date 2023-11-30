@@ -95,15 +95,11 @@ export default function HomeContentItem({ state }) {
       <View style={styles.homeContentItemView}>
         <View style={styles.homeContentItemTitle}>
           <View style={{ flexDirection: "row" }}>
-            {imageSource ? (
-              <Image
-                source={imageSource}
-                style={{ width: 24, height: 24 }} // 예시 크기, 원하는 대로 조절
-                resizeMode="cover" // 또는 "contain", "stretch" 등
-              />
-            ) : (
-              <Ionicons name="person" size={24} color="black" />
-            )}
+            <Image
+              source={imageSource}
+              style={{ width: 24, height: 24 }} // 예시 크기, 원하는 대로 조절
+              resizeMode="cover" // 또는 "contain", "stretch" 등
+            />
             <Text style={styles.homeContentItemTitleNickname}>
               {state.host.name}
             </Text>
