@@ -1,21 +1,20 @@
 /** @format */
 
 import { useState, useEffect } from "react";
+import { ActivityIndicator } from "react-native";
 import { StyleSheet, View } from "react-native";
 import { PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import MapView from "react-native-maps";
 
-const GoogleMap = ({ latitude, longitude }) => {
+const GoogleMap = ({ mylatitude, mylongitude, detailLocation }) => {
   const initialRegion = {
-    latitude: latitude ? latitude : 36.4250364688847,
-    longitude: longitude ? longitude : 128.167240393244,
+    latitude: parseFloat(mylatitude),
+    longitude: parseFloat(mylongitude),
     latitudeDelta: 0.005,
     longitudeDelta: 0.005,
   };
+
   const [region, setRegion] = useState(initialRegion);
-  useEffect(() => {
-    console.log(latitude, longitude);
-  }, [latitude, longitude]);
   return (
     <View style={styles.screen}>
       <MapView
@@ -31,11 +30,8 @@ const GoogleMap = ({ latitude, longitude }) => {
             latitude: region.latitude,
             longitude: region.longitude,
           }}
-          onPress={() => {
-            console.log("시부레");
-          }}
           pinColor="#2D63E2"
-          title="하이"
+          title={detailLocation}
         />
       </MapView>
     </View>
