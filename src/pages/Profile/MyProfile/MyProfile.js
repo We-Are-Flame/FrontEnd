@@ -8,7 +8,7 @@ import theme from "../../../styles/theme";
 import ProfileEditModal from "../../../modals/ProfileEditModal/ProfileEditModal";
 import userStore from "../../../store/userStore";
 import modalHandleStore from "../../../store/modalHandleStore";
-export default function MyProfile({ setUpdated }) {
+export default function MyProfile() {
   const { setProfileEditModal } = modalHandleStore();
 
   const [isAuth, setIsAuth] = useState(false);
@@ -82,7 +82,7 @@ export default function MyProfile({ setUpdated }) {
           </View>
         </View>
       </View>
-      <ProfileEditModal setUpdated={setUpdated} />
+      <ProfileEditModal />
     </View>
   );
 }
