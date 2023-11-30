@@ -13,7 +13,7 @@ import {
   SafeAreaView,
   Dimensions,
   Modal,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
 } from "react-native";
 import * as Linking from "expo-linking";
 import { Image } from "expo-image";
@@ -26,7 +26,7 @@ import Spinner from "../../../../assets/loading_spinner.svg";
 import theme from "../../../styles/theme";
 import HomeDetailComment from "./HomeDetailComment/HomeDetailComment";
 import HomeDetailCommentInput from "./HomeDetailComment/HomeDetailCommentInput";
-import MyCarousel from '../../../components/MyCarousel';
+import MyCarousel from "../../../components/MyCarousel";
 
 import GoogleMap from "../../../components/GoogleMap";
 import { API_URL } from "@env";
@@ -42,10 +42,10 @@ export default function HomeDetailPage({ route }) {
   const [endTime, setEndTime] = useState("");
   const [addedComment, setAddedComment] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
-  const [carouselImage,setCarouselImage] = useState([]);
+  const [carouselImage, setCarouselImage] = useState([]);
   const { userToken } = userStore();
 
-  const carouselArr = [kitchingLogo,kitchingLogo,kitchingLogo];
+  const carouselArr = [kitchingLogo, kitchingLogo, kitchingLogo];
 
   const navigation = useNavigation();
   const scrollViewRef = useRef();
@@ -132,42 +132,44 @@ export default function HomeDetailPage({ route }) {
     if (detailData.time && detailData.time.start_time) {
       setStartTime(new Date(detailData.time.start_time));
       setEndTime(new Date(detailData.time.end_time));
-      setCarouselImage([detailData.image.thumbnail_url, ...detailData.image.image_urls]);
+      setCarouselImage([
+        detailData.image.thumbnail_url,
+        ...detailData.image.image_urls,
+      ]);
     }
   }, [detailData]);
 
-  useEffect(()=>{
+  useEffect(() => {
     console.log(carouselImage);
     console.log(detailData.image);
-  },[carouselImage])
+  }, [carouselImage]);
 
   const addComment = (newComment) => {
     setAddedComment((prevComments) => [...prevComments, newComment]);
   };
-  
-  const clickModify = ()=>{
+
+  const clickModify = () => {
     console.log("수정");
     setModalVisible(false);
   };
-  
-  const clickDelete = ()=>{
-    
-    axios.delete(`${API_URL}/api/meetings/${detailData.id}`,
-      {
+
+  const clickDelete = () => {
+    axios
+      .delete(`${API_URL}/api/meetings/${detailData.id}`, {
         headers: {
           "Content-Type": `application/json`,
           Authorization: "Bearer " + `${userToken}`,
         },
       })
-    .then((res)=>{
-      console.log(res.data);
-      setModalVisible(false);
-      navigation.replace("Home");
-    })
-    .catch((err)=>{
-      console.log(err);
-    })
-  }
+      .then((res) => {
+        console.log(res.data);
+        setModalVisible(false);
+        navigation.replace("Home");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   return Object.keys(detailData).length !== 0 ? (
     <KeyboardAvoidingView
@@ -236,44 +238,64 @@ export default function HomeDetailPage({ route }) {
                   transparent={true}
                   visible={modalVisible}
                   onRequestClose={() => {
-                    Alert.alert('Modal has been closed.');
+                    Alert.alert("Modal has been closed.");
                     setModalVisible(!modalVisible);
-                  }}>
-                  <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
+                  }}
+                >
+                  <TouchableWithoutFeedback
+                    onPress={() => setModalVisible(false)}
+                  >
                     <View style={styles.modalOverlay}>
                       <View style={styles.centeredView}>
                         <View style={styles.modalView}>
                           <Pressable
                             style={({ pressed }) => [
                               {
-                                opacity: pressed ? 0.2 : 1
+                                opacity: pressed ? 0.2 : 1,
                               },
-                            ]} onPress={clickModify}>
-                            <Text style={[styles.modalTextModify,styles.modalText]}>수정</Text>
+                            ]}
+                            onPress={clickModify}
+                          >
+                            <Text
+                              style={[styles.modalTextModify, styles.modalText]}
+                            >
+                              수정
+                            </Text>
                           </Pressable>
                           <Pressable
                             style={({ pressed }) => [
                               {
-                                opacity: pressed ? 0.2 : 1
+                                opacity: pressed ? 0.2 : 1,
                               },
-                            ]} onPress={clickDelete}>
-                            <Text style={[styles.modalText,styles.modalTextDelete]}>삭제</Text>
+                            ]}
+                            onPress={clickDelete}
+                          >
+                            <Text
+                              style={[styles.modalText, styles.modalTextDelete]}
+                            >
+                              삭제
+                            </Text>
                           </Pressable>
                           <Pressable
                             style={({ pressed }) => [
                               {
-                                opacity: pressed ? 0.2 : 1
+                                opacity: pressed ? 0.2 : 1,
                               },
-                            ]} onPress={() => setModalVisible(false)}>
-                            <Text style={[styles.modalText, styles.modalTextClose]}>닫기</Text>
+                            ]}
+                            onPress={() => setModalVisible(false)}
+                          >
+                            <Text
+                              style={[styles.modalText, styles.modalTextClose]}
+                            >
+                              닫기
+                            </Text>
                           </Pressable>
                         </View>
                       </View>
                     </View>
                   </TouchableWithoutFeedback>
                 </Modal>
-                <Pressable
-                  onPress={() => setModalVisible(true)}>
+                <Pressable onPress={() => setModalVisible(true)}>
                   <AntDesign name="ellipsis1" size={30} color="black" />
                 </Pressable>
               </View>
@@ -287,8 +309,15 @@ export default function HomeDetailPage({ route }) {
                 {detailData.info.description}
               </Text>
               <Text style={{ color: theme.psColor }}>{hashtagString}</Text>
-              
-              <MyCarousel entries={(carouselImage.length !==0) ? carouselImage : carouselArr} widthProps={Dimensions.get('window').width} heightProps={200} layout="default"/>
+
+              <MyCarousel
+                entries={
+                  carouselImage.length !== 0 ? carouselImage : carouselArr
+                }
+                widthProps={Dimensions.get("window").width}
+                heightProps={200}
+                layout="default"
+              />
 
               {/* 여기에 종료된게임, 참가신청, 참가취소 버튼 추가 */}
               {detailData.status.is_expire ? (
@@ -369,8 +398,9 @@ export default function HomeDetailPage({ route }) {
 
             <View style={styles.homeDetailMap}>
               <GoogleMap
-                latitude={detailData.location.latitude}
-                longitude={detailData.location.longitude}
+                mylatitude={detailData.location.latitude}
+                detailLocation={detailData.location.detail_location}
+                mylongitude={detailData.location.longitude}
               />
             </View>
 
@@ -531,18 +561,18 @@ const styles = StyleSheet.create({
   },
   centeredView: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: 22,
   },
   modalView: {
     margin: 20,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 20,
     paddingTop: 20,
     paddingBottom: 30,
-    alignItems: 'center',
-    shadowColor: '#000',
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -552,47 +582,47 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   buttonClose: {
-    backgroundColor: '#2196F3',
+    backgroundColor: "#2196F3",
   },
   textStyle: {
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
   },
   modalText: {
     marginBottom: 15,
-    textAlign: 'center',
+    textAlign: "center",
   },
   modalOverlay: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // 반투명 배경
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // 반투명 배경
   },
   modalText: {
-    fontSize:25,
-    paddingRight:80,
-    paddingLeft:80,
-    marginTop:10,
+    fontSize: 25,
+    paddingRight: 80,
+    paddingLeft: 80,
+    marginTop: 10,
   },
-  modalTextModify:{
-    borderTopWidth:1,
-    borderTopColor:theme.psColor,
-    borderBottomWidth:1,
-    borderBottomColor:theme.psColor,
-    color:theme.psColor
+  modalTextModify: {
+    borderTopWidth: 1,
+    borderTopColor: theme.psColor,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.psColor,
+    color: theme.psColor,
   },
-  modalTextDelete:{
-    borderTopWidth:1,
-    borderTopColor:"red",
-    borderBottomWidth:1,
-    borderBottomColor:"red",
-    color:"red"
+  modalTextDelete: {
+    borderTopWidth: 1,
+    borderTopColor: "red",
+    borderBottomWidth: 1,
+    borderBottomColor: "red",
+    color: "red",
   },
-  modalTextClose:{
-    borderTopWidth:1,
-    borderTopColor:"#000000",
-    borderBottomWidth:1,
-    borderBottomColor:"#000000",
-  }
+  modalTextClose: {
+    borderTopWidth: 1,
+    borderTopColor: "#000000",
+    borderBottomWidth: 1,
+    borderBottomColor: "#000000",
+  },
 });
