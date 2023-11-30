@@ -99,7 +99,9 @@ export default function HomeScreen() {
 
         <View style={{ flex: 7 }}>
           {pageLoading ? (
-            <ActivityIndicator />
+            <View style={{ flex: 1, ...theme.centerStyle }}>
+              <ActivityIndicator size="large" color="black" />
+            </View>
           ) : clubList.number_of_elements !== 0 ? (
             <FlatList
               onEndReached={onEndReached}
