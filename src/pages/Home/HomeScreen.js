@@ -34,6 +34,7 @@ export default function HomeScreen() {
   const [clubList, setClubList] = useState({});
   const [selectedSort, setSelectedSort] = useState(sort[0]);
   const [pageLoading, setPageLoading] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const { isLogin, userToken } = userStore();
 
@@ -67,12 +68,12 @@ export default function HomeScreen() {
 
   const getData = async () => {
     const result = await axios.get(
-      `${API_URL}/api/meetings?start=0&end=${
+      `${API_URL}/api/meetings?start=${page * 10}&end=${
         (page + 1) * 10
       }&sort=${selectedSort}}`
     );
 
-    if (result.data.size === clubList.length) {
+    if (result.data.number_of_elements === clubList.number_of_elements) {
       setLoading(false);
       return;
     }
