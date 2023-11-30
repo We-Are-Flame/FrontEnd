@@ -23,6 +23,8 @@ import {
 import { Entypo } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/core";
 import axios from "axios";
+import { Stomp } from '@stomp/stompjs';
+import SockJS from 'sockjs-client/dist/sockjs';
 
 import { API_URL } from "@env";
 import Dropdown from "../../../components/Dropdown";
@@ -193,6 +195,37 @@ export default function CreateClubPostPage({ route }) {
     return hashTags;
   };
 
+  //채팅방 소켓 연결
+  function onConnected(room_id) {
+    let roomId = room_id; //post할때 response값
+    let username = '이태헌'; //유저 닉네임
+    stompClient.subscribe('/sub/chat/room/' + roomId, onMessageReceived);
+
+    stompClient.send("/pub/chat/enterUser",
+      {},
+      JSON.stringify({
+        "roomId": roomId,
+        sender: username,
+        senderId: 2,
+        message: username + '님이 입장하셨습니다.',
+        time: new Date(),
+        messageType: 'ENTER'
+      })
+    )
+  };
+
+  async function onMessageReceived(payload) {
+    let chat = await JSON.parse(payload.body);
+    console.log(chat.message);
+  };
+
+  const TextEncodingPolyfill = require('text-encoding');
+
+  Object.assign('global', {
+    TextEncoder: TextEncodingPolyfill.TextEncoder,
+    TextDecoder: TextEncodingPolyfill.TextDecoder,
+  });
+
   const uploadImage = async () => {
     if (!status.granted) {
       const permission = await requestPermission();
@@ -309,7 +342,22 @@ export default function CreateClubPostPage({ route }) {
       })
       .then((res) => {
         console.log(res.data);
-        navigation.replace("Home", { isLogin: route.params.isLogin });
+        axios.post(`${API_URL}/api/chat/room`,{
+          meeting_id:res.data.id,
+          room_name:title
+        },{
+          headers: {
+            "Content-Type": `application/json`,
+            Authorization: "Bearer " + `${userToken}`,
+          }}
+        ).then((res)=>{
+          console.log(res.data);
+          stompClient = Stomp.over(function(){
+            return new SockJS("http://118.67.128.48/ws-stomp");
+          });
+          stompClient.connect({}, ()=>onConnected(res.roomId), {});
+          navigation.replace("Home", { isLogin: route.params.isLogin });
+        }).catch((err)=>console.log(err))
       })
       .catch((err) => {
         console.log(err);
