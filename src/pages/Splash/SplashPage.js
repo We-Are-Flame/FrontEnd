@@ -42,18 +42,18 @@ export default function SplashPage() {
             },
           })
           .then((res) => {
-            if (res.status === 200) {
-              setUserToken(token);
-              setIsLogin(true);
-              navigation.replace("Home", { isLogin: true, token: token });
-            }
+            console.log("??");
+            setUserToken(token);
+            setIsLogin(true);
+            navigation.replace("Home");
           })
           .catch((err) => {
             navigation.replace("Login");
             console.log(err);
           });
+      } else {
+        navigation.replace("Login"); // 이슈
       }
-      navigation.replace("Login"); // 이슈 
     }, 2000);
   }, []);
 
