@@ -24,69 +24,111 @@ import axios from "axios";
 import { API_URL } from "@env";
 import userStore from "../../store/userStore";
 import modalHandleStore from "../../store/modalHandleStore";
-export default function ProfileEditModal({ setUpdated }) {
-  const { userToken, userData } = userStore();
+export default function ProfileEditModal() {
+  const { userToken, userData, setUpdatedState, updatedState } = userStore();
   const { profileEditModal, setProfileEditModal } = modalHandleStore();
-  const [originNickname, setOriginNickname] = useState(userData.nickname);
+  const [editableNickname, setEditableNickname] = useState(userData.nickname);
   const [isNicknameValid, setIsNicknameValid] = useState(true);
   const [isNicknameChange, setIsNicknameChange] = useState(false);
   const [isProfileImgChange, setIsProfileImgChange] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
+  const [selectedImg, setSelectedImg] = useState("");
+  const [presignedUrl, setPresignedUrl] = useState("");
+  const [imageExtension, setImageExtension] = useState("");
   const [status, requestPermission] = useMediaLibraryPermissions();
+  
   useEffect(() => {
-    if (userData.nickname == originNickname) {
+    if (userData.nickname == editableNickname) {
       setIsNicknameChange(false);
     } else {
       setIsNicknameChange(true);
     }
-  }, [originNickname]);
+  }, [editableNickname]);
 
   useEffect(() => {
-    setOriginNickname(userData.nickname);
+    setEditableNickname(userData.nickname);
   }, [userData]);
 
   useEffect(() => {
-    if (imageUrl != "") {
+    if (selectedImg != "") {
       setIsProfileImgChange(true);
     } else {
       setIsProfileImgChange(false);
     }
-  }, [imageUrl]);
+  }, [selectedImg]);
 
   const resetState = () => {
-    setOriginNickname(userData.nickname);
+    setEditableNickname(userData.nickname);
     setIsNicknameValid(true);
     setIsNicknameChange(false);
     setIsProfileImgChange(false);
-    setImageUrl("");
+    setSelectedImg("");
   };
-  const uploadImage = async () => {
-    if (!status.granted) {
-      const permission = await requestPermission();
-      if (!permission.granted) {
-        return null;
-      }
-    }
 
-    const result = await launchImageLibraryAsync({
-      mediaTypes: MediaTypeOptions.Images,
-      allowsEditing: false,
-      quality: 1,
-      aspect: [1, 1],
+  const blobToArrayBuffer = (blob) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsArrayBuffer(blob);
+      reader.onloadend = () => {
+        const arrayBuffer = reader.result;
+        const uint8Array = new Uint8Array(arrayBuffer);
+        resolve(uint8Array);
+      };
+      reader.onerror = (error) => {
+        reject(error);
+      };
     });
+  };
 
-    if (!result.canceled) {
-      setImageUrl(result.assets[0].uri);
-    } else {
-      return null;
-    }
+  const sendUpdatedImg = async () => {
+    const r = await axios.put(
+      `${API_URL}/api/user/profile-image`,
+      {
+        image: {
+          profile_image_url: imageUrl,
+        },
+      },
+      {
+        headers: {
+          "Content-Type": `application/json`,
+          Authorization: "Bearer " + `${userToken}`,
+        },
+      }
+    );
+    console.log("전송 완료");
+  };
+  const saveImageToServer = async () => {
+    const response = await fetch(selectedImg);
+    const blob = await response.blob();
+    const binaryDataArray = await blobToArrayBuffer(blob); //[121, 52, 12, 53]
+    console.log(presignedUrl, imageExtension);
+    const r = await axios.put(presignedUrl, binaryDataArray, {
+      headers: {
+        "Content-Type": "image/" + imageExtension, // 혹은 해당 이미지의 MIME 타입에 맞게 설정
+      },
+    });
   };
   const handleNicknameChange = (changeName) => {
     const isValid = validateNickname(changeName);
     setIsNicknameValid(isValid);
-    setOriginNickname(changeName);
+    setEditableNickname(changeName);
   };
-
+  const sendUpdatedNickname = async () => {
+    try {
+      await axios.put(
+        `${API_URL}/api/user/nickname`,
+        { nickname: editableNickname },
+        {
+          headers: {
+            "Content-Type": `application/json`,
+            Authorization: "Bearer " + `${userToken}`,
+          },
+        }
+      );
+    } catch {
+      console.log("에러");
+    }
+  };
   const validateNickname = (changeName) => {
     const regex = /^[a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣]*$/;
     return (
@@ -97,35 +139,86 @@ export default function ProfileEditModal({ setUpdated }) {
   const handleCompletePress = () => {
     if (isNicknameValid && isNicknameChange && isProfileImgChange) {
       /* 닉네임 프로필 이미지가 바뀌었을 때*/
-      console.log("닉네임 프로필 이미지 바뀜:", originNickname);
-      /* 완료시에 로직 수행*/
+      saveImageToServer();
+      sendUpdatedImg();
+      sendUpdatedNickname();
+      console.log("닉네임 프로필 이미지 바뀜:", editableNickname);
     } else if (isProfileImgChange) {
       /*  프로필 이미지만 바뀜*/
+      saveImageToServer();
+      sendUpdatedImg();
       console.log("프로필 이미지 변경됨");
-      /* 완료시에 로직 수행*/
     } else if (isNicknameValid && isNicknameChange) {
       /*  닉네임만 바뀜*/
-      axios
-        .put(
-          `${API_URL}/api/user/nickname`,
-          { nickname: originNickname },
+      sendUpdatedNickname();
+      console.log("닉네임 변경됨");
+    }
+    setUpdatedState(!updatedState);
+    setProfileEditModal(false);
+  };
+
+  const generateRandomString = (length) => {
+    const characters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let result = "";
+    const charactersLength = characters.length;
+
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+
+    return result;
+  };
+
+  const uploadImage = async () => {
+    if (!status.granted) {
+      const permission = await requestPermission();
+      if (!permission.granted) {
+        return null;
+      }
+    }
+    let result = await launchImageLibraryAsync({
+      mediaTypes: MediaTypeOptions.Images,
+      allowsEditing: false,
+      quality: 1,
+      aspect: [3, 1],
+    });
+
+    if (!result.canceled) {
+      setSelectedImg(result.assets[0].uri);
+      try {
+        // 마지막 '.'의 위치를 찾기
+        const lastIndex = result.assets[0].uri.lastIndexOf(".");
+        // '.' 이후의 문자열(확장자)를 추출
+        const extension = result.assets[0].uri.substring(lastIndex + 1);
+        setImageExtension(extension);
+
+        let res = await axios.post(
+          `${API_URL}/api/presigned`,
+          {
+            image_list: [
+              {
+                file_name: generateRandomString(10),
+                file_type: "image/" + extension,
+              },
+            ],
+          },
           {
             headers: {
               "Content-Type": `application/json`,
-              Authorization: "Bearer " + `${userToken}`,
             },
           }
-        )
-        .then((res) => {
-          console.log("닉네임 변경됨");
-          setUpdated();
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-      /* 완료시에 로직 수행*/
+        );
+        setImageUrl(res.data.image_list[0].image_url);
+        setPresignedUrl(res.data.image_list[0].presigned_url);
+        // console.log(res.data.image_list[0].presigned_url);
+        // console.log(res.data.image_list[0].image_url);
+      } catch (error) {
+        console.error("이미지 업로드 중 오류 발생", error);
+      }
+    } else {
+      return null;
     }
-    setProfileEditModal(false);
   };
 
   return (
@@ -178,7 +271,7 @@ export default function ProfileEditModal({ setUpdated }) {
                 <View style={styles.imageWrapper}>
                   <ImageViewer
                     placeholderImageSource={userData.profile_image}
-                    selectedImage={imageUrl}
+                    selectedImage={selectedImg}
                   />
                 </View>
                 <View style={styles.iconContainer}>
@@ -194,7 +287,7 @@ export default function ProfileEditModal({ setUpdated }) {
               dataDetectorTypes="phoneNumber"
               placeholder="닉네임을 입력해주세요."
               placeholderTextColor="lightgray"
-              value={originNickname}
+              value={editableNickname}
               onChangeText={handleNicknameChange}
               maxLength={6}
             />
