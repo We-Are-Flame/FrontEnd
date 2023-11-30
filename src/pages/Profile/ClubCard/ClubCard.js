@@ -74,13 +74,16 @@ export default function ClubCard({ clubData }) {
 
 const styles = StyleSheet.create({
   clubCardView: {
+    flex: 1,
+
     ...theme.centerStyle,
     padding: 10,
     backgroundColor: "white",
   },
   manageCard: {
+    flex: 1,
     width: "100%",
-    height: theme.screenHeight / 10,
+    height: 200,
     padding: 5,
     marginTop: 5,
     backgroundColor: "white",

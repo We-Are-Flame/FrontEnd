@@ -19,16 +19,20 @@ import { render } from "react-dom";
 
 const FirstRoute = ({ myClubData }) => {
   return (
-    <ScrollView contentContainerStyle={{ flex: 1 }}>
+    <ScrollView style={{ flex: 1 }}>
       {Object.keys(myClubData).length !== 0 && myClubData.count !== 0 ? (
         <View style={styles.clubCardView}>
           <View style={{ width: "90%" }}>
             {myClubData.content.map((meeting, index) => (
               <Fragment key={index}>
-                <Text style={{ ...styles.clubDate, marginTop: 20 }}>
+                <Text
+                  style={{ ...styles.clubDate, marginTop: 20, height: 200 }}
+                >
                   {meeting.time.start_time}
                 </Text>
-                <ClubCard key={index} clubData={meeting} />
+                <View style={{ flex: 1 }}>
+                  <ClubCard key={index} clubData={meeting} />
+                </View>
               </Fragment>
             ))}
           </View>
@@ -99,12 +103,14 @@ export default function MyClub({ myClubData }) {
 
 const styles = StyleSheet.create({
   clubCardView: {
+    flex: 1,
     ...theme.centerStyle,
-    padding: 10,
-    backgroundColor: "white",
+    padding: 5,
+    backgroundColor: "red",
   },
   myClubView: {
     flex: 1,
+    backgroundColor: "blue",
   },
   clubDate: {
     fontWeight: "600",
