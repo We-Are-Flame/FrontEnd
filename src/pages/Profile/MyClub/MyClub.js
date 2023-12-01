@@ -26,7 +26,11 @@ const FirstRoute = ({ myClubData }) => {
             {myClubData.content.map((meeting, index) => (
               <Fragment key={index}>
                 <Text
-                  style={{ ...styles.clubDate, marginTop: 20, height: 200 }}
+                  style={{
+                    ...styles.clubDate,
+                    marginTop: 20,
+                    height: theme.screenHeight / 20,
+                  }}
                 >
                   {meeting.time.start_time}
                 </Text>
@@ -106,11 +110,9 @@ const styles = StyleSheet.create({
     flex: 1,
     ...theme.centerStyle,
     padding: 5,
-    backgroundColor: "red",
   },
   myClubView: {
     flex: 1,
-    backgroundColor: "blue",
   },
   clubDate: {
     fontWeight: "600",

@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
   manageCard: {
     flex: 1,
     width: "100%",
-    height: 200,
+    height: 100,
     padding: 5,
     marginTop: 5,
     backgroundColor: "white",
