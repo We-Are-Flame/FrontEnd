@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   Alert,
   FlatList,
+  ActivityIndicator,
 } from "react-native";
 import axios from "axios";
 import { useState, useCallback, useEffect } from "react";
@@ -23,10 +24,8 @@ import HomeContent from "./HomeContent/HomeContent";
 import HomeCategory from "./HomeCategory/HomeCategory";
 import Dropdown from "../../components/Dropdown";
 import { sort } from "../../utils/StaticData";
-import LoginModal from "../../modals/LoginModal/LoginModal";
 import userStore from "../../store/userStore";
 import { API_URL } from "@env";
-import { ActivityIndicator } from "react-native";
 
 export default function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
