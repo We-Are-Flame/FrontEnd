@@ -3,7 +3,6 @@
 import * as React from "react";
 import { useState, useCallback, useEffect } from "react";
 import axios from "axios";
-
 import {
   View,
   Text,
@@ -11,7 +10,6 @@ import {
   ScrollView,
   RefreshControl,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "@env";
 import MyProfile from "./MyProfile/MyProfile";
 import MyClub from "./MyClub/MyClub";
