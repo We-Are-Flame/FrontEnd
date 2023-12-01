@@ -98,7 +98,7 @@ export default function HomeContentItem({ state }) {
             <Image
               source={imageSource}
               style={{ width: 24, height: 24 }} // 예시 크기, 원하는 대로 조절
-              resizeMode="cover" // 또는 "contain", "stretch" 등
+              contentFit="cover" // 또는 "contain", "stretch" 등
             />
             <Text style={styles.homeContentItemTitleNickname}>
               {state.host.name}
