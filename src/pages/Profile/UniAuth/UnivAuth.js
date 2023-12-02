@@ -1,5 +1,5 @@
 import theme from "../../../styles/theme";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -7,15 +7,23 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   Keyboard,
+  Alert,
 } from "react-native";
+import { useNavigation } from "@react-navigation/core";
 import { Button, TextInput } from "react-native-paper";
-
+import userStore from "../../../store/userStore";
 export default function UnivAuth() {
+  const { userData, setUserData } = userStore();
   const [isSend, setIsSend] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
+  const [authCode, setAuthCode] = useState("");
+  const navigation = useNavigation();
+
+  /// userStore에 isAuth를 추가 인증이 됐으면 isAuth를 true로 바꾼다. 그 후 마이페이지에서 또 처리 (인증마크)
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={styles.univAuthView}>
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 0.8 }}>
           <Text
             style={{ ...styles.headerText, height: theme.screenHeight / 30 }}
           >
@@ -30,7 +38,7 @@ export default function UnivAuth() {
             style={{
               fontSize: 16,
               color: "gray",
-              height: theme.screenHeight / 30,
+              height: theme.screenHeight / 40,
             }}
           >
             이메일
@@ -43,6 +51,8 @@ export default function UnivAuth() {
               mode="outlined"
               outlineColor="lightgray"
               style={styles.emailInput}
+              value={userEmail}
+              onChangeText={setUserEmail}
             />
             <View style={{ flex: 0.2 }}>
               <Text
@@ -67,27 +77,59 @@ export default function UnivAuth() {
           </View>
         </View>
         {isSend ? (
-          <View style={{ flex: 1, justifyContent: "center" }}>
-            <TextInput
-              mode="outlined"
-              activeOutlineColor="black"
-              placeholderTextColor="gray"
-              placeholder="인증 번호 입력"
-              outlineColor="lightgray"
-              style={{ backgroundColor: "white" }}
-            />
+          <View
+            style={{ flex: 1, justifyContent: "center", flexDirection: "row" }}
+          >
+            <View style={{ flex: 1.5, justifyContent: "center" }}>
+              <TextInput
+                mode="outlined"
+                activeOutlineColor="black"
+                placeholderTextColor="gray"
+                placeholder="인증번호 입력"
+                value={authCode}
+                onChangeText={setAuthCode}
+                outlineColor="lightgray"
+                style={{ backgroundColor: "white" }}
+              />
+            </View>
+            <View style={{ flex: 0.2 }} />
+            <View style={{ flex: 1, justifyContent: "center" }}>
+              <TouchableOpacity
+                disabled={!authCode}
+                onPress={() => {
+                  Alert.alert("인증 성공", "인증이 완료되었습니다.", [
+                    {
+                      text: "확인",
+                      onPress: () => {
+                        navigation.goBack();
+                      },
+                    },
+                  ]);
+                }}
+              >
+                <Button
+                  labelStyle={styles.btnLabelStyle}
+                  style={{ height: 50, ...theme.centerStyle }}
+                  mode="contained"
+                  buttonColor={authCode ? theme.psColor : "lightgray"}
+                >
+                  인증번호 확인
+                </Button>
+              </TouchableOpacity>
+            </View>
           </View>
         ) : null}
 
         <View style={{ flex: 1, marginTop: theme.screenHeight / 60 }}>
           <TouchableOpacity
+            disabled={!userEmail}
             onPress={() => {
               setIsSend(!isSend);
             }}
           >
             <Button
               mode="contained"
-              buttonColor="lightgray"
+              buttonColor={userEmail ? theme.psColor : "lightgray"}
               textColor="white"
               labelStyle={{
                 fontWeight: "bold",
@@ -125,5 +167,9 @@ const styles = StyleSheet.create({
     flex: 1.5,
     backgroundColor: "white",
     borderColor: "lightgray",
+  },
+  btnLabelStyle: {
+    fontWeight: "bold",
+    fontSize: theme.screenWidth / 24,
   },
 });
