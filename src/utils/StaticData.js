@@ -272,6 +272,31 @@ export const participateList = {
       profile_image: "kakao.com/qwe13341",
       temperature: 960,
     },
+
+    {
+      id: 3,
+      nickname: "어피치",
+      profile_image: "kakao.com/qwe13341",
+      temperature: 960,
+    },
+    {
+      id: 4,
+      nickname: "프로도",
+      profile_image: "kakao.com/qwe13341",
+      temperature: 960,
+    },
+    {
+      id: 3,
+      nickname: "춘식이",
+      profile_image: "kakao.com/qwe13341",
+      temperature: 960,
+    },
+    {
+      id: 4,
+      nickname: "네오",
+      profile_image: "kakao.com/qwe13341",
+      temperature: 960,
+    },
   ],
 };
 
