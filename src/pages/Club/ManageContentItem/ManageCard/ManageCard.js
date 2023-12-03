@@ -81,8 +81,19 @@ import theme from "../../../../styles/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Pressable } from "react-native";
-export default function ManageCard({ checkItemsHandler, id }) {
+export default function ManageCard({
+  checkItemsHandler,
+  id,
+  isAllChecked,
+  participantData,
+}) {
   const [checked, setChecked] = useState(false);
+
+  const allCheckHandler = () => {
+    setChecked(isAllChecked);
+    checkItemsHandler(id, isAllChecked);
+  };
+
   const checkHanlder = () => {
     setChecked((prevChecked) => {
       const newChecked = !prevChecked;
@@ -90,6 +101,10 @@ export default function ManageCard({ checkItemsHandler, id }) {
       return newChecked;
     });
   };
+
+  useEffect(() => {
+    allCheckHandler();
+  }, [isAllChecked]);
 
   return (
     <View style={styles.manageCardView}>
@@ -107,8 +122,8 @@ export default function ManageCard({ checkItemsHandler, id }) {
           <Image style={styles.image} source={LionImg} contentFit="cover" />
         </View>
         <View style={{ justifyContent: "center", flex: 1 }}>
-          <Text style={{ fontWeight: "600" }}>우움</Text>
-          <Text>온도 990 º</Text>
+          <Text style={{ fontWeight: "600" }}>{participantData.nickname}</Text>
+          <Text>온도 {participantData.temperature} º</Text>
         </View>
         <View style={styles.buttonContainer}>
           <View style={{ flex: 1 }}></View>

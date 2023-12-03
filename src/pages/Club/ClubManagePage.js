@@ -15,8 +15,6 @@ import theme from "../../styles/theme";
 import { Ionicons } from "@expo/vector-icons";
 import ManageCard from "./ManageContentItem/ManageCard/ManageCard";
 export default function ClubManagePage() {
-  const [isSelect, setIsSelect] = useState();
-
   const [checkItems, setCheckItems] = useState(new Set()); // 체크 된 애들을 담는 집합
   const [isAllChecked, setIsAllChecked] = useState(false);
 
@@ -30,7 +28,19 @@ export default function ClubManagePage() {
     setCheckItems(newCheckItems);
   };
 
-  const allCheckHandler = () => {};
+  const allCheckHandler = (allCheckToggle) => {
+    if (allCheckToggle) {
+      const allChecked = new Set(
+        participateList.content.map((data, index) => `id` + index)
+      );
+      setCheckItems(allChecked);
+      setIsAllChecked(true);
+    } else {
+      setCheckItems(new Set());
+      setIsAllChecked(false);
+    }
+  };
+
   return (
     <View style={styles.managePageView}>
       <View style={styles.managePageContent}>
@@ -46,10 +56,14 @@ export default function ClubManagePage() {
             <View style={styles.headerLeft}>
               <Pressable
                 onPress={() => {
-                  setIsSelect(!isSelect);
+                  setIsAllChecked((prevIsAllChecked) => {
+                    const newChecked = !prevIsAllChecked;
+                    allCheckHandler(newChecked);
+                    return newChecked;
+                  });
                 }}
               >
-                {isSelect ? (
+                {isAllChecked ? (
                   <Ionicons name="checkmark-circle" size={24} color="black" />
                 ) : (
                   <Ionicons name="ellipse-outline" size={24} color="black" />
@@ -73,10 +87,11 @@ export default function ClubManagePage() {
             {participateList.content.map((data, index) => {
               return (
                 <ManageCard
-                  data={data}
+                  participantData={data}
                   key={index}
                   id={`id` + index}
                   checkItemsHandler={checkItemsHandler}
+                  isAllChecked={isAllChecked}
                 />
               );
             })}
