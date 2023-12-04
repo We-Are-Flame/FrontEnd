@@ -11,6 +11,15 @@ import userStore from "../../../store/userStore";
 export default function ClubCard({ clubData }) {
   const { userData } = userStore();
   const navigation = useNavigation();
+
+  const getTime = (dateString) => {
+    const dateObject = new Date(dateString);
+    const timeString = dateObject.toLocaleTimeString("ko-KR", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    return timeString;
+  };
   return (
     <Card
       onPress={() => {
@@ -64,7 +73,8 @@ export default function ClubCard({ clubData }) {
           </Text>
 
           <Text style={{ flex: 1, fontSize: 14 }}>
-            {clubData.time.start_time}
+            {getTime(clubData.time.start_time)} ~{" "}
+            {getTime(clubData.time.end_time)}
           </Text>
         </View>
       </View>
