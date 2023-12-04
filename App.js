@@ -23,6 +23,7 @@ import AlarmSetting from "./src/pages/Profile/ProfileSetting/AlarmSetting";
 import AccountInfo from "./src/pages/Profile/ProfileSetting/AccountInfo";
 import ChatDetailPage from "./src/pages/Chat/ChatDetailPage/ChatDetailPage";
 import UnivAuth from "./src/pages/Profile/UniAuth/UnivAuth";
+
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -66,7 +67,13 @@ export default function App() {
         <Stack.Screen
           name="ClubManagePage"
           component={ClubManagePage}
-          options={{ gestureEnabled: false }}
+          options={{
+            gestureEnabled: false,
+            headerShown: true,
+            title: "신청 관리",
+            headerBackTitle: " ",
+            headerTintColor: "black",
+          }}
         />
         <Stack.Screen
           name="HomeDetailPage"
