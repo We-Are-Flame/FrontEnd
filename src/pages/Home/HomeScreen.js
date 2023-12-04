@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   Alert,
   FlatList,
+  Pressable
 } from "react-native";
 import axios from "axios";
 import { useState, useCallback, useEffect } from "react";
@@ -27,6 +28,7 @@ import LoginModal from "../../modals/LoginModal/LoginModal";
 import userStore from "../../store/userStore";
 import { API_URL } from "@env";
 import { ActivityIndicator } from "react-native";
+import ReviewModalItem from './ReviewModalItem/ReviewModalItem';
 
 export default function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
@@ -36,6 +38,7 @@ export default function HomeScreen() {
   const [pageLoading, setPageLoading] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [endClub,setEndClub] = useState(true);
   const { isLogin, userToken } = userStore();
 
   const navigation = useNavigation();
@@ -70,7 +73,7 @@ export default function HomeScreen() {
     const result = await axios.get(
       `${API_URL}/api/meetings?start=${page * 10}&end=${
         (page + 1) * 10
-      }&sort=${selectedSort}`
+      }&sort=${selectedSort}}`
     );
 
     if (result.data.number_of_elements === clubList.number_of_elements) {
@@ -191,6 +194,72 @@ export default function HomeScreen() {
             </View>
           </TouchableOpacity>
         </Modal>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={endClub}
+          onRequestClose={() => {
+            setEndClub(!endClub);
+          }}
+        >
+          <TouchableOpacity
+            style={styles.modalOverlay}
+            activeOpacity={1}
+            //onPress={() => setEndClub(!endClub)} // 이 부분이 모달 외부를 눌렀을 때 닫히도록 함
+          >
+            <View style={styles.centeredView}>
+              <View style={styles.reviewModal}>
+                <Text style={{fontSize:28, fontWeight:"bold"}}>지난 모임은 즐거우셨나요?</Text>
+                <View style={{flexDirection:"row", justifyContent:"center"}}>
+                  <Text style={{fontWeight:"bold"}}>제목여기에&nbsp;</Text>
+                  <Text>모임의 사람들을 평가해주세요 !</Text>
+                </View>
+                <View>
+                  <View style={{flexDirection:"row", marginTop:10}}>
+                    <Text style={{flex:1}}></Text>
+                    <Text style={{flex:1, fontWeight:"bold"}}>이름</Text>
+                    <Text style={{flex:1, fontWeight:"bold"}}>온도</Text>
+                    <Text style={{flex:1, fontWeight:"bold"}}>평가</Text>
+                  </View>
+                  <ReviewModalItem />
+                  <ReviewModalItem />
+                  <ReviewModalItem />
+                  {/* <FlatList 플랫리스트 이용하여 스크롤 구현
+                    data={reviewData}
+                    renderItem={({ item }) => <ReviewModalItem {...item} />}
+                    keyExtractor={item => item.id}
+                    // 필요한 경우 추가 props
+                  /> */}
+                  <Pressable onPress={() => {
+                    console.log('리뷰 제출!');
+                    setEndClub(false);
+                  }}
+                  style={({ pressed }) => [
+                    {
+                      backgroundColor: pressed ? theme.subColor : theme.psColor
+                    },
+                    {borderRadius:10}
+                  ]}>
+                    <Text style={styles.reviewSubmitBtn}>평가하기</Text>
+                  </Pressable>
+                  <View style={{flexDirection:"row"}}>
+                    <View style={{flex:2}}/>
+                    <Pressable onPress={() => {
+                      console.log('닫기');
+                      setEndClub(false);
+                    }}
+                    style={() => [
+                      {borderRadius:10,backgroundColor:"#ffffff", marginTop: 10, flex:1}
+                    ]}>
+                      <Text style={styles.reviewCancelBtn}>닫기</Text>
+                    </Pressable>
+                    <View style={{flex:2}}/>
+                  </View>
+                </View>
+              </View>
+            </View>
+          </TouchableOpacity>
+        </Modal>
       </View>
     </PaperProvider>
   );
@@ -273,4 +342,30 @@ const styles = StyleSheet.create({
   homeScreenSort: {
     alignItems: "flex-end",
   },
+  reviewModal:{
+    backgroundColor:"#ffffff",
+    borderRadius:10,
+    padding:20,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom:50,
+  },
+  reviewSubmitBtn:{
+    textAlign:"center", 
+    color:"#ffffff",
+    fontWeight:"bold",
+    padding:10,
+    borderRadius:10,
+    
+  },
+  reviewCancelBtn:{
+    textAlign:"center", 
+    fontWeight:"bold",
+    color:"#cccccc",
+    padding:10,
+    borderRadius:10,
+  }
 });

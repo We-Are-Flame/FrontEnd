@@ -1,12 +1,124 @@
-import React,{useEffect,useState} from "react";
-import { View,StyleSheet, Text,Button,TextInput } from "react-native";
+import React,{useEffect,useState,useCallback} from "react";
+import { View,StyleSheet, Text,Button,TextInput,TouchableOpacity } from "react-native";
+import { Stomp } from '@stomp/stompjs';
+import SockJS from 'sockjs-client/dist/sockjs';
 
 import { Entypo } from '@expo/vector-icons';
 import theme from '../../../styles/theme';
+import axios from 'axios';
+import { API_URL } from '@env';
 
-export default function ChatDetailPage() {
+import Chatting from '../Chatting/Chatting';
+import { userStore } from './../../../store/userStore';
+
+export default function ChatDetailPage({route}) {
+  const [chat,setChat] = useState([]);
+  const [text,setText] = useState("");
+  const [isFocused,setIsFocused] = useState(false);
+  const { userData } = userStore();
+
+  const onMessageReceived = useCallback(async(payload) => {
+    let responseChat = await JSON.parse(payload.body);
+
+    setChat((preChat)=>[
+      ...preChat,
+      {
+        message_type:responseChat.message_type,
+        sender : responseChat.sender,
+        time : new Date(),
+        message : responseChat.message,
+        profile_image : responseChat.profile_image,
+      }
+    ]);
+  });
+
+  const TextEncodingPolyfill = require('text-encoding');
+
+  Object.assign('global', {
+    TextEncoder: TextEncodingPolyfill.TextEncoder,
+    TextDecoder: TextEncodingPolyfill.TextDecoder,
+  });
+
+  function sendMessage(event) {
+
+    if (text && stompClient) {
+        const chatMessage = {
+            roomId: route.params.roomId,
+            sender: userData.nickname,
+            senderId: 7,
+            message: text,
+            time: new Date(),
+            messageType: 'TALK'
+        };
+
+      //   const dummyMessage = {
+      //     roomId: route.params.roomId,
+      //     sender: "박준하",
+      //     senderId: 9,
+      //     message: "나는 바보다",
+      //     time: new Date(),
+      //     messageType: 'TALK'
+      // };
+
+        stompClient.send("/pub/chat/sendMessage", {}, JSON.stringify(chatMessage));
+        //stompClient.send("/pub/chat/sendMessage", {}, JSON.stringify(dummyMessage));
+        setText("");
+    }
+    event.preventDefault();
+  }
+
+  function onConnected() {
+    stompClient.subscribe('/sub/chat/room/' + route.params.roomId, onMessageReceived);
+
+    stompClient.send("/pub/chat/enterUser",
+      {},
+      JSON.stringify({
+        roomId: route.params.roomId,
+        sender: userData.nickname,
+        senderId: 7,
+        message: userData.nickname + '님이 입장하셨습니다.',
+        time: new Date(),
+        messageType: 'ENTER'
+      })
+    )
+  }
+
+  useEffect(()=>{
+    axios.get(`${API_URL}/api/chat/${route.params.roomId}/messages`,null,{
+      headers:{
+        "Content-Type": `application/json`,
+      }
+    })
+    .then((res)=>{
+      setChat(res.data.content);
+      console.log(res.data.content);
+    })
+    .catch((err)=>{
+      console.log(err);
+    })
+  },[route.params]);
+
+  useEffect(()=>{
+    stompClient = Stomp.over(function(){
+      return new SockJS("http://118.67.128.48/ws-stomp");
+    });
+    stompClient.connect({}, onConnected, {});
+  },[]);
+
   return (
     <View style={styles.chatDetailPageView}>
+      <View style={styles.chatContent}>
+        {
+          chat.map((data,key)=>{
+            return <Chatting data={data} key={key}/>
+          })
+        }
+        {/* {
+          msg.map((data,key)=>{
+            return <Chatting data={data} key={key} />
+          })
+        } */}
+      </View>
       <View style={styles.chatInput}>
         <View style={styles.chatInputImage}>
           <Entypo name="image" size={30} color="black" />
@@ -14,7 +126,32 @@ export default function ChatDetailPage() {
         <TextInput
           style={styles.input}
           placeholder="Message"
+          onChangeText={setText}
+          value={text}
+          onFocus={() => {
+            setIsFocused(true);
+          }}
+          onBlur={() => {
+            setIsFocused(false);
+          }}
         />
+        {isFocused && (
+          <TouchableOpacity
+            onPress={sendMessage}
+            style={styles.chatInputImage}
+          >
+            <Text
+              style={{
+                color: theme.psColor,
+                fontWeight: "600",
+                fontSize: theme.screenWidth / 23,
+                
+              }}
+            >
+              전송
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );
@@ -39,5 +176,8 @@ const styles = StyleSheet.create({
     padding:10,
     flex:1,
     ...theme.centerStyle
+  },
+  chatContent:{
+
   }
 });

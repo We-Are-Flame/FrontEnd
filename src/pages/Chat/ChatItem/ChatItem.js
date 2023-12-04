@@ -8,8 +8,6 @@ import { Octicons } from '@expo/vector-icons';
 import kitchingLogo from "../../../../assets/kitchingLogo.png";
 const screenWidth = Dimensions.get('window').width;
 
-import ChatDetailPage from '../ChatDetailPage/ChatDetailPage';
-
 export default function ChatItem({ chatData }) {
   const navigation = useNavigation();
 
@@ -30,7 +28,7 @@ export default function ChatItem({ chatData }) {
   return (
     <TouchableOpacity style={styles.chatItemView}
       onPress={() => {
-        navigation.navigate("ChatDetailPage");
+        navigation.navigate("ChatDetailPage",{roomId:chatData.room_id});
       }}
     >
       <View style={{flex:1}}>
