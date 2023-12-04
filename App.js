@@ -1,11 +1,14 @@
 /** @format */
 
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet,Pressable, Text, View } from "react-native";
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useState, useEffect, useCallback } from "react";
+import { useNavigation } from '@react-navigation/native';
+
+import { AntDesign } from '@expo/vector-icons';
 
 import theme from "./src/styles/theme";
 import ClubManagePage from "./src/pages/Club/ClubManagePage";
@@ -21,6 +24,7 @@ import ProfileSetting from "./src/pages/Profile/ProfileSetting/ProfileSetting";
 import ContactUs from "./src/pages/Profile/ProfileSetting/ContactUs";
 import AlarmSetting from "./src/pages/Profile/ProfileSetting/AlarmSetting";
 import AccountInfo from "./src/pages/Profile/ProfileSetting/AccountInfo";
+import ChatSettingPage from './src/pages/Chat/ChatSettingPage/ChatSettingPage';
 import ChatDetailPage from "./src/pages/Chat/ChatDetailPage/ChatDetailPage";
 import UnivAuth from "./src/pages/Profile/UniAuth/UnivAuth";
 
@@ -156,10 +160,26 @@ export default function App() {
         <Stack.Screen
           name="ChatDetailPage"
           component={ChatDetailPage}
-          options={({ route }) => ({
+          options={({ navigation }) => ({
+            headerRight:()=>(
+              <Pressable onPress={() => navigation.navigate('ChatSettingPage')} style={{marginRight:20}}>
+                <AntDesign name="ellipsis1" size={24} color="black" />
+              </Pressable>
+            ),
             gestureEnabled: false,
             headerShown: true,
             title: "채팅",
+            headerBackTitle: " ",
+            headerTintColor: "black",
+          })}
+        />
+        <Stack.Screen
+          name="ChatSettingPage"
+          component={ChatSettingPage}
+          options={({ route }) => ({
+            gestureEnabled: false,
+            headerShown: true,
+            title: "채팅 설정",
             headerBackTitle: " ",
             headerTintColor: "black",
           })}

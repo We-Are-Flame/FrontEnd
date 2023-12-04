@@ -129,6 +129,7 @@ export default function HomeDetailPage({ route }) {
   }, [startTime, endTime, detailData]);
 
   useEffect(() => {
+    console.log(detailData);
     if (detailData.time && detailData.time.start_time) {
       setStartTime(new Date(detailData.time.start_time));
       setEndTime(new Date(detailData.time.end_time));
@@ -169,6 +170,22 @@ export default function HomeDetailPage({ route }) {
       .catch((err) => {
         console.log(err);
       });
+  };
+
+  const clickApply = ()=>{
+    axios.post(`${API_URL}/api/meetings/${detailData.id}/apply`, null , {
+      headers: {
+        "Content-Type": `application/json`,
+        Authorization: "Bearer " + `${userToken}`,
+      },
+    })
+    .then((res)=>{
+      console.log(res.data);
+      navigation.navigate("Home");
+    })
+    .catch((err)=>{
+      console.log(err);
+    })
   };
 
   return Object.keys(detailData).length !== 0 ? (
@@ -330,15 +347,24 @@ export default function HomeDetailPage({ route }) {
                     종료된 게임
                   </Text>
                 </TouchableOpacity>
-              ) : detailData.status.participate_status === "NONE" ? (
-                <TouchableOpacity style={styles.homeDetailStateBtnBlue}>
+              ) : detailData.status.is_owner ? "": detailData.status.participate_status === "NONE" ? (
+                <TouchableOpacity style={styles.homeDetailStateBtnBlue} onPress={clickApply}>
                   <Text style={styles.homeDetailStateTextBlue}>참가 신청</Text>
                 </TouchableOpacity>
-              ) : (
+              ) : detailData.status.participate_status === "ACCEPTED" ? (
                 <TouchableOpacity style={styles.homeDetailStateBtnRed}>
                   <Text style={styles.homeDetailStateTextRed}>참가 취소</Text>
                 </TouchableOpacity>
-              )}
+              ) : detailData.status.participate_status === "PENDING" ? (
+                <TouchableOpacity style={styles.homeDetailStateBtnBlack}>
+                  <Text>수락 대기</Text>
+                </TouchableOpacity>
+              ) : detailData.status.participate_status === "REJECTED" ? (
+                <TouchableOpacity style={styles.homeDetailStateBtnRed}>
+                  <Text style={styles.homeDetailStateTextRed}>수락 거절됨</Text>
+                </TouchableOpacity>
+              ) : ""
+              }
             </View>
 
             <View style={styles.homeDetailSpace} />
@@ -551,6 +577,14 @@ const styles = StyleSheet.create({
   homeDetailStateBtnRed: {
     borderWidth: 1,
     borderColor: "#ff0000",
+    borderRadius: 10,
+    padding: 15,
+    marginTop: 10,
+    ...theme.centerStyle,
+  },
+  homeDetailStateBtnBlack:{
+    borderWidth: 1,
+    borderColor: "#000000",
     borderRadius: 10,
     padding: 15,
     marginTop: 10,

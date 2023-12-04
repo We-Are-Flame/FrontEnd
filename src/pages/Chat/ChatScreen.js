@@ -40,7 +40,7 @@ export default function ChatScreen({ navigation }) {
         style={{ flex: theme.headerSpace, backgroundColor: theme.psColor }}
       ></View>
 
-      <Header isLogin={true} />
+      <Header />
       <View style={{flex:7, backgroundColor:"#ffffff"}}>
         <FlatList
           style={{marginTop:40}}
