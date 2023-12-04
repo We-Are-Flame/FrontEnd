@@ -1,3 +1,5 @@
+/** @format */
+
 // /** @format */
 
 // import * as React from "react";
@@ -119,7 +121,11 @@ export default function ManageCard({
           </Pressable>
         </View>
         <View style={{ flex: 1 }}>
-          <Image style={styles.image} source={LionImg} contentFit="cover" />
+          <Image
+            style={styles.image}
+            source={{ uri: participantData.profile_image }}
+            contentFit="cover"
+          />
         </View>
         <View style={{ justifyContent: "center", flex: 1 }}>
           <Text style={{ fontWeight: "600" }}>{participantData.nickname}</Text>
