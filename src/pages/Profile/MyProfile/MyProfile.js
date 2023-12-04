@@ -8,11 +8,13 @@ import theme from "../../../styles/theme";
 import ProfileEditModal from "../../../modals/ProfileEditModal/ProfileEditModal";
 import userStore from "../../../store/userStore";
 import modalHandleStore from "../../../store/modalHandleStore";
+import { useNavigation } from "@react-navigation/core";
 export default function MyProfile() {
   const { setProfileEditModal } = modalHandleStore();
 
   const [isAuth, setIsAuth] = useState(false);
   const { isLogin, userData } = userStore();
+  const navigation = useNavigation();
 
   return (
     <View style={styles.myProfileView}>
@@ -69,16 +71,22 @@ export default function MyProfile() {
             </Text>
           </View>
           <View style={{ ...styles.stateItems, borderRightWidth: 0 }}>
-            <Text>학교 인증</Text>
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: "bold",
-                color: isAuth ? theme.psColor : "gray",
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("UnivAuth");
               }}
             >
-              {isAuth ? "인증됨" : "인증필요"}
-            </Text>
+              <Text>학교 인증</Text>
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: "bold",
+                  color: isAuth ? theme.psColor : "gray",
+                }}
+              >
+                {isAuth ? "인증됨" : "인증필요"}
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
       </View>
