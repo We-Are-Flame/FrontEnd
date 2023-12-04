@@ -242,20 +242,63 @@ const styles = StyleSheet.create({
 });
 
 export const commentData = {
-  status:"success",
-  data:[
+  status: "success",
+  data: [
     {
-      "profile_image": "../../../../assets/lion.webp",  // 댓글 작성자의 프로필 이미지
-      "nickname": "태헌",            // 댓글 작성자의 닉네임
-      "content": "모임에 강아지 데려가도 되나요?"  // 댓글 내용
+      profile_image: "../../../../assets/lion.webp", // 댓글 작성자의 프로필 이미지
+      nickname: "태헌", // 댓글 작성자의 닉네임
+      content: "모임에 강아지 데려가도 되나요?", // 댓글 내용
     },
     {
-      "profile_image": "../../../../assets/chunsik.webp",  // 댓글 작성자의 프로필 이미지
-      "nickname": "재성",            // 댓글 작성자의 닉네임
-      "content": "모임 끝나고 술 한잔 하고싶은데 어떤가요?"  // 댓글 내용
+      profile_image: "../../../../assets/chunsik.webp", // 댓글 작성자의 프로필 이미지
+      nickname: "재성", // 댓글 작성자의 닉네임
+      content: "모임 끝나고 술 한잔 하고싶은데 어떤가요?", // 댓글 내용
     },
-  ]
-}
+  ],
+};
+
+export const participateList = {
+  count: 2,
+  content: [
+    {
+      id: 1,
+      nickname: "라이언",
+      profile_image: "kakao.com/qwe13341",
+      temperature: 960,
+    },
+    {
+      id: 2,
+      nickname: "육군",
+      profile_image: "kakao.com/qwe13341",
+      temperature: 960,
+    },
+
+    {
+      id: 3,
+      nickname: "어피치",
+      profile_image: "kakao.com/qwe13341",
+      temperature: 960,
+    },
+    {
+      id: 4,
+      nickname: "프로도",
+      profile_image: "kakao.com/qwe13341",
+      temperature: 960,
+    },
+    {
+      id: 3,
+      nickname: "춘식이",
+      profile_image: "kakao.com/qwe13341",
+      temperature: 960,
+    },
+    {
+      id: 4,
+      nickname: "네오",
+      profile_image: "kakao.com/qwe13341",
+      temperature: 960,
+    },
+  ],
+};
 
 export const headers = {
   "Content-Type": `application/json`,
@@ -263,9 +306,9 @@ export const headers = {
 
 export const post_headers = {
   "Content-Type": `application/json`,
-  "Authorization": "Bearer "+"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzOk1FTUJFUiIsInVzZXJJZCI6MywiZW1haWwiOiJmb3JldmVyMjk2QG5hdmVyLmNvbSIsImlhdCI6MTcwMTAxNzIxMiwiZXhwIjoxNzAxMDI3MjEyfQ._6P9HJxnF3FUvNaolLrLgEVFN3FruLNrM1w2KNROCJg"
+  Authorization:
+    "Bearer " +
+    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzOk1FTUJFUiIsInVzZXJJZCI6MywiZW1haWwiOiJmb3JldmVyMjk2QG5hdmVyLmNvbSIsImlhdCI6MTcwMTAxNzIxMiwiZXhwIjoxNzAxMDI3MjEyfQ._6P9HJxnF3FUvNaolLrLgEVFN3FruLNrM1w2KNROCJg",
 };
 
-export const sort = [
-  "soon","new","title"
-];
+export const sort = ["soon", "new", "title"];

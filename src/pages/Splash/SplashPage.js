@@ -17,14 +17,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "@env";
 import axios from "axios";
 
-import LoginModal from "../../modals/LoginModal/LoginModal";
 import theme from "../../styles/theme";
-import Logo from "../../../assets/kitchingLogo.png";
 import userStore from "../../store/userStore";
 
 export default function SplashPage() {
   const [animating, setAnimating] = useState(true);
-  const { setUserToken, setIsLogin } = userStore();
+  const { setUserToken, setIsLogin, setUserData } = userStore();
   const navigation = useNavigation();
   useEffect(() => {
     setTimeout(async () => {
@@ -34,16 +32,22 @@ export default function SplashPage() {
       console.log(token);
 
       if (token !== null) {
-        await axios
+        axios
           .get(`${API_URL}/api/user/notification`, {
             headers: {
               "Content-Type": `application/json`,
               Authorization: "Bearer " + `${token}`,
             },
           })
-          .then((res) => {
-            console.log("??");
+          .then(async (res) => {
+            const userInfoResponse = await axios.get(`${API_URL}/api/user`, {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + token,
+              },
+            }); //채팅에서 사용하기 위해 스플래시 페이지에서 미리 사용자 정보를 가져옴
             setUserToken(token);
+            setUserData(userInfoResponse.data); 
             setIsLogin(true);
             navigation.replace("Home");
           })

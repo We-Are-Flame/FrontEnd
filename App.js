@@ -24,8 +24,10 @@ import ProfileSetting from "./src/pages/Profile/ProfileSetting/ProfileSetting";
 import ContactUs from "./src/pages/Profile/ProfileSetting/ContactUs";
 import AlarmSetting from "./src/pages/Profile/ProfileSetting/AlarmSetting";
 import AccountInfo from "./src/pages/Profile/ProfileSetting/AccountInfo";
-import ChatDetailPage from './src/pages/Chat/ChatDetailPage/ChatDetailPage';
 import ChatSettingPage from './src/pages/Chat/ChatSettingPage/ChatSettingPage';
+import ChatDetailPage from "./src/pages/Chat/ChatDetailPage/ChatDetailPage";
+import UnivAuth from "./src/pages/Profile/UniAuth/UnivAuth";
+
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -69,7 +71,13 @@ export default function App() {
         <Stack.Screen
           name="ClubManagePage"
           component={ClubManagePage}
-          options={{ gestureEnabled: false }}
+          options={{
+            gestureEnabled: false,
+            headerShown: true,
+            title: "신청 관리",
+            headerBackTitle: " ",
+            headerTintColor: "black",
+          }}
         />
         <Stack.Screen
           name="HomeDetailPage"
@@ -172,6 +180,17 @@ export default function App() {
             gestureEnabled: false,
             headerShown: true,
             title: "채팅 설정",
+            headerBackTitle: " ",
+            headerTintColor: "black",
+          })}
+        />
+        <Stack.Screen
+          name="UnivAuth"
+          component={UnivAuth}
+          options={({ route }) => ({
+            gestureEnabled: false,
+            headerShown: true,
+            title: "학교 이메일 인증",
             headerBackTitle: " ",
             headerTintColor: "black",
           })}

@@ -12,6 +12,7 @@ import {
   Alert,
   FlatList,
   Pressable
+  ActivityIndicator,
 } from "react-native";
 import axios from "axios";
 import { useState, useCallback, useEffect } from "react";
@@ -24,11 +25,11 @@ import HomeContent from "./HomeContent/HomeContent";
 import HomeCategory from "./HomeCategory/HomeCategory";
 import Dropdown from "../../components/Dropdown";
 import { sort } from "../../utils/StaticData";
-import LoginModal from "../../modals/LoginModal/LoginModal";
 import userStore from "../../store/userStore";
 import { API_URL } from "@env";
-import { ActivityIndicator } from "react-native";
+
 import ReviewModalItem from './ReviewModalItem/ReviewModalItem';
+
 
 export default function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
@@ -39,7 +40,7 @@ export default function HomeScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [endClub,setEndClub] = useState(true);
-  const { isLogin, userToken } = userStore();
+  const { isLogin, userToken, updatedState } = userStore();
 
   const navigation = useNavigation();
 
@@ -67,7 +68,7 @@ export default function HomeScreen() {
 
   useEffect(() => {
     fetchData();
-  }, [selectedSort]);
+  }, [selectedSort, updatedState]);
 
   const getData = async () => {
     const result = await axios.get(

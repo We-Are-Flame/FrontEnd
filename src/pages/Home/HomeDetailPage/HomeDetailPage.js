@@ -241,7 +241,11 @@ export default function HomeDetailPage({ route }) {
               <View>
                 {detailData.status.is_owner ? (
                   <TouchableOpacity
-                    onPress={() => navigation.navigate("ClubManagePage")}
+                    onPress={() =>
+                      navigation.navigate("ClubManagePage", {
+                        clubId: detailData.id,
+                      })
+                    }
                   >
                     <Text style={styles.homeDetailAppManageBtn}>신청관리</Text>
                   </TouchableOpacity>
