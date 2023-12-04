@@ -28,8 +28,7 @@ import { sort } from "../../utils/StaticData";
 import userStore from "../../store/userStore";
 import { API_URL } from "@env";
 
-import ReviewModalItem from './ReviewModalItem/ReviewModalItem';
-
+import ReviewModalItem from "./ReviewModalItem/ReviewModalItem";
 
 export default function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
@@ -39,7 +38,7 @@ export default function HomeScreen() {
   const [pageLoading, setPageLoading] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [endClub,setEndClub] = useState(true);
+  const [endClub, setEndClub] = useState(true);
   const { isLogin, userToken, updatedState } = userStore();
 
   const navigation = useNavigation();
@@ -210,17 +209,21 @@ export default function HomeScreen() {
           >
             <View style={styles.centeredView}>
               <View style={styles.reviewModal}>
-                <Text style={{fontSize:28, fontWeight:"bold"}}>지난 모임은 즐거우셨나요?</Text>
-                <View style={{flexDirection:"row", justifyContent:"center"}}>
-                  <Text style={{fontWeight:"bold"}}>제목여기에&nbsp;</Text>
+                <Text style={{ fontSize: 28, fontWeight: "bold" }}>
+                  지난 모임은 즐거우셨나요?
+                </Text>
+                <View
+                  style={{ flexDirection: "row", justifyContent: "center" }}
+                >
+                  <Text style={{ fontWeight: "bold" }}>제목여기에&nbsp;</Text>
                   <Text>모임의 사람들을 평가해주세요 !</Text>
                 </View>
                 <View>
-                  <View style={{flexDirection:"row", marginTop:10}}>
-                    <Text style={{flex:1}}></Text>
-                    <Text style={{flex:1, fontWeight:"bold"}}>이름</Text>
-                    <Text style={{flex:1, fontWeight:"bold"}}>온도</Text>
-                    <Text style={{flex:1, fontWeight:"bold"}}>평가</Text>
+                  <View style={{ flexDirection: "row", marginTop: 10 }}>
+                    <Text style={{ flex: 1 }}></Text>
+                    <Text style={{ flex: 1, fontWeight: "bold" }}>이름</Text>
+                    <Text style={{ flex: 1, fontWeight: "bold" }}>온도</Text>
+                    <Text style={{ flex: 1, fontWeight: "bold" }}>평가</Text>
                   </View>
                   <ReviewModalItem />
                   <ReviewModalItem />
@@ -231,30 +234,41 @@ export default function HomeScreen() {
                     keyExtractor={item => item.id}
                     // 필요한 경우 추가 props
                   /> */}
-                  <Pressable onPress={() => {
-                    console.log('리뷰 제출!');
-                    setEndClub(false);
-                  }}
-                  style={({ pressed }) => [
-                    {
-                      backgroundColor: pressed ? theme.subColor : theme.psColor
-                    },
-                    {borderRadius:10}
-                  ]}>
-                    <Text style={styles.reviewSubmitBtn}>평가하기</Text>
-                  </Pressable>
-                  <View style={{flexDirection:"row"}}>
-                    <View style={{flex:2}}/>
-                    <Pressable onPress={() => {
-                      console.log('닫기');
+                  <Pressable
+                    onPress={() => {
+                      console.log("리뷰 제출!");
                       setEndClub(false);
                     }}
-                    style={() => [
-                      {borderRadius:10,backgroundColor:"#ffffff", marginTop: 10, flex:1}
-                    ]}>
+                    style={({ pressed }) => [
+                      {
+                        backgroundColor: pressed
+                          ? theme.subColor
+                          : theme.psColor,
+                      },
+                      { borderRadius: 10 },
+                    ]}
+                  >
+                    <Text style={styles.reviewSubmitBtn}>평가하기</Text>
+                  </Pressable>
+                  <View style={{ flexDirection: "row" }}>
+                    <View style={{ flex: 2 }} />
+                    <Pressable
+                      onPress={() => {
+                        console.log("닫기");
+                        setEndClub(false);
+                      }}
+                      style={() => [
+                        {
+                          borderRadius: 10,
+                          backgroundColor: "#ffffff",
+                          marginTop: 10,
+                          flex: 1,
+                        },
+                      ]}
+                    >
                       <Text style={styles.reviewCancelBtn}>닫기</Text>
                     </Pressable>
-                    <View style={{flex:2}}/>
+                    <View style={{ flex: 2 }} />
                   </View>
                 </View>
               </View>
@@ -343,30 +357,29 @@ const styles = StyleSheet.create({
   homeScreenSort: {
     alignItems: "flex-end",
   },
-  reviewModal:{
-    backgroundColor:"#ffffff",
-    borderRadius:10,
-    padding:20,
+  reviewModal: {
+    backgroundColor: "#ffffff",
+    borderRadius: 10,
+    padding: 20,
   },
   centeredView: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom:50,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 50,
   },
-  reviewSubmitBtn:{
-    textAlign:"center", 
-    color:"#ffffff",
-    fontWeight:"bold",
-    padding:10,
-    borderRadius:10,
-    
+  reviewSubmitBtn: {
+    textAlign: "center",
+    color: "#ffffff",
+    fontWeight: "bold",
+    padding: 10,
+    borderRadius: 10,
   },
-  reviewCancelBtn:{
-    textAlign:"center", 
-    fontWeight:"bold",
-    color:"#cccccc",
-    padding:10,
-    borderRadius:10,
-  }
+  reviewCancelBtn: {
+    textAlign: "center",
+    fontWeight: "bold",
+    color: "#cccccc",
+    padding: 10,
+    borderRadius: 10,
+  },
 });

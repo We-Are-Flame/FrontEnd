@@ -21,14 +21,22 @@ export default function KaKaoLogin() {
       console.log(err);
     }
   };
-  const KakaoLoginWebView = (data) => {
+  const KakaoLoginWebView = async (data) => {
     const exp = "token=";
     var condition = data.indexOf(exp);
     if (condition != -1) {
       var access_token = data.substring(condition + exp.length);
-      navigation.replace("Home", { screen: "Home" });
+      const userInfoResponse = await axios.get(`${API_URL}/api/user`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + access_token,
+        },
+      }); //채팅에서 사용하기 위해 스플래시 페이지에서 미리 사용자 정보를 가져옴
+      setUserToken(token);
+      setUserData(userInfoResponse.data);
       storeData(access_token);
       setIsLogin(true);
+      navigation.replace("Home", { screen: "Home" });
     }
   };
 
