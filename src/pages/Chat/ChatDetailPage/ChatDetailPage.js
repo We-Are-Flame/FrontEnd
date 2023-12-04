@@ -135,19 +135,14 @@ export default function ChatDetailPage({ route }) {
           : theme.screenHeight / 10
       }
     >
-      <View style={styles.chatDetailPageView}>
-        <View style={styles.chatContent}>
-          <FlatList
-            style={styles.chatContent}
-            data={chat}
-            renderItem={renderItem}
-            keyExtractor={(item, index) => index.toString()} // 고유 키를 제공
-          />
-          {/* {
-          msg.map((data,key)=>{
-            return <Chatting data={data} key={key} />
-          })
-        } */}
+    <View style={styles.chatDetailPageView}>
+      <View style={styles.chatContent}>
+        <FlatList
+          style={styles.chatContent}
+          data={chat}
+          renderItem={renderItem}
+          keyExtractor={(item, index) => index.toString()} // 고유 키를 제공
+        />
         </View>
         <View style={styles.chatInput}>
           <View style={styles.chatInputImage}>
