@@ -401,7 +401,7 @@ export default function HomeDetailPage({ route }) {
                   <Text style={styles.informationFormmat}>모집인원</Text>
                 </View>
                 <Text style={{ ...styles.informationFormmat, flex: 6 }}>
-                  {detailData.info.current_participants} /{" "}
+                  {detailData.info.current_participants + 1} /{" "}
                   {detailData.info.max_participants}
                 </Text>
                 <Text></Text>

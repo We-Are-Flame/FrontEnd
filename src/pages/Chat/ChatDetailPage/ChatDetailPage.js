@@ -1,5 +1,5 @@
 import React,{useEffect,useState,useCallback} from "react";
-import { View,StyleSheet, Text,Button,TextInput,TouchableOpacity } from "react-native";
+import { View,StyleSheet, Text,Button,TextInput,TouchableOpacity,KeyboardAvoidingView,FlatList } from "react-native";
 import { Stomp } from '@stomp/stompjs';
 import SockJS from 'sockjs-client/dist/sockjs';
 
@@ -9,7 +9,7 @@ import axios from 'axios';
 import { API_URL } from '@env';
 
 import Chatting from '../Chatting/Chatting';
-import { userStore } from './../../../store/userStore';
+import userStore from "../../../store/userStore";
 
 export default function ChatDetailPage({route}) {
   const [chat,setChat] = useState([]);
@@ -19,7 +19,6 @@ export default function ChatDetailPage({route}) {
 
   const onMessageReceived = useCallback(async(payload) => {
     let responseChat = await JSON.parse(payload.body);
-
     setChat((preChat)=>[
       ...preChat,
       {
@@ -80,7 +79,7 @@ export default function ChatDetailPage({route}) {
         time: new Date(),
         messageType: 'ENTER'
       })
-    )
+    );
   }
 
   useEffect(()=>{
@@ -98,6 +97,10 @@ export default function ChatDetailPage({route}) {
     })
   },[route.params]);
 
+  const renderItem = ({ item }) => {
+    return <Chatting data={item} />;
+  };
+
   useEffect(()=>{
     stompClient = Stomp.over(function(){
       return new SockJS("http://118.67.128.48/ws-stomp");
@@ -106,13 +109,23 @@ export default function ChatDetailPage({route}) {
   },[]);
 
   return (
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={
+        Platform.OS === "ios"
+          ? theme.screenHeight / 15
+          : theme.screenHeight / 10
+      }
+    >
     <View style={styles.chatDetailPageView}>
       <View style={styles.chatContent}>
-        {
-          chat.map((data,key)=>{
-            return <Chatting data={data} key={key}/>
-          })
-        }
+        <FlatList
+          style={styles.chatContent}
+          data={chat}
+          renderItem={renderItem}
+          keyExtractor={(item, index) => index.toString()} // 고유 키를 제공
+        />
         {/* {
           msg.map((data,key)=>{
             return <Chatting data={data} key={key} />
@@ -154,6 +167,7 @@ export default function ChatDetailPage({route}) {
         )}
       </View>
     </View>
+    </KeyboardAvoidingView>
   );
 }
 

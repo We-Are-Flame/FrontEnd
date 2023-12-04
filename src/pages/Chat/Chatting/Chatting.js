@@ -7,6 +7,7 @@ import theme from '../../../styles/theme';
 
 export default function Chatting({ data }) {
   const { userData } = userStore();
+  console.log(data);
 
   function formatTime(dateString) {
     const date = new Date(dateString);
@@ -25,7 +26,7 @@ export default function Chatting({ data }) {
         <Text style={{color:"#aaaaaa"}}>{data.message}</Text>
       </View>
     );
-  }else if(data.message_type === "TALK" && data.sender === "이태헌" ){
+  }else if(data.message_type === "TALK" && data.sender === userData.nickname ){
     return(
       <View style={{alignItems:"flex-end", marginRight:20, flexDirection:"row",alignSelf: 'flex-end'}}>
         <View style={{
