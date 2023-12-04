@@ -140,7 +140,7 @@ export default function HomeContentItem({ state }) {
           <View style={{ flexDirection: "row", marginLeft: 3, marginTop: 5 }}>
             <AntDesign name="clockcircle" size={18} color="black" />
             <Text style={{ marginTop: 2, marginLeft: 3 }}>
-              &nbsp;{duration}시간 게임
+              &nbsp;{duration}시간
             </Text>
           </View>
           <View style={{ flexDirection: "row", marginLeft: 3, marginTop: 5 }}>
