@@ -19,6 +19,7 @@ import axios from "axios";
 import userStore from "../../store/userStore";
 
 import { API_URL } from "@env";
+import Loading from "../../components/Loading";
 
 export default function ChatScreen({ navigation }) {
   const [refreshing, setRefreshing] = useState(false);
@@ -46,25 +47,23 @@ export default function ChatScreen({ navigation }) {
     console.log(res.data.content);
     setPageLoading(false);
   };
-  
+
   useEffect(() => {
     fetchData();
   }, []);
 
   return (
     <View style={styles.chatScreenView}>
-      {pageLoading ? (
-        <View style={{ flex: 1, ...theme.centerStyle }}>
-          <ActivityIndicator size="large" color="black" />
-        </View>
-      ) : (
-        <View style={{ flex: 1 }}>
-          <View
-            style={{ flex: theme.headerSpace, backgroundColor: theme.psColor }}
-          ></View>
+      <View style={{ flex: 1 }}>
+        <View
+          style={{ flex: theme.headerSpace, backgroundColor: theme.psColor }}
+        ></View>
 
-          <Header />
-          <View style={{ flex: 7, backgroundColor: "#ffffff" }}>
+        <Header />
+        <View style={{ flex: 7, backgroundColor: "#ffffff" }}>
+          {pageLoading ? (
+            <Loading />
+          ) : (
             <FlatList
               refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -77,9 +76,9 @@ export default function ChatScreen({ navigation }) {
               keyExtractor={(item, index) => index.toString()}
               ItemSeparatorComponent={() => <View style={{ height: 20 }} />}
             />
-          </View>
+          )}
         </View>
-      )}
+      </View>
     </View>
   );
 }

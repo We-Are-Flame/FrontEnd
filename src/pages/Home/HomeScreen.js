@@ -29,6 +29,7 @@ import userStore from "../../store/userStore";
 import { API_URL } from "@env";
 
 import ReviewModalItem from "./ReviewModalItem/ReviewModalItem";
+import Loading from "../../components/Loading";
 
 export default function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
@@ -110,9 +111,7 @@ export default function HomeScreen() {
 
         <View style={{ flex: 7 }}>
           {pageLoading ? (
-            <View style={{ flex: 1, ...theme.centerStyle }}>
-              <ActivityIndicator size="large" color="black" />
-            </View>
+            <Loading />
           ) : clubList.number_of_elements !== 0 ? (
             <FlatList
               onEndReached={onEndReached}

@@ -17,6 +17,7 @@ import theme from "../../styles/theme";
 import Header from "../../components/Header";
 import userStore from "../../store/userStore";
 import { ActivityIndicator } from "react-native";
+import Loading from "../../components/Loading";
 export default function ProfilePage() {
   const [refreshing, setRefreshing] = useState(false);
   const { setUserData, userToken, updatedState } = userStore();
@@ -88,9 +89,7 @@ export default function ProfilePage() {
 
       <View style={styles.profilePageMain}>
         {pageLoading ? (
-          <View style={{ flex: 1, ...theme.centerStyle }}>
-            <ActivityIndicator size="large" color="black" />
-          </View>
+          <Loading />
         ) : (
           <ScrollView
             nestedScrollEnabled={true}

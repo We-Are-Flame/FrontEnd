@@ -32,6 +32,7 @@ import MyCarousel from "../../../components/MyCarousel";
 import GoogleMap from "../../../components/GoogleMap";
 import { API_URL } from "@env";
 import userStore from "../../../store/userStore";
+import Loading from "../../../components/Loading";
 
 export default function HomeDetailPage({ route }) {
   const [detailData, setDetailData] = useState({});
@@ -251,9 +252,7 @@ export default function HomeDetailPage({ route }) {
       }
     >
       {pageLoading ? (
-        <View style={{ flex: 1, ...theme.centerStyle }}>
-          <ActivityIndicator size="large" color="black" />
-        </View>
+        <Loading />
       ) : (
         <View style={styles.homeDetailPageView}>
           <View style={styles.homeDetailContentView}>
