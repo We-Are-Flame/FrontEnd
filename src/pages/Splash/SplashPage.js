@@ -28,35 +28,55 @@ export default function SplashPage() {
     setTimeout(async () => {
       setAnimating(false);
 
-      const token = await AsyncStorage.getItem("userAccessToken");
-      console.log(token);
+      try {
+        const token = await AsyncStorage.getItem("userAccessToken");
+        console.log(token);
 
-      if (token !== null) {
-        axios
-          .get(`${API_URL}/api/user/notification`, {
+        if (token !== null) {
+          // axios
+          //   .get(`${API_URL}/api/user/notification`, {
+          //     headers: {
+          //       "Content-Type": `application/json`,
+          //       Authorization: "Bearer " + `${token}`,
+          //     },
+          //   })
+          //   .then(async (res) => {
+          //     const userInfoResponse = await axios.get(`${API_URL}/api/user`, {
+          //       headers: {
+          //         "Content-Type": "application/json",
+          //         Authorization: "Bearer " + token,
+          //       },
+          //     }); //채팅에서 사용하기 위해 스플래시 페이지에서 미리 사용자 정보를 가져옴
+          //     setUserToken(token);
+          //     setUserData(userInfoResponse.data);
+          //     setIsLogin(true);
+          //     navigation.replace("Home");
+          //   })
+          //   .catch((err) => {
+          //     navigation.replace("Login");
+          //     console.log(err);
+          //   });
+          await axios.get(`${API_URL}/api/user/notification`, {
             headers: {
-              "Content-Type": `application/json`,
-              Authorization: "Bearer " + `${token}`,
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token,
             },
-          })
-          .then(async (res) => {
-            const userInfoResponse = await axios.get(`${API_URL}/api/user`, {
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: "Bearer " + token,
-              },
-            }); //채팅에서 사용하기 위해 스플래시 페이지에서 미리 사용자 정보를 가져옴
-            setUserToken(token);
-            setUserData(userInfoResponse.data); 
-            setIsLogin(true);
-            navigation.replace("Home");
-          })
-          .catch((err) => {
-            navigation.replace("Login");
-            console.log(err);
           });
-      } else {
-        navigation.replace("Login"); // 이슈
+          const userInfoResponse = await axios.get(`${API_URL}/api/user`, {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token,
+            },
+          }); //채팅에서 사용하기 위해 스플래시 페이지에서 미리 사용자 정보를 가져옴
+          setUserToken(token);
+          setUserData(userInfoResponse.data);
+          setIsLogin(true);
+          navigation.replace("Home");
+        } else {
+          navigation.replace("Login");
+        }
+      } catch (err) {
+        console.log("에러 발생", err);
       }
     }, 2000);
   }, []);
