@@ -46,6 +46,7 @@ export default function ChatScreen({ navigation }) {
     console.log(res.data.content);
     setPageLoading(false);
   };
+  
   useEffect(() => {
     fetchData();
   }, []);

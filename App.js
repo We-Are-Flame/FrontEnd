@@ -160,9 +160,9 @@ export default function App() {
         <Stack.Screen
           name="ChatDetailPage"
           component={ChatDetailPage}
-          options={({ navigation }) => ({
+          options={({ navigation,route  }) => ({
             headerRight:()=>(
-              <Pressable onPress={() => navigation.navigate('ChatSettingPage')} style={{marginRight:20}}>
+              <Pressable onPress={() => navigation.navigate('ChatSettingPage',{ roomId: route.params.roomId })} style={{marginRight:20}}>
                 <AntDesign name="ellipsis1" size={24} color="black" />
               </Pressable>
             ),
