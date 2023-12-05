@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Button } from "react-native";
+import { View, Text, Button, StyleSheet } from "react-native";
 import kitchingLogo from "../../../../assets/kitchingLogo.png";
 import { Image } from "expo-image";
 import userStore from "../../../store/userStore";
@@ -38,7 +38,7 @@ export default function Chatting({ data }) {
           alignSelf: "flex-end",
         }}
       >
-        <View style={{}}>
+        <View>
           <Text
             style={{
               color: "#cccccc",
@@ -49,18 +49,10 @@ export default function Chatting({ data }) {
             {formatTime(data.time)}
           </Text>
         </View>
-        <View>
+        <View style={styles.myChatContainer}>
           <Text
             style={{
-              backgroundColor: "#dddddd",
-              padding: 10,
-              borderBottomRightRadius: 30,
-              borderBottomLeftRadius: 30,
-              borderTopLeftRadius: 30,
-              marginTop: 3,
-              marginRight: 5,
               color: "#ffffff",
-              backgroundColor: theme.psColor,
             }}
           >
             {data.message}
@@ -94,19 +86,18 @@ export default function Chatting({ data }) {
         />
         <View>
           <Text style={{ marginLeft: 5, fontSize: 12 }}>{data.sender}</Text>
-          <Text
-            style={{
-              backgroundColor: "#dddddd",
-              padding: 10,
-              borderBottomRightRadius: 30,
-              borderBottomLeftRadius: 30,
-              borderTopRightRadius: 30,
-              marginTop: 3,
-              marginLeft: 5,
-            }}
-          >
-            {data.message}
-          </Text>
+          <View style={styles.otherChatContainer}>
+            <Text
+              style={{
+                backgroundColor: "#dddddd",
+                borderBottomRightRadius: 30,
+                borderBottomLeftRadius: 30,
+                borderTopRightRadius: 30,
+              }}
+            >
+              {data.message}
+            </Text>
+          </View>
         </View>
         <View style={{}}>
           <Text
@@ -123,3 +114,22 @@ export default function Chatting({ data }) {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  myChatContainer: {
+    padding: 10,
+    borderTopRightRadius: 1,
+    borderBottomRightRadius: 20,
+    borderBottomLeftRadius: 30,
+    borderTopLeftRadius: 30,
+    backgroundColor: theme.psColor,
+  },
+  otherChatContainer: {
+    marginLeft: 3,
+    backgroundColor: "#dddddd",
+    padding: 10,
+    borderBottomRightRadius: 30,
+    borderBottomLeftRadius: 30,
+    borderTopRightRadius: 30,
+  },
+});
