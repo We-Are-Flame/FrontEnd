@@ -22,10 +22,12 @@ export default function ProfilePage() {
   const { setUserData, userToken, updatedState } = userStore();
   const [myClubData, setMyClubData] = useState({});
   const [pageLoading, setPageLoading] = useState(null);
+
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     setTimeout(() => {
       setRefreshing(false);
+      fetchData();
     }, 1000);
   }, []);
 

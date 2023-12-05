@@ -10,10 +10,11 @@ import {
   Pressable,
   KeyboardAvoidingView,
   Platform,
-  SafeAreaView,
   Dimensions,
   Modal,
   TouchableWithoutFeedback,
+  Alert,
+  ActivityIndicator,
 } from "react-native";
 import * as Linking from "expo-linking";
 import { Image } from "expo-image";
@@ -43,6 +44,8 @@ export default function HomeDetailPage({ route }) {
   const [addedComment, setAddedComment] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [carouselImage, setCarouselImage] = useState([]);
+  const [pageLoading, setPageLoading] = useState(null);
+  const [isUpdate, setIsUpdate] = useState(false);
   const { userToken } = userStore();
 
   const carouselArr = [kitchingLogo, kitchingLogo, kitchingLogo];
@@ -65,22 +68,24 @@ export default function HomeDetailPage({ route }) {
 
     return `${amPmString} ${formattedHour}:${formattedMinutes}`;
   };
-
-  useEffect(() => {
-    axios
-      .get(`${API_URL}/api/meetings/${stateId}`, {
+  const fetchData = async () => {
+    try {
+      setPageLoading(true);
+      const res = await axios.get(`${API_URL}/api/meetings/${stateId}`, {
         headers: {
           "Content-Type": `application/json`,
           Authorization: "Bearer " + `${userToken}`,
         },
-      })
-      .then((res) => {
-        setDetailData(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
       });
-  }, [stateId]);
+      setDetailData(res.data);
+      setPageLoading(false);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  useEffect(() => {
+    fetchData();
+  }, [stateId, isUpdate]);
 
   useEffect(() => {
     if (Object.keys(detailData).length !== 0) {
@@ -129,7 +134,7 @@ export default function HomeDetailPage({ route }) {
   }, [startTime, endTime, detailData]);
 
   useEffect(() => {
-    console.log(detailData);
+    // console.log(detailData);
     if (detailData.time && detailData.time.start_time) {
       setStartTime(new Date(detailData.time.start_time));
       setEndTime(new Date(detailData.time.end_time));
@@ -140,10 +145,10 @@ export default function HomeDetailPage({ route }) {
     }
   }, [detailData]);
 
-  useEffect(() => {
-    console.log(carouselImage);
-    console.log(detailData.image);
-  }, [carouselImage]);
+  // useEffect(() => {
+  //   console.log(carouselImage);
+  //   console.log(detailData.image);
+  // }, [carouselImage]);
 
   const addComment = (newComment) => {
     setAddedComment((prevComments) => [...prevComments, newComment]);
@@ -172,20 +177,32 @@ export default function HomeDetailPage({ route }) {
       });
   };
 
-  const clickApply = ()=>{
-    axios.post(`${API_URL}/api/meetings/${detailData.id}/apply`, null , {
-      headers: {
-        "Content-Type": `application/json`,
-        Authorization: "Bearer " + `${userToken}`,
+  const clickApply = () => {
+    Alert.alert("신청하시겠습니까?", "ㄱㄱ", [
+      {
+        text: "취소",
+        onPress: () => {
+          console.log("취소");
+        },
       },
-    })
-    .then((res)=>{
-      console.log(res.data);
-      navigation.navigate("Home");
-    })
-    .catch((err)=>{
-      console.log(err);
-    })
+      {
+        text: "확인",
+        onPress: async () => {
+          const res = await axios.post(
+            `${API_URL}/api/meetings/${detailData.id}/apply`,
+            null,
+            {
+              headers: {
+                "Content-Type": `application/json`,
+                Authorization: "Bearer " + `${userToken}`,
+              },
+            }
+          );
+          setIsUpdate(!isUpdate);
+          console.log(res.data);
+        },
+      },
+    ]);
   };
 
   return Object.keys(detailData).length !== 0 ? (
@@ -198,303 +215,340 @@ export default function HomeDetailPage({ route }) {
           : theme.screenHeight / 10
       }
     >
-      <View style={styles.homeDetailPageView}>
-        <View style={styles.homeDetailContentView}>
-          <ScrollView style={styles.homeDetailScrollView} ref={scrollViewRef}>
-            <View style={styles.homeDetailTitle}>
-              <View style={{ flexDirection: "row" }}>
-                {imageSource ? (
-                  <Image
-                    source={imageSource}
-                    style={{
-                      width: 24,
-                      height: 24,
-                      marginTop: 3,
-                      marginRight: 5,
-                    }} // 예시 크기, 원하는 대로 조절
-                    resizeMode="cover" // 또는 "contain", "stretch" 등
-                  />
-                ) : (
-                  <Ionicons name="person" size={24} color="black" />
-                )}
-                <View>
-                  <View style={{ flexDirection: "row" }}>
-                    <Text style={{ fontWeight: "bold", fontSize: 10 }}>
-                      {detailData.info.title}&nbsp;&nbsp;&nbsp;
-                    </Text>
-                    <Text
+      {pageLoading ? (
+        <View style={{ flex: 1, ...theme.centerStyle }}>
+          <ActivityIndicator size="large" color="black" />
+        </View>
+      ) : (
+        <View style={styles.homeDetailPageView}>
+          <View style={styles.homeDetailContentView}>
+            <ScrollView style={styles.homeDetailScrollView} ref={scrollViewRef}>
+              <View style={styles.homeDetailTitle}>
+                <View style={{ flexDirection: "row" }}>
+                  {imageSource ? (
+                    <Image
+                      source={imageSource}
                       style={{
-                        color: "#aaaaaa",
-                        fontWeight: "bold",
-                        fontSize: 10,
-                      }}
-                    >
-                      {detailData.info.category || "스포츠"}
+                        width: 24,
+                        height: 24,
+                        marginTop: 3,
+                        marginRight: 5,
+                      }} // 예시 크기, 원하는 대로 조절
+                      contentFit="cover" // 또는 "contain", "stretch" 등
+                    />
+                  ) : (
+                    <Ionicons name="person" size={24} color="black" />
+                  )}
+                  <View>
+                    <View style={{ flexDirection: "row" }}>
+                      <Text style={{ fontWeight: "bold", fontSize: 10 }}>
+                        {detailData.info.title}&nbsp;&nbsp;&nbsp;
+                      </Text>
+                      <Text
+                        style={{
+                          color: "#aaaaaa",
+                          fontWeight: "bold",
+                          fontSize: 10,
+                        }}
+                      >
+                        {detailData.info.category || "스포츠"}
+                      </Text>
+                    </View>
+                    <Text style={{ fontWeight: "bold" }}>
+                      {detailData.host.name}
                     </Text>
                   </View>
-                  <Text style={{ fontWeight: "bold" }}>
-                    {detailData.host.name}
-                  </Text>
+                </View>
+                <View></View>
+                <View
+                  style={{
+                    justifyContent: "center",
+                  }}
+                >
+                  {detailData.status.is_owner ? (
+                    <TouchableOpacity
+                      onPress={() =>
+                        navigation.navigate("ClubManagePage", {
+                          clubId: detailData.id,
+                        })
+                      }
+                    >
+                      <Text style={styles.homeDetailAppManageBtn}>
+                        신청관리
+                      </Text>
+                    </TouchableOpacity>
+                  ) : (
+                    ""
+                  )}
+                </View>
+                <View>
+                  <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={modalVisible}
+                    onRequestClose={() => {
+                      Alert.alert("Modal has been closed.");
+                      setModalVisible(!modalVisible);
+                    }}
+                  >
+                    <TouchableWithoutFeedback
+                      onPress={() => setModalVisible(false)}
+                    >
+                      <View style={styles.modalOverlay}>
+                        <View style={styles.centeredView}>
+                          <View style={styles.modalView}>
+                            <Pressable
+                              style={({ pressed }) => [
+                                {
+                                  opacity: pressed ? 0.2 : 1,
+                                },
+                              ]}
+                              onPress={clickModify}
+                            >
+                              <Text
+                                style={[
+                                  styles.modalTextModify,
+                                  styles.modalText,
+                                ]}
+                              >
+                                수정
+                              </Text>
+                            </Pressable>
+                            <Pressable
+                              style={({ pressed }) => [
+                                {
+                                  opacity: pressed ? 0.2 : 1,
+                                },
+                              ]}
+                              onPress={clickDelete}
+                            >
+                              <Text
+                                style={[
+                                  styles.modalText,
+                                  styles.modalTextDelete,
+                                ]}
+                              >
+                                삭제
+                              </Text>
+                            </Pressable>
+                            <Pressable
+                              style={({ pressed }) => [
+                                {
+                                  opacity: pressed ? 0.2 : 1,
+                                },
+                              ]}
+                              onPress={() => setModalVisible(false)}
+                            >
+                              <Text
+                                style={[
+                                  styles.modalText,
+                                  styles.modalTextClose,
+                                ]}
+                              >
+                                닫기
+                              </Text>
+                            </Pressable>
+                          </View>
+                        </View>
+                      </View>
+                    </TouchableWithoutFeedback>
+                  </Modal>
+                  {detailData.status.is_owner ? (
+                    <Pressable onPress={() => setModalVisible(true)}>
+                      <AntDesign name="ellipsis1" size={30} color="black" />
+                    </Pressable>
+                  ) : null}
                 </View>
               </View>
-              <View></View>
-              <View>
-                {detailData.status.is_owner ? (
+
+              <View style={styles.homeDetailContent}>
+                <Text style={{ fontWeight: "bold", fontSize: 22 }}>
+                  {detailData.info.title}
+                </Text>
+                <Text style={{ marginTop: 10 }}>
+                  {detailData.info.description}
+                </Text>
+                <Text style={{ color: theme.psColor }}>{hashtagString}</Text>
+
+                <MyCarousel
+                  entries={
+                    carouselImage.length !== 0 ? carouselImage : carouselArr
+                  }
+                  widthProps={Dimensions.get("window").width}
+                  heightProps={200}
+                  layout="default"
+                />
+
+                {/* 여기에 종료된게임, 참가신청, 참가취소 버튼 추가 */}
+                {detailData.status.is_expire ? (
+                  <TouchableOpacity style={styles.homeDetailStateBtnGray}>
+                    <Text style={styles.homeDetailStateTextGray}>
+                      종료된 게임
+                    </Text>
+                  </TouchableOpacity>
+                ) : detailData.status.is_owner ? (
+                  ""
+                ) : detailData.status.participate_status === "NONE" ? (
                   <TouchableOpacity
-                    onPress={() =>
-                      navigation.navigate("ClubManagePage", {
-                        clubId: detailData.id,
-                      })
-                    }
+                    style={styles.homeDetailStateBtnBlue}
+                    onPress={clickApply}
                   >
-                    <Text style={styles.homeDetailAppManageBtn}>신청관리</Text>
+                    <Text style={styles.homeDetailStateTextBlue}>
+                      참가 신청
+                    </Text>
+                  </TouchableOpacity>
+                ) : detailData.status.participate_status === "ACCEPTED" ? (
+                  <TouchableOpacity style={styles.homeDetailStateBtnRed}>
+                    <Text style={styles.homeDetailStateTextRed}>참가 취소</Text>
+                  </TouchableOpacity>
+                ) : detailData.status.participate_status === "PENDING" ? (
+                  <TouchableOpacity style={styles.homeDetailStateBtnBlack}>
+                    <Text>수락 대기</Text>
+                  </TouchableOpacity>
+                ) : detailData.status.participate_status === "REJECTED" ? (
+                  <TouchableOpacity style={styles.homeDetailStateBtnRed}>
+                    <Text style={styles.homeDetailStateTextRed}>
+                      수락 거절됨
+                    </Text>
                   </TouchableOpacity>
                 ) : (
                   ""
                 )}
               </View>
-              <View>
-                <Modal
-                  animationType="slide"
-                  transparent={true}
-                  visible={modalVisible}
-                  onRequestClose={() => {
-                    Alert.alert("Modal has been closed.");
-                    setModalVisible(!modalVisible);
-                  }}
-                >
-                  <TouchableWithoutFeedback
-                    onPress={() => setModalVisible(false)}
-                  >
-                    <View style={styles.modalOverlay}>
-                      <View style={styles.centeredView}>
-                        <View style={styles.modalView}>
-                          <Pressable
-                            style={({ pressed }) => [
-                              {
-                                opacity: pressed ? 0.2 : 1,
-                              },
-                            ]}
-                            onPress={clickModify}
-                          >
-                            <Text
-                              style={[styles.modalTextModify, styles.modalText]}
-                            >
-                              수정
-                            </Text>
-                          </Pressable>
-                          <Pressable
-                            style={({ pressed }) => [
-                              {
-                                opacity: pressed ? 0.2 : 1,
-                              },
-                            ]}
-                            onPress={clickDelete}
-                          >
-                            <Text
-                              style={[styles.modalText, styles.modalTextDelete]}
-                            >
-                              삭제
-                            </Text>
-                          </Pressable>
-                          <Pressable
-                            style={({ pressed }) => [
-                              {
-                                opacity: pressed ? 0.2 : 1,
-                              },
-                            ]}
-                            onPress={() => setModalVisible(false)}
-                          >
-                            <Text
-                              style={[styles.modalText, styles.modalTextClose]}
-                            >
-                              닫기
-                            </Text>
-                          </Pressable>
-                        </View>
-                      </View>
-                    </View>
-                  </TouchableWithoutFeedback>
-                </Modal>
-                <Pressable onPress={() => setModalVisible(true)}>
-                  <AntDesign name="ellipsis1" size={30} color="black" />
-                </Pressable>
-              </View>
-            </View>
 
-            <View style={styles.homeDetailContent}>
-              <Text style={{ fontWeight: "bold", fontSize: 22 }}>
-                {detailData.info.title}
-              </Text>
-              <Text style={{ marginTop: 10 }}>
-                {detailData.info.description}
-              </Text>
-              <Text style={{ color: theme.psColor }}>{hashtagString}</Text>
+              <View style={styles.homeDetailSpace} />
 
-              <MyCarousel
-                entries={
-                  carouselImage.length !== 0 ? carouselImage : carouselArr
-                }
-                widthProps={Dimensions.get("window").width}
-                heightProps={200}
-                layout="default"
-              />
-
-              {/* 여기에 종료된게임, 참가신청, 참가취소 버튼 추가 */}
-              {detailData.status.is_expire ? (
-                <TouchableOpacity style={styles.homeDetailStateBtnGray}>
-                  <Text style={styles.homeDetailStateTextGray}>
-                    종료된 게임
+              <View style={styles.homeDetailInformation}>
+                <View style={{ flexDirection: "row" }}>
+                  <View style={{ flexDirection: "row", flex: 4 }}>
+                    <AntDesign name="calendar" size={24} color="black" />
+                    <Text style={styles.informationFormmat}>날짜</Text>
+                  </View>
+                  <Text style={{ ...styles.informationFormmat, flex: 6 }}>
+                    {dateStirng}
                   </Text>
-                </TouchableOpacity>
-              ) : detailData.status.is_owner ? "": detailData.status.participate_status === "NONE" ? (
-                <TouchableOpacity style={styles.homeDetailStateBtnBlue} onPress={clickApply}>
-                  <Text style={styles.homeDetailStateTextBlue}>참가 신청</Text>
-                </TouchableOpacity>
-              ) : detailData.status.participate_status === "ACCEPTED" ? (
-                <TouchableOpacity style={styles.homeDetailStateBtnRed}>
-                  <Text style={styles.homeDetailStateTextRed}>참가 취소</Text>
-                </TouchableOpacity>
-              ) : detailData.status.participate_status === "PENDING" ? (
-                <TouchableOpacity style={styles.homeDetailStateBtnBlack}>
-                  <Text>수락 대기</Text>
-                </TouchableOpacity>
-              ) : detailData.status.participate_status === "REJECTED" ? (
-                <TouchableOpacity style={styles.homeDetailStateBtnRed}>
-                  <Text style={styles.homeDetailStateTextRed}>수락 거절됨</Text>
-                </TouchableOpacity>
-              ) : ""
-              }
-            </View>
-
-            <View style={styles.homeDetailSpace} />
-
-            <View style={styles.homeDetailInformation}>
-              <View style={{ flexDirection: "row" }}>
-                <View style={{ flexDirection: "row", flex: 4 }}>
-                  <AntDesign name="calendar" size={24} color="black" />
-                  <Text style={styles.informationFormmat}>날짜</Text>
                 </View>
-                <Text style={{ ...styles.informationFormmat, flex: 6 }}>
-                  {dateStirng}
-                </Text>
               </View>
-            </View>
 
-            <View style={styles.homeDetailInformation}>
-              <View style={{ flexDirection: "row" }}>
-                <View style={{ flexDirection: "row", flex: 4 }}>
-                  <AntDesign name="clockcircle" size={24} color="black" />
-                  <Text style={styles.informationFormmat}>시간</Text>
+              <View style={styles.homeDetailInformation}>
+                <View style={{ flexDirection: "row" }}>
+                  <View style={{ flexDirection: "row", flex: 4 }}>
+                    <AntDesign name="clockcircle" size={24} color="black" />
+                    <Text style={styles.informationFormmat}>시간</Text>
+                  </View>
+                  <Text style={{ ...styles.informationFormmat, flex: 6 }}>
+                    {timeRangeString}
+                  </Text>
+                  <Text></Text>
                 </View>
-                <Text style={{ ...styles.informationFormmat, flex: 6 }}>
-                  {timeRangeString}
-                </Text>
-                <Text></Text>
               </View>
-            </View>
 
-            <View style={styles.homeDetailInformation}>
-              <View style={{ flexDirection: "row" }}>
-                <View style={{ flexDirection: "row", flex: 4 }}>
-                  <Ionicons name="people" size={24} color="black" />
-                  <Text style={styles.informationFormmat}>모집인원</Text>
+              <View style={styles.homeDetailInformation}>
+                <View style={{ flexDirection: "row" }}>
+                  <View style={{ flexDirection: "row", flex: 4 }}>
+                    <Ionicons name="people" size={24} color="black" />
+                    <Text style={styles.informationFormmat}>모집인원</Text>
+                  </View>
+                  <Text style={{ ...styles.informationFormmat, flex: 6 }}>
+                    {detailData.info.current_participants + 1} /{" "}
+                    {detailData.info.max_participants}
+                  </Text>
+                  <Text></Text>
                 </View>
-                <Text style={{ ...styles.informationFormmat, flex: 6 }}>
-                  {detailData.info.current_participants + 1} /{" "}
-                  {detailData.info.max_participants}
-                </Text>
-                <Text></Text>
               </View>
-            </View>
 
-            <View style={styles.homeDetailInformation}>
-              <View style={{ flexDirection: "row" }}>
-                <View style={{ flexDirection: "row", flex: 4 }}>
-                  <MaterialIcons name="place" size={24} color="black" />
-                  <Text style={styles.informationFormmat}>위치</Text>
-                </View>
-                <Text
-                  style={{
-                    ...styles.informationFormmat,
-                    flex: 6,
-                  }}
-                >
-                  {`${detailData.location.location} ${detailData.location.detail_location}`}
-                </Text>
-                <Text></Text>
-              </View>
-            </View>
-
-            <View style={styles.homeDetailMap}>
-              <GoogleMap
-                mylatitude={detailData.location.latitude}
-                detailLocation={detailData.location.detail_location}
-                mylongitude={detailData.location.longitude}
-              />
-            </View>
-
-            <View
-              style={{
-                backgroundColor: "white",
-                padding: 10,
-              }}
-            >
-              <View
-                style={{
-                  flexDirection: "row",
-                  ...theme.centerStyle,
-                  backgroundColor: "#f5f5f5",
-                  height: 60,
-                  paddingVertical: 5,
-                  paddingHorizontal: 15,
-                  borderRadius: 5,
-                }}
-              >
-                <Text
-                  style={{ flex: 8, color: theme.psColor, fontWeight: "bold" }}
-                >
-                  {detailData.location.location}
-                </Text>
-                <View
-                  style={{
-                    flex: 2,
-                    height: 35,
-                    borderRadius: 20,
-                    backgroundColor: "#ffffff",
-                    ...theme.centerStyle,
-                  }}
-                >
-                  <Pressable
-                    onPress={() => {
-                      Linking.openURL(
-                        `http://maps.google.com/?q=${detailData.location.location}`
-                      );
+              <View style={styles.homeDetailInformation}>
+                <View style={{ flexDirection: "row" }}>
+                  <View style={{ flexDirection: "row", flex: 4 }}>
+                    <MaterialIcons name="place" size={24} color="black" />
+                    <Text style={styles.informationFormmat}>위치</Text>
+                  </View>
+                  <Text
+                    style={{
+                      ...styles.informationFormmat,
+                      flex: 6,
                     }}
                   >
-                    <Text
-                      style={{
-                        color: theme.psColor,
-                      }}
-                    >
-                      길찾기
-                    </Text>
-                  </Pressable>
+                    {`${detailData.location.location} ${detailData.location.detail_location}`}
+                  </Text>
+                  <Text></Text>
                 </View>
               </View>
-            </View>
 
-            <View style={styles.homeDetailSpace} />
+              <View style={styles.homeDetailMap}>
+                <GoogleMap
+                  mylatitude={detailData.location.latitude}
+                  detailLocation={detailData.location.detail_location}
+                  mylongitude={detailData.location.longitude}
+                />
+              </View>
 
-            <HomeDetailComment addedComment={addedComment} id={stateId} />
-          </ScrollView>
+              <View
+                style={{
+                  backgroundColor: "white",
+                  padding: 10,
+                }}
+              >
+                <View
+                  style={{
+                    flexDirection: "row",
+                    ...theme.centerStyle,
+                    backgroundColor: "#f5f5f5",
+                    height: 60,
+                    paddingVertical: 5,
+                    paddingHorizontal: 15,
+                    borderRadius: 5,
+                  }}
+                >
+                  <Text
+                    style={{
+                      flex: 8,
+                      color: theme.psColor,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {detailData.location.location}
+                  </Text>
+                  <View
+                    style={{
+                      flex: 2,
+                      height: 35,
+                      borderRadius: 20,
+                      backgroundColor: "#ffffff",
+                      ...theme.centerStyle,
+                    }}
+                  >
+                    <Pressable
+                      onPress={() => {
+                        Linking.openURL(
+                          `http://maps.google.com/?q=${detailData.location.location}`
+                        );
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: theme.psColor,
+                        }}
+                      >
+                        길찾기
+                      </Text>
+                    </Pressable>
+                  </View>
+                </View>
+              </View>
+
+              <View style={styles.homeDetailSpace} />
+
+              <HomeDetailComment addedComment={addedComment} id={stateId} />
+            </ScrollView>
+          </View>
+          <HomeDetailCommentInput
+            id={stateId}
+            scrollViewRef={scrollViewRef}
+            setAddedComment={addComment}
+          />
         </View>
-        <HomeDetailCommentInput
-          id={stateId}
-          scrollViewRef={scrollViewRef}
-          setAddedComment={addComment}
-        />
-      </View>
+      )}
     </KeyboardAvoidingView>
   ) : (
     <Image
@@ -563,32 +617,32 @@ const styles = StyleSheet.create({
   homeDetailStateTextGray: {
     color: "#cccccc",
   },
-  homeDetailStateBtnBlue: {
+
+  homeDetailStateBtn: {
     borderWidth: 1,
-    borderColor: theme.psColor,
     borderRadius: 10,
     padding: 15,
     marginTop: 10,
     ...theme.centerStyle,
+  },
+  homeDetailStateBtnBlue: {
+    ...theme.detailStateBtnStyle,
+    borderColor: theme.psColor,
   },
   homeDetailStateTextBlue: {
     color: theme.psColor,
   },
   homeDetailStateBtnRed: {
-    borderWidth: 1,
+    ...theme.detailStateBtnStyle,
     borderColor: "#ff0000",
-    borderRadius: 10,
-    padding: 15,
-    marginTop: 10,
-    ...theme.centerStyle,
   },
-  homeDetailStateBtnBlack:{
-    borderWidth: 1,
+  homeDetailStateBtnBlack: {
+    ...theme.detailStateBtnStyle,
     borderColor: "#000000",
-    borderRadius: 10,
-    padding: 15,
-    marginTop: 10,
-    ...theme.centerStyle,
+  },
+  homeDetailStateBtnDisabled: {
+    ...theme.detailStateBtnStyle,
+    borderColor: "lightgray",
   },
   homeDetailStateTextRed: {
     color: "#ff0000",
