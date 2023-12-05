@@ -205,35 +205,40 @@ export default function HomeDetailPage({ route }) {
     ]);
   };
 
-  const clickCancel = ()=>{
-    Alert.alert("모임을 탈퇴하시겠습니까?", `${detailData.info.title}을 탈퇴합니다.`, [
-      {
-        text: "취소",
-        onPress: () => {
-          console.log("취소");
+  const clickCancel = () => {
+    Alert.alert(
+      "모임을 탈퇴하시겠습니까?",
+      `${detailData.info.title}을 탈퇴합니다.`,
+      [
+        {
+          text: "취소",
+          onPress: () => {
+            console.log("취소");
+          },
         },
-      },
-      {
-        text: "확인",
-        onPress: () => {
-          axios.post(`${API_URL}/api/meetings/${detailData.id}/cancel`, null,{
-            headers: {
-              "Content-Type": `application/json`,
-              Authorization: "Bearer " + `${userToken}`,
-            },
-          })
-          .then((res)=>{
-            console.log(res.data);
-            setIsUpdate(!isUpdate);
-            //채팅방 퇴장 통신 추가할 것
-          })
-          .catch((err)=>{
-            console.log(err);
-          })
+        {
+          text: "확인",
+          onPress: () => {
+            axios
+              .post(`${API_URL}/api/meetings/${detailData.id}/cancel`, null, {
+                headers: {
+                  "Content-Type": `application/json`,
+                  Authorization: "Bearer " + `${userToken}`,
+                },
+              })
+              .then((res) => {
+                console.log(res.data);
+                setIsUpdate(!isUpdate);
+                //채팅방 퇴장 통신 추가할 것
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          },
         },
-      },
-    ]);
-  }
+      ]
+    );
+  };
 
   return Object.keys(detailData).length !== 0 ? (
     <KeyboardAvoidingView
@@ -429,7 +434,10 @@ export default function HomeDetailPage({ route }) {
                     </Text>
                   </TouchableOpacity>
                 ) : detailData.status.participate_status === "ACCEPTED" ? (
-                  <TouchableOpacity style={styles.homeDetailStateBtnRed} onPress={clickCancel}>
+                  <TouchableOpacity
+                    style={styles.homeDetailStateBtnRed}
+                    onPress={clickCancel}
+                  >
                     <Text style={styles.homeDetailStateTextRed}>참가 취소</Text>
                   </TouchableOpacity>
                 ) : detailData.status.participate_status === "PENDING" ? (
