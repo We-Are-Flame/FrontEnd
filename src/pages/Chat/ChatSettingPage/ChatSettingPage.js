@@ -57,7 +57,7 @@ export default function ChatSettingPage({ navigation,route }) {
   };
 
   const outChatRoom = ()=>{
-    axios.delete(`${API_URL}/api/chat/${route.params.roomId}/user`,null,{
+    axios.delete(`${API_URL}/api/chat/${route.params.roomId}/user`,{
       headers: {
         "Content-Type": `application/json`,
         Authorization: "Bearer " + `${userToken}`,

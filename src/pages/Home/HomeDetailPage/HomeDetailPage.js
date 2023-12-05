@@ -199,11 +199,41 @@ export default function HomeDetailPage({ route }) {
             }
           );
           setIsUpdate(!isUpdate);
-          console.log(res.data);
+          //채팅방 입장 통신 추가할 것
         },
       },
     ]);
   };
+
+  const clickCancel = ()=>{
+    Alert.alert("모임을 탈퇴하시겠습니까?", `${detailData.info.title}을 탈퇴합니다.`, [
+      {
+        text: "취소",
+        onPress: () => {
+          console.log("취소");
+        },
+      },
+      {
+        text: "확인",
+        onPress: () => {
+          axios.post(`${API_URL}/api/meetings/${detailData.id}/cancel`, null,{
+            headers: {
+              "Content-Type": `application/json`,
+              Authorization: "Bearer " + `${userToken}`,
+            },
+          })
+          .then((res)=>{
+            console.log(res.data);
+            setIsUpdate(!isUpdate);
+            //채팅방 퇴장 통신 추가할 것
+          })
+          .catch((err)=>{
+            console.log(err);
+          })
+        },
+      },
+    ]);
+  }
 
   return Object.keys(detailData).length !== 0 ? (
     <KeyboardAvoidingView
@@ -377,6 +407,7 @@ export default function HomeDetailPage({ route }) {
                   widthProps={Dimensions.get("window").width}
                   heightProps={200}
                   layout="default"
+                  flag={1}
                 />
 
                 {/* 여기에 종료된게임, 참가신청, 참가취소 버튼 추가 */}
@@ -398,7 +429,7 @@ export default function HomeDetailPage({ route }) {
                     </Text>
                   </TouchableOpacity>
                 ) : detailData.status.participate_status === "ACCEPTED" ? (
-                  <TouchableOpacity style={styles.homeDetailStateBtnRed}>
+                  <TouchableOpacity style={styles.homeDetailStateBtnRed} onPress={clickCancel}>
                     <Text style={styles.homeDetailStateTextRed}>참가 취소</Text>
                   </TouchableOpacity>
                 ) : detailData.status.participate_status === "PENDING" ? (
