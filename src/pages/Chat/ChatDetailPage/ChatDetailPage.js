@@ -12,6 +12,12 @@ import {
 import { Stomp } from "@stomp/stompjs";
 import SockJS from "sockjs-client/dist/sockjs";
 
+import {
+  MediaTypeOptions,
+  launchImageLibraryAsync,
+  useMediaLibraryPermissions,
+} from "expo-image-picker";
+
 import { Entypo } from "@expo/vector-icons";
 import theme from "../../../styles/theme";
 import axios from "axios";
@@ -19,6 +25,8 @@ import { API_URL } from "@env";
 
 import Chatting from "../Chatting/Chatting";
 import userStore from "../../../store/userStore";
+import ImageViewer from '../../../components/ImageViewer';
+
 
 export default function ChatDetailPage({ route }) {
   const [chat, setChat] = useState([]);
@@ -52,7 +60,7 @@ export default function ChatDetailPage({ route }) {
       const chatMessage = {
         roomId: route.params.roomId,
         sender: userData.nickname,
-        senderId: 8,
+        senderId: 7,
         message: text,
         time: new Date(),
         messageType: "TALK",
@@ -90,7 +98,7 @@ export default function ChatDetailPage({ route }) {
       JSON.stringify({
         roomId: route.params.roomId,
         sender: userData.nickname,
-        senderId: 8,
+        senderId: 7,
         message: userData.nickname + "님이 입장하셨습니다.",
         time: new Date(),
         messageType: "ENTER",
@@ -141,7 +149,9 @@ export default function ChatDetailPage({ route }) {
           style={styles.chatContent}
           data={chat}
           renderItem={renderItem}
+          onContentSizeChange={() => this.flatList.scrollToEnd({animated: true})}
           keyExtractor={(item, index) => index.toString()} // 고유 키를 제공
+          ref={(ref) => { this.flatList = ref; }}
         />
         </View>
         <View style={styles.chatInput}>

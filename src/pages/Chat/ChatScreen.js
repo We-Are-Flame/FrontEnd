@@ -25,7 +25,6 @@ export default function ChatScreen({ navigation }) {
         },
       })
       .then((res) => {
-        console.log(res.data.content);
         setData(res.data.content);
       })
       .catch((err) => {

@@ -7,7 +7,6 @@ import theme from "../../../styles/theme";
 
 export default function Chatting({ data }) {
   const { userData } = userStore();
-  console.log(data);
 
   function formatTime(dateString) {
     const date = new Date(dateString);
