@@ -10,10 +10,11 @@ import {
   Pressable,
   KeyboardAvoidingView,
   Platform,
-  SafeAreaView,
   Dimensions,
   Modal,
   TouchableWithoutFeedback,
+  Alert,
+  ActivityIndicator,
 } from "react-native";
 import * as Linking from "expo-linking";
 import { Image } from "expo-image";
@@ -43,6 +44,8 @@ export default function HomeDetailPage({ route }) {
   const [addedComment, setAddedComment] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [carouselImage, setCarouselImage] = useState([]);
+  const [pageLoading, setPageLoading] = useState(null);
+  const [isUpdate, setIsUpdate] = useState(false);
   const { userToken } = userStore();
 
   const carouselArr = [kitchingLogo, kitchingLogo, kitchingLogo];
@@ -65,22 +68,24 @@ export default function HomeDetailPage({ route }) {
 
     return `${amPmString} ${formattedHour}:${formattedMinutes}`;
   };
-
-  useEffect(() => {
-    axios
-      .get(`${API_URL}/api/meetings/${stateId}`, {
+  const fetchData = async () => {
+    try {
+      setPageLoading(true);
+      const res = await axios.get(`${API_URL}/api/meetings/${stateId}`, {
         headers: {
           "Content-Type": `application/json`,
           Authorization: "Bearer " + `${userToken}`,
         },
-      })
-      .then((res) => {
-        setDetailData(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
       });
-  }, [stateId]);
+      setDetailData(res.data);
+      setPageLoading(false);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  useEffect(() => {
+    fetchData();
+  }, [stateId, isUpdate]);
 
   useEffect(() => {
     if (Object.keys(detailData).length !== 0) {
@@ -129,7 +134,7 @@ export default function HomeDetailPage({ route }) {
   }, [startTime, endTime, detailData]);
 
   useEffect(() => {
-    console.log(detailData);
+    // console.log(detailData);
     if (detailData.time && detailData.time.start_time) {
       setStartTime(new Date(detailData.time.start_time));
       setEndTime(new Date(detailData.time.end_time));
@@ -140,10 +145,10 @@ export default function HomeDetailPage({ route }) {
     }
   }, [detailData]);
 
-  useEffect(() => {
-    console.log(carouselImage);
-    console.log(detailData.image);
-  }, [carouselImage]);
+  // useEffect(() => {
+  //   console.log(carouselImage);
+  //   console.log(detailData.image);
+  // }, [carouselImage]);
 
   const addComment = (newComment) => {
     setAddedComment((prevComments) => [...prevComments, newComment]);
@@ -172,20 +177,32 @@ export default function HomeDetailPage({ route }) {
       });
   };
 
-  const clickApply = ()=>{
-    axios.post(`${API_URL}/api/meetings/${detailData.id}/apply`, null , {
-      headers: {
-        "Content-Type": `application/json`,
-        Authorization: "Bearer " + `${userToken}`,
+  const clickApply = () => {
+    Alert.alert("신청하시겠습니까?", "ㄱㄱ", [
+      {
+        text: "취소",
+        onPress: () => {
+          console.log("취소");
+        },
       },
-    })
-    .then((res)=>{
-      console.log(res.data);
-      navigation.navigate("Home");
-    })
-    .catch((err)=>{
-      console.log(err);
-    })
+      {
+        text: "확인",
+        onPress: async () => {
+          const res = await axios.post(
+            `${API_URL}/api/meetings/${detailData.id}/apply`,
+            null,
+            {
+              headers: {
+                "Content-Type": `application/json`,
+                Authorization: "Bearer " + `${userToken}`,
+              },
+            }
+          );
+          setIsUpdate(!isUpdate);
+          console.log(res.data);
+        },
+      },
+    ]);
   };
 
   return Object.keys(detailData).length !== 0 ? (
@@ -212,7 +229,7 @@ export default function HomeDetailPage({ route }) {
                       marginTop: 3,
                       marginRight: 5,
                     }} // 예시 크기, 원하는 대로 조절
-                    resizeMode="cover" // 또는 "contain", "stretch" 등
+                    contentFit="cover" // 또는 "contain", "stretch" 등
                   />
                 ) : (
                   <Ionicons name="person" size={24} color="black" />
@@ -238,7 +255,11 @@ export default function HomeDetailPage({ route }) {
                 </View>
               </View>
               <View></View>
-              <View>
+              <View
+                style={{
+                  justifyContent: "center",
+                }}
+              >
                 {detailData.status.is_owner ? (
                   <TouchableOpacity
                     onPress={() =>
@@ -316,9 +337,11 @@ export default function HomeDetailPage({ route }) {
                     </View>
                   </TouchableWithoutFeedback>
                 </Modal>
-                <Pressable onPress={() => setModalVisible(true)}>
-                  <AntDesign name="ellipsis1" size={30} color="black" />
-                </Pressable>
+                {detailData.status.is_owner ? (
+                  <Pressable onPress={() => setModalVisible(true)}>
+                    <AntDesign name="ellipsis1" size={30} color="black" />
+                  </Pressable>
+                ) : null}
               </View>
             </View>
 
@@ -347,8 +370,13 @@ export default function HomeDetailPage({ route }) {
                     종료된 게임
                   </Text>
                 </TouchableOpacity>
-              ) : detailData.status.is_owner ? "": detailData.status.participate_status === "NONE" ? (
-                <TouchableOpacity style={styles.homeDetailStateBtnBlue} onPress={clickApply}>
+              ) : detailData.status.is_owner ? (
+                ""
+              ) : detailData.status.participate_status === "NONE" ? (
+                <TouchableOpacity
+                  style={styles.homeDetailStateBtnBlue}
+                  onPress={clickApply}
+                >
                   <Text style={styles.homeDetailStateTextBlue}>참가 신청</Text>
                 </TouchableOpacity>
               ) : detailData.status.participate_status === "ACCEPTED" ? (
@@ -363,8 +391,9 @@ export default function HomeDetailPage({ route }) {
                 <TouchableOpacity style={styles.homeDetailStateBtnRed}>
                   <Text style={styles.homeDetailStateTextRed}>수락 거절됨</Text>
                 </TouchableOpacity>
-              ) : ""
-              }
+              ) : (
+                ""
+              )}
             </View>
 
             <View style={styles.homeDetailSpace} />
@@ -452,7 +481,11 @@ export default function HomeDetailPage({ route }) {
                 }}
               >
                 <Text
-                  style={{ flex: 8, color: theme.psColor, fontWeight: "bold" }}
+                  style={{
+                    flex: 8,
+                    color: theme.psColor,
+                    fontWeight: "bold",
+                  }}
                 >
                   {detailData.location.location}
                 </Text>
@@ -563,32 +596,32 @@ const styles = StyleSheet.create({
   homeDetailStateTextGray: {
     color: "#cccccc",
   },
-  homeDetailStateBtnBlue: {
+
+  homeDetailStateBtn: {
     borderWidth: 1,
-    borderColor: theme.psColor,
     borderRadius: 10,
     padding: 15,
     marginTop: 10,
     ...theme.centerStyle,
+  },
+  homeDetailStateBtnBlue: {
+    ...theme.detailStateBtnStyle,
+    borderColor: theme.psColor,
   },
   homeDetailStateTextBlue: {
     color: theme.psColor,
   },
   homeDetailStateBtnRed: {
-    borderWidth: 1,
+    ...theme.detailStateBtnStyle,
     borderColor: "#ff0000",
-    borderRadius: 10,
-    padding: 15,
-    marginTop: 10,
-    ...theme.centerStyle,
   },
-  homeDetailStateBtnBlack:{
-    borderWidth: 1,
+  homeDetailStateBtnBlack: {
+    ...theme.detailStateBtnStyle,
     borderColor: "#000000",
-    borderRadius: 10,
-    padding: 15,
-    marginTop: 10,
-    ...theme.centerStyle,
+  },
+  homeDetailStateBtnDisabled: {
+    ...theme.detailStateBtnStyle,
+    borderColor: "lightgray",
   },
   homeDetailStateTextRed: {
     color: "#ff0000",
