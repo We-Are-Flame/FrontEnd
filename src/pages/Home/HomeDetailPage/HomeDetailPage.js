@@ -412,6 +412,7 @@ export default function HomeDetailPage({ route }) {
                   widthProps={Dimensions.get("window").width}
                   heightProps={200}
                   layout="default"
+                  flag={1}
                 />
 
                 {/* 여기에 종료된게임, 참가신청, 참가취소 버튼 추가 */}
