@@ -112,7 +112,7 @@ export default function Header() {
     } else if (routeName == "채팅") {
       setLogoName("채팅");
     } else if (routeName == "랜덤") {
-      setLogoName("랜덤");
+      setLogoName("추천 모임");
     }
   };
   return (
