@@ -1,20 +1,20 @@
 /** @format */
 
-import React,{useState,useEffect} from "react";
-import { View, Text,Dimensions } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, Dimensions, StyleSheet } from "react-native";
 
-import Header from './../../components/Header';
+import Header from "./../../components/Header";
 
-import theme from '../../styles/theme';
-import MyCarousel from './../../components/MyCarousel';
+import theme from "../../styles/theme";
+import MyCarousel from "./../../components/MyCarousel";
 
-import axios from 'axios';
-import userStore from '../../store/userStore';
-import { API_URL } from '@env';
+import axios from "axios";
+import userStore from "../../store/userStore";
+import { API_URL } from "@env";
 
 export default function RandomScreen({ navigation }) {
-  const [data,setData] = useState([]);
-  const {userToken} = userStore();
+  const [data, setData] = useState([]);
+  const { userToken } = userStore();
   const ment = [
     "오늘은 이 모임 어떠세요?",
     "찾았다 !",
@@ -28,34 +28,48 @@ export default function RandomScreen({ navigation }) {
     return ment[randomIndex];
   }
 
-  useEffect(()=>{
-    axios.get(`${API_URL}/api/meetings?start=0&end=10&sort=soon`,{
-      headers: {
-        "Content-Type": `application/json`,
-        Authorization: "Bearer " + `${userToken}`,
-      },
-    })
-    .then((res)=>{
-      setData(res.data.content);
-    })
-    .catch((err)=>{
-      console.log(err);
-    })
-  },[]);
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/api/meetings?start=0&end=10&sort=soon`, {
+        headers: {
+          "Content-Type": `application/json`,
+          Authorization: "Bearer " + `${userToken}`,
+        },
+      })
+      .then((res) => {
+        setData(res.data.content);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <View
-        style={{ flex: theme.headerSpace, backgroundColor: theme.psColor }}
-      ></View>
-
+    <View style={{ flex: 1 }}>
+      <View style={styles.randomScreenHeaderSpace} />
       <Header />
-      <View style={{flex:7}}>
-        <View style={{...theme.centerStyle, flex:1}}>
-          <Text style={{fontSize:24,fontWeight:"bold"}}>{getRandomMent()}</Text>
+      <View style={{ flex: 7 }}>
+        <View style={{ ...theme.centerStyle, flex: 1 }}>
+          <Text style={{ fontSize: 24, fontWeight: "bold" }}>
+            {getRandomMent()}
+          </Text>
         </View>
-        <MyCarousel entries={data} widthProps={Dimensions.get('window').width} heightProps={400} layout="tinder" flag={2}/>
+        <MyCarousel
+          entries={data}
+          widthProps={Dimensions.get("window").width}
+          heightProps={400}
+          layout="tinder"
+          flag={2}
+        />
       </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  randomScreenView: {},
+  randomScreenHeaderSpace: {
+    flex: theme.headerSpace,
+    backgroundColor: theme.psColor,
+  },
+});

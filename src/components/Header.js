@@ -109,8 +109,10 @@ export default function Header() {
       setLogoName("Kitching");
     } else if (routeName == "마이") {
       setLogoName("마이홈");
-    } else if (routeName == "채팅"){
+    } else if (routeName == "채팅") {
       setLogoName("채팅");
+    } else if (routeName == "랜덤") {
+      setLogoName("추천 모임");
     }
   };
   return (
