@@ -42,35 +42,34 @@ export default function ClubCard({ clubData }) {
           />
         </View>
         <View style={styles.cardContentStyle}>
-          <View
-            style={{
-              flex: 1,
-              flexDirection: "row",
-              justifyContent: "space-between",
-            }}
-          >
-            <Text
-              style={{
-                fontSize: 16,
-                color: "lightgray",
-                fontWeight: "400",
-              }}
-            >
-              {clubData.location.location}
-            </Text>
+          <View style={styles.clubContentTop}>
+            <View style={{ flex: 1, justifyContent: "center" }}>
+              <Text
+                style={{
+                  fontSize: 16,
+                  color: "lightgray",
+                  fontWeight: "400",
+                }}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                {clubData.location.location}
+              </Text>
+            </View>
             <View
               style={{
                 ...styles.clubState,
                 borderColor: theme.psColor,
               }}
             >
-              <Text style={{ color: theme.psColor }}>참가중</Text>
+              <Text style={{ color: theme.psColor }}>진행중</Text>
             </View>
           </View>
-
-          <Text style={{ flex: 1, fontWeight: "600", fontSize: 16 }}>
-            {clubData.info.title}
-          </Text>
+          <View style={{ flex: 1, justifyContent: "center" }}>
+            <Text style={{ fontWeight: "600", fontSize: 16 }}>
+              {clubData.info.title}
+            </Text>
+          </View>
 
           <Text style={{ flex: 1, fontSize: 14 }}>
             {getTime(clubData.time.start_time)} ~{" "}
@@ -93,7 +92,7 @@ const styles = StyleSheet.create({
   manageCard: {
     flex: 1,
     width: "100%",
-    height: 100,
+    height: 95,
     padding: 5,
     marginTop: 5,
     backgroundColor: "white",
@@ -114,10 +113,19 @@ const styles = StyleSheet.create({
     flex: 2.4,
     padding: 5,
   },
-  cardImageStyle: { flexGrow: 0, width: "100%", height: "100%" },
+  cardImageStyle: {
+    flexGrow: 0,
+    width: "100%",
+    height: "100%",
+  },
   cardContentStyle: {
     flex: 7.6,
     padding: 5,
     paddingHorizontal: 5,
+  },
+  clubContentTop: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
 });
