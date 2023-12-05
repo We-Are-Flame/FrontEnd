@@ -93,6 +93,7 @@ export default function ProfilePage() {
           </View>
         ) : (
           <ScrollView
+            nestedScrollEnabled={true}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }

@@ -39,7 +39,7 @@ const FirstRoute = ({ myClubData }) => {
   const groupedMeetings = groupMeetingsByDate(meetings);
 
   return (
-    <ScrollView style={{ flex: 1 }}>
+    <ScrollView nestedScrollEnabled={true} style={{ flex: 1 }}>
       {Object.keys(groupedMeetings).length !== 0 ? (
         <View style={styles.clubCardView}>
           <View style={{ width: "90%" }}>
