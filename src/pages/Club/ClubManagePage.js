@@ -7,23 +7,28 @@ import {
   ScrollView,
   TouchableOpacity,
   Pressable,
+  Alert,
+  ActivityIndicator,
 } from "react-native";
-import { useEffect, useInsertionEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "react-native-paper";
-import { participateList } from "../../utils/StaticData";
-import theme from "../../styles/theme";
-import { Ionicons } from "@expo/vector-icons";
-import ManageCard from "./ManageContentItem/ManageCard/ManageCard";
 import axios from "axios";
-import userStore from "../../store/userStore";
+import { Ionicons } from "@expo/vector-icons";
 import { API_URL } from "@env";
+
+import theme from "../../styles/theme";
+import userStore from "../../store/userStore";
+
+import ManageCard from "./ManageCard/ManageCard";
+
 export default function ClubManagePage({ route }) {
   const clubId = route.params.clubId;
 
   const [checkItems, setCheckItems] = useState(new Set()); // 체크 된 애들을 담는 집합
   const [isAllChecked, setIsAllChecked] = useState(true);
   const [participantList, setParticipantList] = useState({});
-
+  const [pageLoading, setPageLoading] = useState(null);
+  const [isUpdate, setIsUpdate] = useState(false);
   const { userToken } = userStore();
 
   const checkItemsHandler = (id, isChecked) => {
@@ -35,11 +40,25 @@ export default function ClubManagePage({ route }) {
     }
     setCheckItems(newCheckItems);
   };
+  const fetchData = async () => {
+    setPageLoading(true);
+    const res = await axios.get(
+      `${API_URL}/api/meetings/${clubId}/registrations`,
+      {
+        headers: {
+          "Content-Type": `application/json`,
+          Authorization: "Bearer " + `${userToken}`,
+        },
+      }
+    );
 
+    setParticipantList(res.data);
+    setPageLoading(false);
+  };
   const allCheckHandler = (allCheckToggle) => {
     if (allCheckToggle) {
       const allChecked = new Set(
-        participantList.content.map((data, index) => `id` + index)
+        participantList.content.map((data, index) => data.id)
       );
       setCheckItems(allChecked);
       setIsAllChecked(true);
@@ -48,92 +67,145 @@ export default function ClubManagePage({ route }) {
       setIsAllChecked(false);
     }
   };
+  const sendAcceptList = () => {
+    Alert.alert("수락하시겠습니까?", "사용자들이 모임에 초대됩니다.", [
+      {
+        text: "취소",
+        onPress: () => {
+          console.log("취소");
+        },
+      },
+      {
+        text: "확인",
+        onPress: async () => {
+          try {
+            const res = await axios.post(
+              `${API_URL}/api/meetings/${clubId}/registrations/bulk-accept`,
+              {
+                registration_ids: Array.from(checkItems),
+              },
+              {
+                headers: {
+                  "Content-Type": `application/json`,
+                  Authorization: "Bearer " + `${userToken}`,
+                },
+              }
+            );
+            console.log(res);
+            console.log("수락");
+            setIsUpdate(!isUpdate);
+          } catch (err) {
+            console.log(err);
+          }
+        },
+      },
+    ]);
+  };
 
   useEffect(() => {
-    axios
-      .get(`${API_URL}/api/meetings/${clubId}/registrations`, {
-        headers: {
-          "Content-Type": `application/json`,
-          Authorization: "Bearer " + `${userToken}`,
-        },
-      })
-      .then((res) => {
-        console.log(res.data);
-        setParticipantList(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
+    fetchData();
+  }, [isUpdate]);
+
+  useEffect(() => {
+    if (participantList.content && checkItems.size !== participantList.count) {
+      setIsAllChecked(false);
+    } else {
+      setIsAllChecked(true);
+    }
+  }, [checkItems]);
+
   return (
     <View style={styles.managePageView}>
-      <View style={styles.managePageContent}>
-        <View style={styles.headerContainer}>
-          <View style={styles.headerLeft}>
-            <Pressable
-              onPress={() => {
-                setIsAllChecked((prevIsAllChecked) => {
-                  const newChecked = !prevIsAllChecked;
-                  allCheckHandler(newChecked);
-                  return newChecked;
-                });
-              }}
-            >
-              {isAllChecked ? (
-                <Ionicons name="checkmark-circle" size={24} color="black" />
-              ) : (
-                <Ionicons name="ellipse-outline" size={24} color="black" />
-              )}
-            </Pressable>
-            <Text
-              style={{
-                ...styles.headerText,
-                marginLeft: theme.screenWidth / 60,
-              }}
-            >
-              전체 {participantList && participantList.count}개
-            </Text>
+      {participantList && participantList.count != 0 ? (
+        pageLoading ? (
+          <View style={{ flex: 1, ...theme.centerStyle }}>
+            <ActivityIndicator size="large" color="black" />
           </View>
+        ) : (
+          <View style={styles.managePageContent}>
+            <View style={styles.headerContainer}>
+              <View style={styles.headerLeft}>
+                <Pressable
+                  onPress={() => {
+                    setIsAllChecked((prevIsAllChecked) => {
+                      const newChecked = !prevIsAllChecked;
+                      allCheckHandler(newChecked);
+                      return newChecked;
+                    });
+                  }}
+                >
+                  {isAllChecked ? (
+                    <Ionicons name="checkmark-circle" size={24} color="black" />
+                  ) : (
+                    <Ionicons name="ellipse-outline" size={24} color="black" />
+                  )}
+                </Pressable>
+                <Text
+                  style={{
+                    ...styles.headerText,
+                    marginLeft: theme.screenWidth / 60,
+                  }}
+                >
+                  전체 {participantList && participantList.count}개
+                </Text>
+              </View>
 
-          <View style={styles.headerRight}>
-            <Pressable>
-              <Text style={styles.headerText}>선택 거절</Text>
-            </Pressable>
+              <View style={styles.headerRight}>
+                {checkItems.size !== 0 ? (
+                  <Pressable>
+                    <Text style={styles.headerText}>선택 거절</Text>
+                  </Pressable>
+                ) : null}
+              </View>
+            </View>
+
+            <ScrollView style={{ flex: 1 }}>
+              {participantList.content &&
+                participantList.content.map((data, index) => {
+                  return (
+                    <ManageCard
+                      participantData={data}
+                      key={index}
+                      checkItemsHandler={checkItemsHandler}
+                      isAllChecked={isAllChecked}
+                    />
+                  );
+                })}
+            </ScrollView>
+            <View style={{ flex: 0.5 }}>
+              <TouchableOpacity onPress={sendAcceptList}>
+                <Button
+                  style={{
+                    borderWidth: 0,
+                    height: theme.screenHeight / 15,
+                    justifyContent: "center",
+                    borderRadius: 5,
+                  }}
+                  labelStyle={{ fontSize: theme.screenWidth / 25 }}
+                  buttonColor={theme.psColor}
+                  textColor="white"
+                >
+                  {checkItems.size}명 수락하기
+                </Button>
+              </TouchableOpacity>
+            </View>
           </View>
+        )
+      ) : (
+        <View
+          style={{
+            ...styles.managePageContent,
+            ...theme.centerStyle,
+            marginBottom: theme.screenHeight / 15,
+          }}
+        >
+          <View style={{ marginBottom: theme.screenHeight / 100 }}>
+            <Ionicons name="person-add-outline" size={80} color="lightgray" />
+          </View>
+          <Text style={styles.introudceMsg}>모임에 신청자가 없습니다</Text>
+          <Text style={styles.introudceMsg}>사람들을 모아보세요.</Text>
         </View>
-
-        <ScrollView style={{ flex: 1 }}>
-          {participantList.content &&
-            participantList.content.map((data, index) => {
-              return (
-                <ManageCard
-                  participantData={data}
-                  key={index}
-                  id={`id` + index}
-                  checkItemsHandler={checkItemsHandler}
-                  isAllChecked={isAllChecked}
-                />
-              );
-            })}
-        </ScrollView>
-        <View style={{ flex: 0.5 }}>
-          <TouchableOpacity>
-            <Button
-              style={{
-                borderWidth: 0,
-                height: theme.screenHeight / 15,
-                justifyContent: "center",
-                borderRadius: 5,
-              }}
-              labelStyle={{ fontSize: theme.screenWidth / 25 }}
-              buttonColor={theme.psColor}
-              textColor="white"
-            >
-              {checkItems.size}명 수락하기
-            </Button>
-          </TouchableOpacity>
-        </View>
-      </View>
+      )}
     </View>
   );
 }
@@ -165,4 +237,9 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   headerText: { fontSize: 16, fontWeight: "600", textAlignVertical: "bottom" },
+  introudceMsg: {
+    color: "gray",
+    fontSize: theme.screenWidth / 24,
+    marginBottom: theme.screenHeight / 200,
+  },
 });

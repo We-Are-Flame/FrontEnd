@@ -39,7 +39,7 @@ export default function HomeScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [endClub, setEndClub] = useState(true);
-  const { isLogin, userToken, updatedState } = userStore();
+  const { userToken, updatedState } = userStore();
 
   const navigation = useNavigation();
 
@@ -47,6 +47,7 @@ export default function HomeScreen() {
     setRefreshing(true);
     setTimeout(() => {
       setRefreshing(false);
+      fetchData();
     }, 1000);
   }, []);
 
@@ -73,7 +74,7 @@ export default function HomeScreen() {
     const result = await axios.get(
       `${API_URL}/api/meetings?start=${page * 10}&end=${
         (page + 1) * 10
-      }&sort=${selectedSort}}`
+      }&sort=${selectedSort}`
     );
 
     if (result.data.number_of_elements === clubList.number_of_elements) {
@@ -90,6 +91,13 @@ export default function HomeScreen() {
       getData();
     }
   };
+
+  // useEffect(() => {
+  //   clubList.content &&
+  //     clubList.content.map((data, index) => {
+  //       console.log(`${index} ${data.info.title}`);
+  //     });
+  // }, [clubList]);
 
   return (
     <PaperProvider>

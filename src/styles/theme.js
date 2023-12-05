@@ -12,6 +12,14 @@ const theme = {
   screenWidth: Dimensions.get("window").width,
   screenHeight: Dimensions.get("window").height,
   headerSpace: 0.4,
+  detailStateBtnStyle: {
+    borderWidth: 1,
+    borderRadius: 10,
+    padding: 15,
+    marginTop: 10,
+    justifyContent: "center",
+    alignItems: "center",
+  },
 };
 
 export default theme;
