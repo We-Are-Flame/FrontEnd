@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   FlatList,
   Switch,
+  Alert
 } from "react-native";
 
 import { useNavigation } from "@react-navigation/core";
@@ -54,6 +55,16 @@ export default function ChatSettingPage({ navigation, route }) {
   };
 
   const changeTitle = () => {
+    if (title.length > 10) {
+      Alert.alert(
+        "글쓰기 오류",
+        `모임 명은 10글자 미만입니다.`,
+        [{ text: "확인", onPress: () => console.log("확인됨") }],
+        { cancelable: false }
+      );
+      return;
+    }
+
     axios
       .put(
         `${API_URL}/api/chat/${route.params.roomId}/title`,

@@ -4,6 +4,7 @@ import Carousel from "react-native-snap-carousel";
 import { Image } from "expo-image";
 import { View, StyleSheet } from "react-native";
 import HomeContentItem from '../pages/Home/HomeContent/HomeContentItem/HomeContentItem';
+import theme from './../styles/theme';
 
 //<MyCarousel entries={carouselArr} widthProps={Dimensions.get('window').width} heightProps={200} layout="default"/>
 export default function MyCarousel({
@@ -36,7 +37,7 @@ export default function MyCarousel({
     }
     else{
       return (
-        <View style={[styles.imageView, { height: heightProps, width: widthProps }]}>
+        <View style={{ height: heightProps, width: widthProps, ...theme.centerStyle }}>
           <HomeContentItem state={item}/>
         </View>
       );

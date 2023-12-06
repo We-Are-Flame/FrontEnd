@@ -16,6 +16,7 @@ import dummy1 from "../../../../../assets/kitchingLogo.png";
 
 import { Ionicons, Entypo, AntDesign } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
+import { Dimensions } from 'react-native';
 
 export default function HomeContentItem({ state }) {
   const navigation = useNavigation();
@@ -168,6 +169,7 @@ const styles = StyleSheet.create({
     padding: 15,
     flex: 1,
     height: 350,
+    width:Dimensions.get("window").width-40,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,

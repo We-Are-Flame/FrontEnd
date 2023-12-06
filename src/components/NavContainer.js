@@ -20,7 +20,7 @@ import LoginModal from "../modals/LoginModal/LoginModal";
 import userStore from "../store/userStore";
 
 const homeName = "홈";
-const randomName = "랜덤";
+const randomName = "추천";
 const chatName = "채팅";
 const profileName = "마이";
 

@@ -27,11 +27,7 @@ const icon = [
     color="black"
   />,
   <FontAwesome name="gamepad" size={theme.categoryIconSize} color="black" />,
-  <MaterialIcons
-    name="volunteer-activism"
-    size={theme.categoryIconSize}
-    color="black"
-  />,
+  <FontAwesome5 name="taxi" size={theme.categoryIconSize} color="black" />,
   <AntDesign name="aliwangwang" size={theme.categoryIconSize} color="black" />,
 ];
 

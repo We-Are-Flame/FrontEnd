@@ -56,11 +56,14 @@ export default function ChatItem({ chatData }) {
         />
       </View>
       <View style={styles.chatItemContent}>
-        <View>
+        <View style={{flex:1}}>
           <Text style={{ fontSize: 16, fontWeight: "bold" }}>
             {chatData.room_name}
           </Text>
-          <Text>{chatData.last_message}</Text>
+          <Text numberOfLines={1} // 한 줄만 표시
+            ellipsizeMode="tail" // 끝 부분에 ... 추가
+            style={styles.lastMessage}
+          >{chatData.last_message}</Text>
         </View>
         <View>
           <Text style={{ color: "#aaaaaa" }}>
@@ -91,5 +94,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginLeft: 10,
     flex: 9,
+  },
+  lastMessage: {
+    flex: 1, // 컨테이너 내에서 가능한 모든 공간을 차지하도록 설정
+    maxWidth: '80%', // 컨테이너의 최대 너비를 60%로 제한
   },
 });

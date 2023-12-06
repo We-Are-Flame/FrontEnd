@@ -123,6 +123,9 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 30,
     borderTopLeftRadius: 30,
     backgroundColor: theme.psColor,
+    maxWidth: "70%",
+    flexShrink: 1,
+    marginTop:5,
   },
   otherChatContainer: {
     marginLeft: 3,
@@ -131,5 +134,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 30,
     borderBottomLeftRadius: 30,
     borderTopRightRadius: 30,
+    maxWidth: "70%",
+    flexShrink: 1,
   },
 });
