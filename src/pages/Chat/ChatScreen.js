@@ -44,7 +44,7 @@ export default function ChatScreen({ navigation }) {
       },
     });
     setData(res.data.content);
-    console.log(res.data.content);
+    // console.log(res.data.content);
     setPageLoading(false);
   };
 
@@ -63,12 +63,12 @@ export default function ChatScreen({ navigation }) {
         <View style={{ flex: 7, backgroundColor: "#ffffff" }}>
           {pageLoading ? (
             <Loading />
-          ) : (
+          ) : data.count !== 0 ? (
             <FlatList
               refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
               }
-              style={{ marginTop: 40 }}
+              style={{ marginTop: 20 }}
               data={data}
               renderItem={({ item, index }) => (
                 <ChatItem chatData={item} key={index} />
@@ -76,6 +76,13 @@ export default function ChatScreen({ navigation }) {
               keyExtractor={(item, index) => index.toString()}
               ItemSeparatorComponent={() => <View style={{ height: 20 }} />}
             />
+          ) : (
+            <View style={styles.noChatItemView}>
+              <Text style={styles.introudceMsg}>채팅방이 없습니다</Text>
+              <Text style={styles.introudceMsg}>
+                지금 모임에 참여하고 채팅방에서 대화를 나눠보세요!
+              </Text>
+            </View>
           )}
         </View>
       </View>
@@ -91,5 +98,11 @@ const styles = StyleSheet.create({
   chatItemView: {
     marginTop: 40,
     flex: 0.3,
+  },
+  noChatItemView: { ...theme.centerStyle, flex: 1 },
+  introudceMsg: {
+    color: "gray",
+    fontSize: theme.screenWidth / 24,
+    marginBottom: theme.screenHeight / 200,
   },
 });

@@ -31,9 +31,11 @@ const FirstRoute = ({ myClubData }) => {
   const groupedMeetings = groupMeetingsByDate(meetings);
 
   return (
-    <ScrollView nestedScrollEnabled={true} style={{ flex: 1 }}>
+    <View style={{ flex: 1 }}>
       {Object.keys(groupedMeetings).length !== 0 ? (
-        <MeetingComponent groupedMeetings={groupedMeetings} />
+        <ScrollView nestedScrollEnabled={true} style={{ flex: 1 }}>
+          <MeetingComponent groupedMeetings={groupedMeetings} />
+        </ScrollView>
       ) : (
         <View style={{ flex: 1, ...theme.centerStyle }}>
           <Text style={{ fontSize: 16, color: "lightgray" }}>
@@ -41,7 +43,7 @@ const FirstRoute = ({ myClubData }) => {
           </Text>
         </View>
       )}
-    </ScrollView>
+    </View>
   );
 };
 
@@ -50,9 +52,11 @@ const SecondRoute = ({ joinedClubData }) => {
   const groupedMeetings = groupMeetingsByDate(meetings);
 
   return (
-    <ScrollView nestedScrollEnabled={true} style={{ flex: 1 }}>
+    <View style={{ flex: 1 }}>
       {Object.keys(groupedMeetings).length !== 0 ? (
-        <MeetingComponent groupedMeetings={groupedMeetings} />
+        <ScrollView nestedScrollEnabled={true} style={{ flex: 1 }}>
+          <MeetingComponent groupedMeetings={groupedMeetings} />
+        </ScrollView>
       ) : (
         <View style={{ flex: 1, ...theme.centerStyle }}>
           <Text style={{ fontSize: 16, color: "lightgray" }}>
@@ -60,7 +64,7 @@ const SecondRoute = ({ joinedClubData }) => {
           </Text>
         </View>
       )}
-    </ScrollView>
+    </View>
   );
 };
 
