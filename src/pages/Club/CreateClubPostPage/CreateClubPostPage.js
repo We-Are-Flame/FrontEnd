@@ -204,16 +204,7 @@ export default function CreateClubPostPage({ route }) {
     const regex = /#[\w가-힣]+/g; // 해시태그 추출을 위한 정규 표현식
     const hashTags = inputText.match(regex) || []; // 해시태그 추출
     // 각 해시태그의 길이를 검사합니다.
-    for (let tag of hashTags) {
-      if (tag.length > 11) { // '#' 포함하여 11자 이상인 경우를 체크합니다.
-        Alert.alert(
-          "해시태그 길이 오류",
-          "해시태그는 10글자를 초과할 수 없습니다: " + tag,
-          [{ text: "확인" }]
-        );
-        return []; // 길이가 넘는 경우 빈 배열 반환하거나, 오류 처리를 할 수 있습니다.
-      }
-    }
+    
     return hashTags;
   };
 

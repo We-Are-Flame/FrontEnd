@@ -155,9 +155,9 @@ export default function ChatDetailPage({ route }) {
         />
         </View>
         <View style={styles.chatInput}>
-          <View style={styles.chatInputImage}>
+          <TouchableOpacity style={styles.chatInputImage}>
             <Entypo name="image" size={30} color="black" />
-          </View>
+          </TouchableOpacity>
           <TextInput
             style={styles.input}
             placeholder="Message"
