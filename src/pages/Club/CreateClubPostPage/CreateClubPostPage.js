@@ -69,10 +69,10 @@ export default function CreateClubPostPage({ route }) {
   const submitPost = () => {
     let missingFields = [];
     if (title === "") missingFields.push("모임명");
-    if (title.length > 7) {
+    if (title.length > 10) {
       Alert.alert(
         "글쓰기 오류",
-        `모임 명은 8글자 미만입니다.`,
+        `모임 명은 10글자를 초과할 수 없습니다.`,
         [{ text: "확인", onPress: () => console.log("확인됨") }],
         { cancelable: false }
       );
@@ -99,12 +99,36 @@ export default function CreateClubPostPage({ route }) {
       );
       return;
     }
-    const now = new Date(); // 현재 시간을 나타내는 Date 객체 생성
-    const startDate = new Date(sDate); // sDate를 Date 객체로 변환
-    console.log("sDate : " + sDate); //이게 잘 안나옴 sDate기 인들어갔음
 
+    if (location === "") missingFields.push("위치");
+    if (time === "") missingFields.push("시간");
+    if (!year || !month || !day || !hour || !min) {
+      Alert.alert(
+        "글쓰기 오류",
+        `일시를 모두 입력해주세요.`,
+        [{ text: "확인", onPress: () => console.log("확인됨") }],
+        { cancelable: false }
+      );
+      return;
+    }
+
+    let startDate = new Date(
+      year,
+      parseInt(month, 10) - 1,
+      day,
+      hour,
+      min
+    );
+  
+    // 종료 시간을 계산하기 위해, 시작 시간에 시간을 더합니다.
+    let endDate = new Date(startDate);
+    endDate.setHours(startDate.getHours() + extractNumberFromString(time));
+  
+    // 현재 시간을 나타내는 Date 객체 생성
+    const now = new Date();
+  
     if (startDate < now) {
-      //잘안됨
+      // 여기서 startDate는 위에서 동기적으로 계산한 값입니다.
       Alert.alert(
         "글쓰기 오류",
         `일시는 현재 시간보다 이후여야 합니다.`,
@@ -113,12 +137,6 @@ export default function CreateClubPostPage({ route }) {
       );
       return;
     }
-    if (location === "") missingFields.push("위치");
-    if (year === "") missingFields.push("일시의 연");
-    if (month === "") missingFields.push("일시의 달");
-    if (day === "") missingFields.push("일시의 일");
-    if (hour === "") missingFields.push("일시의 시");
-    if (min === "") missingFields.push("일시의 분");
 
     if (missingFields.length > 0) {
       Alert.alert(
@@ -185,6 +203,17 @@ export default function CreateClubPostPage({ route }) {
   const extractHashTags = (inputText) => {
     const regex = /#[\w가-힣]+/g; // 해시태그 추출을 위한 정규 표현식
     const hashTags = inputText.match(regex) || []; // 해시태그 추출
+    // 각 해시태그의 길이를 검사합니다.
+    for (let tag of hashTags) {
+      if (tag.length > 11) { // '#' 포함하여 11자 이상인 경우를 체크합니다.
+        Alert.alert(
+          "해시태그 길이 오류",
+          "해시태그는 10글자를 초과할 수 없습니다: " + tag,
+          [{ text: "확인" }]
+        );
+        return []; // 길이가 넘는 경우 빈 배열 반환하거나, 오류 처리를 할 수 있습니다.
+      }
+    }
     return hashTags;
   };
 
