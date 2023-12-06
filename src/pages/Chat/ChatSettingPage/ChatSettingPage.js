@@ -23,7 +23,9 @@ import ChatUserItem from "./ChatUserItem/ChatUserItem";
 export default function ChatSettingPage({ navigation, route }) {
   const [users, setUsers] = useState([]);
   const [isModify, setIsModify] = useState(false);
-  const [title, setTitle] = useState("고양이 츄르");
+  const [title, setTitle] = useState("");
+  const [thumbnail,setThumbnail] = useState("");
+  const [host,setHost] = useState(false);
   const [alarm, setAlarm] = useState(false);
 
   const { userToken, userData } = userStore();
@@ -75,7 +77,23 @@ export default function ChatSettingPage({ navigation, route }) {
   };
 
   const outChatRoom = () => {
-    axios
+    if(host){
+      axios
+      .delete(`${API_URL}/api/chat/${route.params.roomId}`, {
+        headers: {
+          "Content-Type": `application/json`,
+          Authorization: "Bearer " + `${userToken}`,
+        },
+      })
+      .then((res) => {
+        navigation.navigate("채팅");
+        console.log(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    }else{
+      axios
       .delete(`${API_URL}/api/chat/${route.params.roomId}/user`, {
         headers: {
           "Content-Type": `application/json`,
@@ -89,6 +107,7 @@ export default function ChatSettingPage({ navigation, route }) {
       .catch((err) => {
         console.log(err);
       });
+    }
   };
 
   useEffect(() => {
@@ -122,11 +141,59 @@ export default function ChatSettingPage({ navigation, route }) {
       });
   }, [route.params.roomId]);
 
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/api/chat/${route.params.roomId}/title`, {
+        headers: {
+          "Content-Type": `application/json`,
+          Authorization: "Bearer " + `${userToken}`,
+        },
+      })
+      .then((res) => {
+        setTitle(res.data.title);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [route.params.roomId]);
+
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/api/chat/${route.params.roomId}/thumbnail`, {
+        headers: {
+          "Content-Type": `application/json`,
+          Authorization: "Bearer " + `${userToken}`,
+        },
+      })
+      .then((res) => {
+        setThumbnail(res.data.thumbnail);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [route.params.roomId]);
+
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/api/chat/${route.params.roomId}/host`, {
+        headers: {
+          "Content-Type": `application/json`,
+          Authorization: "Bearer " + `${userToken}`,
+        },
+      })
+      .then((res) => {
+        setHost(res.data.is_host);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [route.params.roomId]);
+
   return (
     <View style={styles.chatSettingPageView}>
       <View style={styles.chatThumbnail}>
         <Image
-          source={imageSource}
+          source={thumbnail}
           style={{
             width: 120,
             height: 120,
@@ -170,7 +237,7 @@ export default function ChatSettingPage({ navigation, route }) {
             value={title}
           />
         ) : (
-          <Text style={{ color: "gray", marginTop: 5 }}>고양이 츄르</Text>
+          <Text style={{ color: "gray", marginTop: 5 }}>{title}</Text>
         )}
         <Text style={[styles.chatSettingContentLabel, { marginTop: 20 }]}>
           대화 상대
