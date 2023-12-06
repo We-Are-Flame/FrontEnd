@@ -2,13 +2,29 @@
 
 import * as React from "react";
 import theme from "../../../styles/theme";
-import Header from "../../../components/Header";
+import { useEffect } from "react";
 import { useNavigation } from "@react-navigation/core";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
 
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import userStore from "../../../store/userStore";
 export default function ProfileSetting() {
   const menus = ["계정정보", "알림설정", "문의하기", "로그아웃"];
+  const {
+    updatedState,
+    setUpdatedState,
+    setUserToken,
+    setIsLogin,
+    setUserData,
+    userData,
+  } = userStore();
   const navigation = useNavigation();
+  const resetData = {
+    nickname: "",
+    profile_image: "",
+    temperature: 0,
+    my_meetings: 0,
+  };
 
   const handleMenuPress = (menu) => {
     switch (menu) {
@@ -22,12 +38,38 @@ export default function ProfileSetting() {
         navigation.navigate("Inquiry");
         break;
       case "로그아웃":
+        Alert.alert("로그아웃 하시겠습니까?", "", [
+          {
+            text: "취소",
+            onPress: () => {
+              console.log("취소");
+            },
+          },
+          {
+            text: "확인",
+            onPress: async () => {
+              try {
+                await AsyncStorage.removeItem("userAccessToken");
+                setUserToken("");
+                setUserData(resetData);
+                setIsLogin(false);
+                setUpdatedState(!updatedState);
+
+                navigation.navigate("Home");
+              } catch (err) {
+                console.log(err);
+              }
+            },
+          },
+        ]);
         break;
       default:
         break;
     }
   };
-
+  useEffect(() => {
+    console.log(userData);
+  }, [userData]);
   return (
     <View style={styles.profileSettingView}>
       {menus.map((data, index) => (
