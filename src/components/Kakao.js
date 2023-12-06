@@ -11,7 +11,7 @@ import userStore from "../store/userStore";
 const INJECTED_JAVASCRIPT = `window.ReactNativeWebView.postMessage('message from webView')`;
 
 export default function KaKaoLogin() {
-  const { setIsLogin } = userStore();
+  const { setIsLogin, setUserToken, setUserData } = userStore();
   const navigation = useNavigation();
 
   const storeData = async (access_token) => {
@@ -32,7 +32,7 @@ export default function KaKaoLogin() {
           Authorization: "Bearer " + access_token,
         },
       }); //채팅에서 사용하기 위해 스플래시 페이지에서 미리 사용자 정보를 가져옴
-      setUserToken(token);
+      setUserToken(access_token);
       setUserData(userInfoResponse.data);
       storeData(access_token);
       setIsLogin(true);
