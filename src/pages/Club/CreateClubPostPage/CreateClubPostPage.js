@@ -350,7 +350,8 @@ export default function CreateClubPostPage({ route }) {
   };
 
   useEffect(() => {
-    setHashtags(extractHashTags(introduce));
+    const tags = extractHashTags(introduce); // 해시태그 추출 및 검사
+    setHashtags(tags); // 유효한 해시태그만 상태에 설정
   }, [introduce]);
 
   useEffect(() => {
