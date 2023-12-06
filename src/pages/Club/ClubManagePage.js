@@ -51,7 +51,6 @@ export default function ClubManagePage({ route }) {
         },
       }
     );
-
     setParticipantList(res.data);
     setPageLoading(false);
   };
@@ -68,40 +67,96 @@ export default function ClubManagePage({ route }) {
     }
   };
   const sendAcceptList = () => {
-    Alert.alert("수락하시겠습니까?", "사용자들이 모임에 초대됩니다.", [
-      {
-        text: "취소",
-        onPress: () => {
-          console.log("취소");
+    if (checkItems.size < 1) {
+      Alert.alert("수락할 신청자를 선택해주세요");
+    } else {
+      Alert.alert("수락하시겠습니까?", "사용자들이 모임에 초대됩니다.", [
+        {
+          text: "취소",
+          onPress: () => {
+            console.log("취소");
+          },
         },
-      },
-      {
-        text: "확인",
-        onPress: async () => {
-          try {
-            const res = await axios.post(
-              `${API_URL}/api/meetings/${clubId}/registrations/bulk-accept`,
-              {
-                registration_ids: Array.from(checkItems),
-              },
-              {
-                headers: {
-                  "Content-Type": `application/json`,
-                  Authorization: "Bearer " + `${userToken}`,
+        {
+          text: "확인",
+          onPress: async () => {
+            try {
+              const res = await axios.post(
+                `${API_URL}/api/meetings/${clubId}/accept`,
+                {
+                  registration_ids: Array.from(checkItems),
                 },
-              }
-            );
-            console.log(res);
-            console.log("수락");
-            setIsUpdate(!isUpdate);
-          } catch (err) {
-            console.log(err);
-          }
+                {
+                  headers: {
+                    "Content-Type": `application/json`,
+                    Authorization: "Bearer " + `${userToken}`,
+                  },
+                }
+              );
+              console.log(res);
+              console.log("수락");
+              setIsUpdate(!isUpdate);
+            } catch (err) {
+              console.log(err);
+            }
+          },
         },
-      },
-    ]);
+      ]);
+    }
   };
-
+  const sendRejectList = () => {
+    // Alert.prompt("거절하시겠습니까?", "사유를 입력해주세요", [
+    //   {
+    //     text: "취소",
+    //     onPress: () => console.log("취소함"),
+    //     style: "cancel",
+    //   },
+    //   {
+    //     text: "확인",
+    //     onPress: (content) => console.log("OK Pressed, password: " + content),
+    //   },
+    // ]);
+    if (checkItems.size < 1) {
+      Alert.alert("거절할 신청자를 선택해주세요");
+    } else {
+      Alert.alert(
+        "선택한 신청자들을 거절하시겠습니까?",
+        "대기열에서 제외됩니다",
+        [
+          {
+            text: "취소",
+            onPress: () => {
+              console.log("취소");
+            },
+          },
+          {
+            text: "확인",
+            onPress: async () => {
+              try {
+                const res = await axios.post(
+                  `${API_URL}/api/meetings/${clubId}/reject`,
+                  {
+                    registration_ids: Array.from(checkItems),
+                  },
+                  {
+                    headers: {
+                      "Content-Type": `application/json`,
+                      Authorization: "Bearer " + `${userToken}`,
+                    },
+                  }
+                );
+                console.log(res);
+                console.log("거절");
+                setIsUpdate(!isUpdate);
+              } catch (err) {
+                console.log(err);
+              }
+            },
+          },
+        ]
+      );
+    }
+  };
   useEffect(() => {
     fetchData();
   }, [isUpdate]);
@@ -152,7 +207,7 @@ export default function ClubManagePage({ route }) {
 
               <View style={styles.headerRight}>
                 {checkItems.size !== 0 ? (
-                  <Pressable>
+                  <Pressable onPress={sendRejectList}>
                     <Text style={styles.headerText}>선택 거절</Text>
                   </Pressable>
                 ) : null}
@@ -164,6 +219,9 @@ export default function ClubManagePage({ route }) {
                 participantList.content.map((data, index) => {
                   return (
                     <ManageCard
+                      isUpdate={isUpdate}
+                      setIsUpdate={setIsUpdate}
+                      clubId={clubId}
                       participantData={data}
                       key={index}
                       checkItemsHandler={checkItemsHandler}

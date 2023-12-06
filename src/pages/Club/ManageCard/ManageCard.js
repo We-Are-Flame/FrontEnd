@@ -2,18 +2,25 @@
 
 import * as React from "react";
 import { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, Alert } from "react-native";
+import axios from "axios";
 import { Button } from "react-native-paper";
 import theme from "../../../styles/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Pressable } from "react-native";
+import { API_URL } from "@env";
+import userStore from "../../../store/userStore";
 
 export default function ManageCard({
+  isUpdate,
+  setIsUpdate,
+  clubId,
   checkItemsHandler,
   isAllChecked,
   participantData,
 }) {
+  const { userToken } = userStore();
   const [checked, setChecked] = useState(false);
 
   const allCheckHandler = () => {
@@ -28,7 +35,40 @@ export default function ManageCard({
       return newChecked;
     });
   };
-
+  const rejectHandler = () => {
+    Alert.alert("거절하시겠습니까?", "대기열에서 제외됩니다", [
+      {
+        text: "취소",
+        onPress: () => {
+          console.log("취소");
+        },
+      },
+      {
+        text: "확인",
+        onPress: async () => {
+          try {
+            const res = await axios.post(
+              `${API_URL}/api/meetings/${clubId}/reject`,
+              {
+                registration_ids: [participantData.id],
+              },
+              {
+                headers: {
+                  "Content-Type": `application/json`,
+                  Authorization: "Bearer " + `${userToken}`,
+                },
+              }
+            );
+            console.log(res);
+            console.log("거절");
+            setIsUpdate(!isUpdate);
+          } catch (err) {
+            console.log(err);
+          }
+        },
+      },
+    ]);
+  };
   useEffect(() => {
     allCheckHandler();
   }, [isAllChecked]);
@@ -59,7 +99,7 @@ export default function ManageCard({
         <View style={styles.buttonContainer}>
           <View style={{ flex: 1 }}></View>
           <View style={{ flex: 1 }}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={rejectHandler}>
               <Button
                 style={{ borderWidth: 0 }}
                 buttonColor={theme.btnRejectColor}

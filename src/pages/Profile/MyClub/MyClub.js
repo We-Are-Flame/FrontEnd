@@ -12,57 +12,30 @@ import {
   ScrollView,
 } from "react-native";
 import ClubCard from "../ClubCard/ClubCard";
+import MeetingComponent from "../MeetingComponent/MeetingComponent";
 
-const convertDate = (inputDate) => {
-  const dateObj = new Date(inputDate);
-
-  const daysOfWeek = ["일", "월", "화", "수", "목", "금", "토"];
-  const returnDay = daysOfWeek[dateObj.getDay()];
-
-  return returnDay;
+const groupMeetingsByDate = (meetings) => {
+  return meetings.reduce((grouped, meeting) => {
+    const date = meeting.time_output.start_time.split("T")[0];
+    if (!grouped[date]) {
+      grouped[date] = [];
+    }
+    grouped[date].push(meeting);
+    return grouped;
+  }, {});
 };
 
 const FirstRoute = ({ myClubData }) => {
   const meetings = myClubData.content || [];
 
-  const groupMeetingsByDate = (meetings) => {
-    return meetings.reduce((grouped, meeting) => {
-      const date = meeting.time.start_time.split("T")[0];
-      if (!grouped[date]) {
-        grouped[date] = [];
-      }
-      grouped[date].push(meeting);
-      return grouped;
-    }, {});
-  };
-
   const groupedMeetings = groupMeetingsByDate(meetings);
 
   return (
-    <ScrollView nestedScrollEnabled={true} style={{ flex: 1 }}>
+    <View style={{ flex: 1 }}>
       {Object.keys(groupedMeetings).length !== 0 ? (
-        <View style={styles.clubCardView}>
-          <View style={{ width: "90%" }}>
-            {Object.entries(groupedMeetings).map(([date, meetings]) => (
-              <Fragment key={date}>
-                <Text
-                  style={{
-                    ...styles.clubDate,
-                    marginTop: 20,
-                    height: theme.screenHeight / 25,
-                  }}
-                >
-                  {`${date} (${convertDate(meetings[0].time.start_time)})`}
-                </Text>
-                <View style={{ flex: 1 }}>
-                  {meetings.map((meeting, index) => (
-                    <ClubCard key={index} clubData={meeting} />
-                  ))}
-                </View>
-              </Fragment>
-            ))}
-          </View>
-        </View>
+        <ScrollView nestedScrollEnabled={true} style={{ flex: 1 }}>
+          <MeetingComponent groupedMeetings={groupedMeetings} />
+        </ScrollView>
       ) : (
         <View style={{ flex: 1, ...theme.centerStyle }}>
           <Text style={{ fontSize: 16, color: "lightgray" }}>
@@ -70,19 +43,30 @@ const FirstRoute = ({ myClubData }) => {
           </Text>
         </View>
       )}
-    </ScrollView>
+    </View>
   );
 };
 
-const SecondRoute = ({ meetings }) => (
-  <ScrollView contentContainerStyle={{ flex: 1 }}>
-    <View style={{ flex: 1, ...theme.centerStyle }}>
-      <Text style={{ fontSize: 16, color: "lightgray" }}>
-        참여한 모임이 없습니다
-      </Text>
+const SecondRoute = ({ joinedClubData }) => {
+  const meetings = joinedClubData.content || [];
+  const groupedMeetings = groupMeetingsByDate(meetings);
+
+  return (
+    <View style={{ flex: 1 }}>
+      {Object.keys(groupedMeetings).length !== 0 ? (
+        <ScrollView nestedScrollEnabled={true} style={{ flex: 1 }}>
+          <MeetingComponent groupedMeetings={groupedMeetings} />
+        </ScrollView>
+      ) : (
+        <View style={{ flex: 1, ...theme.centerStyle }}>
+          <Text style={{ fontSize: 16, color: "lightgray" }}>
+            참여한 모임이 없습니다
+          </Text>
+        </View>
+      )}
     </View>
-  </ScrollView>
-);
+  );
+};
 
 const renderTabBar = (props) => (
   <TabBar
@@ -93,13 +77,13 @@ const renderTabBar = (props) => (
   />
 );
 
-export default function MyClub({ myClubData }) {
-  const renderScene = ({ route, jumpTo, myClubData }) => {
+export default function MyClub({ myClubData, joinedClubData }) {
+  const renderScene = ({ route, jumpTo, myClubData, joinedClubData }) => {
     switch (route.key) {
       case "first":
         return <FirstRoute jumpTo={jumpTo} myClubData={myClubData} />;
       case "second":
-        return <SecondRoute jumpTo={jumpTo} />;
+        return <SecondRoute jumpTo={jumpTo} joinedClubData={joinedClubData} />;
       default:
         return null;
     }
@@ -115,7 +99,9 @@ export default function MyClub({ myClubData }) {
       <TabView
         renderTabBar={renderTabBar}
         navigationState={{ index, routes }}
-        renderScene={(props) => renderScene({ ...props, myClubData })}
+        renderScene={(props) =>
+          renderScene({ ...props, myClubData, joinedClubData })
+        }
         onIndexChange={setIndex}
       />
     </View>

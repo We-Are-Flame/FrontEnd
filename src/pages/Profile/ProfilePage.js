@@ -22,6 +22,7 @@ export default function ProfilePage() {
   const [refreshing, setRefreshing] = useState(false);
   const { setUserData, userToken, updatedState } = userStore();
   const [myClubData, setMyClubData] = useState({});
+  const [joinedClubData, setJoinedClubData] = useState({});
   const [pageLoading, setPageLoading] = useState(null);
 
   const onRefresh = useCallback(() => {
@@ -63,6 +64,16 @@ export default function ProfilePage() {
               Authorization: "Bearer " + userToken,
             },
           });
+          const joinedMeetings = await axios.get(
+            `${API_URL}/api/meetings/participated`,
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + userToken,
+              },
+            }
+          );
+          setJoinedClubData(joinedMeetings.data);
           setMyClubData(mymeetings.data);
           setUserData(userInfoResponse.data);
         } else {
@@ -103,7 +114,7 @@ export default function ProfilePage() {
             </View>
             <View style={styles.profilePageMainBottom}>
               <View style={{ flex: 0.02, backgroundColor: theme.subColor }} />
-              <MyClub myClubData={myClubData} />
+              <MyClub myClubData={myClubData} joinedClubData={joinedClubData} />
             </View>
           </ScrollView>
         )}
