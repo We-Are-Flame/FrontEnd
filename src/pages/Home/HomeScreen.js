@@ -27,7 +27,7 @@ import Dropdown from "../../components/Dropdown";
 import { sort } from "../../utils/StaticData";
 import userStore from "../../store/userStore";
 import { API_URL } from "@env";
-
+import modalHandleStore from "../../store/modalHandleStore";
 import ReviewModalItem from "./ReviewModalItem/ReviewModalItem";
 import Loading from "../../components/Loading";
 
@@ -40,7 +40,8 @@ export default function HomeScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [endClub, setEndClub] = useState(true);
-  const { userToken, updatedState } = userStore();
+  const { setLoginModal } = modalHandleStore();
+  const { userToken, updatedState, isLogin } = userStore();
 
   const navigation = useNavigation();
 
@@ -191,8 +192,12 @@ export default function HomeScreen() {
             <View style={styles.modalView}>
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate("CreateClubPostPage");
-                  setModalVisible(false);
+                  if (isLogin) {
+                    navigation.navigate("CreateClubPostPage");
+                  } else {
+                    setModalVisible(false);
+                    setLoginModal(true);
+                  }
                 }}
                 hitSlop={{ top: 32, bottom: 32, left: 32, right: 32 }}
               >

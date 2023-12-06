@@ -1,21 +1,20 @@
 /** @format */
 /** @format */
 
-import React, { useState, useEffect, useImperativeHandle } from "react";
+import { useState } from "react";
 import {
   StyleSheet,
   Text,
   View,
   TouchableOpacity,
-  ScrollView,
   TextInput,
 } from "react-native";
 
 import theme from "./../../../../styles/theme";
-import { post_headers } from "../../../../utils/StaticData";
 import axios from "axios";
 import { API_URL } from "@env";
 import userStore from "../../../../store/userStore";
+import modalHandleStore from "../../../../store/modalHandleStore";
 
 export default function HomeDetailCommentInput({
   id,
@@ -24,7 +23,9 @@ export default function HomeDetailCommentInput({
 }) {
   const [text, setText] = useState("");
   const [isFocused, setIsFocused] = useState(false);
-  const { userToken } = userStore();
+  const { userToken, isLogin } = userStore();
+  const { setLoginModal } = modalHandleStore();
+
   const submitComment = () => {
     if (text.trim() === "") {
       return;
@@ -69,7 +70,13 @@ export default function HomeDetailCommentInput({
         {isFocused && (
           <TouchableOpacity
             style={styles.submitComment}
-            onPress={submitComment}
+            onPress={() => {
+              if (isLogin) {
+                submitComment();
+              } else {
+                setLoginModal(true);
+              }
+            }}
           >
             <Text
               style={{

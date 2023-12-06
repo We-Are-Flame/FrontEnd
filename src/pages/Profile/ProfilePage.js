@@ -16,11 +16,10 @@ import MyClub from "./MyClub/MyClub";
 import theme from "../../styles/theme";
 import Header from "../../components/Header";
 import userStore from "../../store/userStore";
-import { ActivityIndicator } from "react-native";
 import Loading from "../../components/Loading";
 export default function ProfilePage() {
   const [refreshing, setRefreshing] = useState(false);
-  const { setUserData, userToken, updatedState } = userStore();
+  const { isLogin, setUserData, userToken, updatedState } = userStore();
   const [myClubData, setMyClubData] = useState({});
   const [joinedClubData, setJoinedClubData] = useState({});
   const [pageLoading, setPageLoading] = useState(null);
@@ -87,7 +86,9 @@ export default function ProfilePage() {
   };
 
   useEffect(() => {
-    fetchData();
+    if (isLogin) {
+      fetchData();
+    }
   }, [updatedState]);
 
   return (

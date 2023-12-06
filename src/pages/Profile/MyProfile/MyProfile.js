@@ -72,6 +72,7 @@ export default function MyProfile() {
           </View>
           <View style={{ ...styles.stateItems, borderRightWidth: 0 }}>
             <TouchableOpacity
+              disabled={!isLogin}
               onPress={() => {
                 navigation.navigate("UnivAuth");
               }}

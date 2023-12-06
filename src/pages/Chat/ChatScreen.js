@@ -25,7 +25,7 @@ export default function ChatScreen({ navigation }) {
   const [refreshing, setRefreshing] = useState(false);
   const [data, setData] = useState([]);
   const [pageLoading, setPageLoading] = useState(false);
-  const { userToken } = userStore();
+  const { userToken, isLogin } = userStore();
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -49,7 +49,9 @@ export default function ChatScreen({ navigation }) {
   };
 
   useEffect(() => {
-    fetchData();
+    if (isLogin) {
+      fetchData();
+    }
   }, []);
 
   return (
@@ -58,12 +60,11 @@ export default function ChatScreen({ navigation }) {
         <View
           style={{ flex: theme.headerSpace, backgroundColor: theme.psColor }}
         ></View>
-
         <Header />
         <View style={{ flex: 7, backgroundColor: "#ffffff" }}>
           {pageLoading ? (
             <Loading />
-          ) : data.count !== 0 ? (
+          ) : data.count && data.count !== 0 ? (
             <FlatList
               refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -79,8 +80,11 @@ export default function ChatScreen({ navigation }) {
           ) : (
             <View style={styles.noChatItemView}>
               <Text style={styles.introudceMsg}>채팅방이 없습니다</Text>
+
               <Text style={styles.introudceMsg}>
-                지금 모임에 참여하고 채팅방에서 대화를 나눠보세요!
+                {isLogin
+                  ? "지금 모임에 참여하고 채팅방에서 대화를 나눠보세요!"
+                  : "로그인 후 모임에 참여하고 채팅방에서 대화를 나눠보세요!"}
               </Text>
             </View>
           )}

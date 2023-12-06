@@ -32,6 +32,7 @@ import MyCarousel from "../../../components/MyCarousel";
 import GoogleMap from "../../../components/GoogleMap";
 import { API_URL } from "@env";
 import userStore from "../../../store/userStore";
+import modalHandleStore from "../../../store/modalHandleStore";
 import Loading from "../../../components/Loading";
 
 export default function HomeDetailPage({ route }) {
@@ -47,8 +48,8 @@ export default function HomeDetailPage({ route }) {
   const [carouselImage, setCarouselImage] = useState([]);
   const [pageLoading, setPageLoading] = useState(null);
   const [isUpdate, setIsUpdate] = useState(false);
-  const { userToken } = userStore();
-
+  const { userToken, isLogin } = userStore();
+  const { setLoginModal } = modalHandleStore();
   const carouselArr = [kitchingLogo, kitchingLogo, kitchingLogo];
 
   const navigation = useNavigation();
@@ -426,7 +427,13 @@ export default function HomeDetailPage({ route }) {
                 ) : detailData.status.participate_status === "NONE" ? (
                   <TouchableOpacity
                     style={styles.homeDetailStateBtnBlue}
-                    onPress={clickApply}
+                    onPress={() => {
+                      if (isLogin) {
+                        clickApply();
+                      } else {
+                        setLoginModal(true);
+                      }
+                    }}
                   >
                     <Text style={styles.homeDetailStateTextBlue}>
                       참가 신청
