@@ -26,8 +26,6 @@ export default function SplashPage() {
   const navigation = useNavigation();
   useEffect(() => {
     setTimeout(async () => {
-      setAnimating(false);
-
       try {
         const token = await AsyncStorage.getItem("userAccessToken");
         console.log(token);
@@ -71,6 +69,7 @@ export default function SplashPage() {
           setUserToken(token);
           setUserData(userInfoResponse.data);
           setIsLogin(true);
+          setAnimating(false);
           navigation.replace("Home");
         } else {
           navigation.replace("Login");
