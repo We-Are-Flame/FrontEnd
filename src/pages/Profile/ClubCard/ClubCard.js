@@ -20,6 +20,30 @@ export default function ClubCard({ clubData }) {
     });
     return timeString;
   };
+  const setStatusColor = () => {
+    switch (clubData.status) {
+      case "IN_PROGRESS":
+        return "red";
+      case "FINISHED":
+        return "lightgray";
+      case "NOT_STARTED":
+        return theme.psColor;
+    }
+  };
+  const setStatusText = () => {
+    switch (clubData.status) {
+      case "IN_PROGRESS":
+        return "진행중";
+      case "FINISHED":
+        return "종료";
+      case "NOT_STARTED":
+        return "시작전";
+    }
+  };
+
+  const statusColor = setStatusColor();
+  const statusText = setStatusText();
+
   return (
     <Card
       onPress={() => {
@@ -45,36 +69,50 @@ export default function ClubCard({ clubData }) {
           <View style={styles.clubContentTop}>
             <View style={{ flex: 1, justifyContent: "center" }}>
               <Text
-                style={{
-                  fontSize: 16,
-                  color: "lightgray",
-                  fontWeight: "400",
-                }}
+                style={styles.clubLocationText}
                 numberOfLines={1}
                 ellipsizeMode="tail"
               >
-                {clubData.location.location}
+                {clubData.location_output.location}
               </Text>
             </View>
             <View
               style={{
                 ...styles.clubState,
-                borderColor: theme.psColor,
+                borderColor: statusColor,
               }}
             >
-              <Text style={{ color: theme.psColor }}>진행중</Text>
+              <Text
+                style={{
+                  color: statusColor,
+                }}
+              >
+                {statusText}
+              </Text>
             </View>
           </View>
-          <View style={{ flex: 1, justifyContent: "center" }}>
-            <Text style={{ fontWeight: "600", fontSize: 16 }}>
-              {clubData.info.title}
+          <View style={{ flex: 1, justifyContent: "flex-start" }}>
+            <Text numberOfLines={1} style={{ fontWeight: "600", fontSize: 18 }}>
+              {clubData.info_output.title}
             </Text>
           </View>
+          <View style={{ flex: 1, flexDirection: "row" }}>
+            <Text style={{ fontSize: 14 }}>
+              {`${getTime(clubData.time_output.start_time)}~${getTime(
+                clubData.time_output.end_time
+              )}`}
+            </Text>
 
-          <Text style={{ flex: 1, fontSize: 14 }}>
-            {getTime(clubData.time.start_time)} ~{" "}
-            {getTime(clubData.time.end_time)}
-          </Text>
+            {clubData.hashtags.length > 0 && <Text> · </Text>}
+
+            {clubData.hashtags.length > 0 && (
+              <View style={{ flex: 1 }}>
+                <Text numberOfLines={1}>
+                  {clubData.hashtags.map((data, index) => data + " ")}
+                </Text>
+              </View>
+            )}
+          </View>
         </View>
       </View>
     </Card>
@@ -97,6 +135,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
     backgroundColor: "white",
   },
+  clubLocationText: { fontSize: 16, color: "lightgray", fontWeight: "400" },
   clubDate: {
     fontWeight: "600",
     fontSize: 20,
