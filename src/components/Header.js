@@ -111,7 +111,7 @@ export default function Header() {
       setLogoName("마이홈");
     } else if (routeName == "채팅") {
       setLogoName("채팅");
-    } else if (routeName == "랜덤") {
+    } else if (routeName == "추천") {
       setLogoName("추천 모임");
     }
   };
