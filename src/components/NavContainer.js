@@ -20,7 +20,7 @@ import LoginModal from "../modals/LoginModal/LoginModal";
 import userStore from "../store/userStore";
 
 const homeName = "홈";
-const randomName = "랜덤";
+const randomName = "추천";
 const chatName = "채팅";
 const profileName = "마이";
 
@@ -28,8 +28,8 @@ const Tab = createMaterialBottomTabNavigator();
 
 export default function NavContainer({ route }) {
   const custheme = useTheme();
-  // const [isLogin, setIsLogin] = useState(route.params.isLogin);
   const { isLogin } = userStore();
+
   useEffect(() => {
     console.log(`로그인 되어있나? ${isLogin}`);
   }, [isLogin]);
@@ -37,7 +37,6 @@ export default function NavContainer({ route }) {
   custheme.colors.secondaryContainer = "transparent";
   return (
     <PaperProvider>
-      <LoginModal />
       <Tab.Navigator
         barStyle={{
           height: theme.screenHeight / 8.5,
