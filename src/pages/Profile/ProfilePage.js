@@ -19,7 +19,8 @@ import userStore from "../../store/userStore";
 import Loading from "../../components/Loading";
 export default function ProfilePage() {
   const [refreshing, setRefreshing] = useState(false);
-  const { isLogin, setUserData, userToken, updatedState } = userStore();
+  const { isLogin, setUserData, userToken, updatedState, setUpdatedState } =
+    userStore();
   const [myClubData, setMyClubData] = useState({});
   const [joinedClubData, setJoinedClubData] = useState({});
   const [pageLoading, setPageLoading] = useState(null);
@@ -28,7 +29,10 @@ export default function ProfilePage() {
     setRefreshing(true);
     setTimeout(() => {
       setRefreshing(false);
-      fetchData();
+      setUpdatedState(!updatedState);
+      if (isLogin) {
+        fetchData();
+      }
     }, 1000);
   }, []);
 

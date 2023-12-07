@@ -17,6 +17,7 @@ export default function ProfileSetting() {
     setIsLogin,
     setUserData,
     userData,
+    userToken,
   } = userStore();
   const navigation = useNavigation();
   const resetData = {
@@ -50,11 +51,9 @@ export default function ProfileSetting() {
             onPress: async () => {
               try {
                 await AsyncStorage.removeItem("userAccessToken");
-                setUserToken("");
+                setUserToken(" ");
                 setUserData(resetData);
                 setIsLogin(false);
-                setUpdatedState(!updatedState);
-
                 navigation.navigate("Home");
               } catch (err) {
                 console.log(err);
@@ -68,8 +67,8 @@ export default function ProfileSetting() {
     }
   };
   useEffect(() => {
-    console.log(userData);
-  }, [userData]);
+    console.log(userToken);
+  }, [userData, userToken]);
   return (
     <View style={styles.profileSettingView}>
       {menus.map((data, index) => (
