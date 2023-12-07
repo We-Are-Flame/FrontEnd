@@ -440,14 +440,14 @@ export default function HomeDetailPage({ route }) {
                     </Text>
                   </TouchableOpacity>
                 ) : detailData.status.participate_status === "ACCEPTED" ? (
-                  <TouchableOpacity
-                    style={styles.homeDetailStateBtnRed}
-                    onPress={clickCancel}
-                  >
-                    <Text style={styles.homeDetailStateTextRed}>참가 취소</Text>
+                  <TouchableOpacity style={styles.homeDetailStateBtnBlack}>
+                    <Text>수락됨</Text>
                   </TouchableOpacity>
                 ) : detailData.status.participate_status === "PENDING" ? (
-                  <TouchableOpacity style={styles.homeDetailStateBtnBlack}>
+                  <TouchableOpacity
+                    style={styles.homeDetailStateBtnBlack}
+                    onPress={clickCancel}
+                  >
                     <Text>수락 대기</Text>
                   </TouchableOpacity>
                 ) : detailData.status.participate_status === "REJECTED" ? (
@@ -685,6 +685,7 @@ const styles = StyleSheet.create({
     ...theme.detailStateBtnStyle,
     borderColor: "#000000",
   },
+
   homeDetailStateBtnDisabled: {
     ...theme.detailStateBtnStyle,
     borderColor: "lightgray",
