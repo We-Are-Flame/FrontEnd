@@ -60,10 +60,17 @@ export default function ChatItem({ chatData }) {
           <Text style={{ fontSize: 16, fontWeight: "bold" }}>
             {chatData.room_name}
           </Text>
+          {
+            (chatData.last_message_type === "IMAGE") ? 
+            <Text numberOfLines={1} // 한 줄만 표시
+            ellipsizeMode="tail" // 끝 부분에 ... 추가
+            style={styles.lastMessage}
+          >사진을 보냈습니다.</Text> :
           <Text numberOfLines={1} // 한 줄만 표시
             ellipsizeMode="tail" // 끝 부분에 ... 추가
             style={styles.lastMessage}
           >{chatData.last_message}</Text>
+          }
         </View>
         <View>
           <Text style={{ color: "#aaaaaa" }}>

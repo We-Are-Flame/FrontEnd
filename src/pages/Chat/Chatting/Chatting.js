@@ -19,7 +19,7 @@ export default function Chatting({ data }) {
     return timeString;
   }
 
-  if (data.message_type !== "TALK") {
+  if (data.message_type === "NOTICE") {
     return (
       <View style={{ alignItems: "center" }}>
         <Text style={{ color: "#aaaaaa" }}>{data.message}</Text>
@@ -71,6 +71,90 @@ export default function Chatting({ data }) {
           marginLeft: 20,
           flexDirection: "row",
           alignSelf: "flex-start",
+          maxWidth:"60%"
+        }}
+      >
+        <Image
+          source={data.profile_image || kitchingLogo}
+          style={{
+            width: 30,
+            height: 30,
+            backgroundColor: "#eeeeee",
+            padding: 20,
+            borderRadius: 10,
+          }}
+          contentFit="cover" // 또는 "contain", "stretch" 등
+        />
+        <View>
+        <Text style={{ marginLeft: 5, fontSize: 12 }}>{data.sender}</Text>
+        <View style={styles.otherChatContainer}>
+          <View>
+            <Text>
+              {data.message}
+            </Text>
+          </View>
+        </View>
+        </View>
+        
+          <Text
+              style={{
+                color: "#cccccc",
+                fontSize: 12,
+                alignSelf: 'flex-end',
+              }}
+            >
+              {formatTime(data.time)}
+            </Text>
+      </View>
+    );
+  } else if(
+    data.message_type === "IMAGE",
+    data.sender === userData.nickname
+  ) {
+    return (
+      <View
+        style={{
+          alignItems: "flex-end",
+          marginRight: 20,
+          flexDirection: "row",
+          alignSelf: "flex-end",
+        }}
+      >
+        <View>
+          <Text
+            style={{
+              color: "#cccccc",
+              fontSize: 12,
+              marginTop: 30,
+            }}
+          >
+            {formatTime(data.time)}
+          </Text>
+        </View>
+          <Image 
+            source={data.message}
+            style={{
+              width: 200,
+              height: 200,
+              borderRadius:20,
+              marginTop:5,
+            }} // 예시 크기, 원하는 대로 조절
+            resizeMode="cover" // 또는 "contain", "stretch" 등
+          />
+      </View>
+    );
+  }else if (
+    data.message_type === "IMAGE" &&
+    userData.nickname !== data.sender
+  ) {
+    return (
+      <View
+        style={{
+          alignItems: "flex-start",
+          marginLeft: 20,
+          flexDirection: "row",
+          alignSelf: "flex-start",
+          maxWidth:"60%"
         }}
       >
         <Image
@@ -86,30 +170,26 @@ export default function Chatting({ data }) {
         />
         <View>
           <Text style={{ marginLeft: 5, fontSize: 12 }}>{data.sender}</Text>
-          <View style={styles.otherChatContainer}>
-            <Text
+            <Image 
+              source={data.message}
               style={{
-                backgroundColor: "#dddddd",
-                borderBottomRightRadius: 30,
-                borderBottomLeftRadius: 30,
-                borderTopRightRadius: 30,
-              }}
-            >
-              {data.message}
-            </Text>
-          </View>
+                width: 200,
+                height: 200,
+                borderRadius:20,
+                marginTop:5,
+              }} // 예시 크기, 원하는 대로 조절
+              resizeMode="cover" // 또는 "contain", "stretch" 등
+            />
         </View>
-        <View style={{}}>
           <Text
             style={{
               color: "#cccccc",
               fontSize: 12,
-              marginTop: 40,
+              alignSelf:"flex-end"
             }}
           >
             {formatTime(data.time)}
           </Text>
-        </View>
       </View>
     );
   }
@@ -118,7 +198,6 @@ export default function Chatting({ data }) {
 const styles = StyleSheet.create({
   myChatContainer: {
     padding: 10,
-    borderTopRightRadius: 1,
     borderBottomRightRadius: 20,
     borderBottomLeftRadius: 30,
     borderTopLeftRadius: 30,
@@ -134,7 +213,6 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 30,
     borderBottomLeftRadius: 30,
     borderTopRightRadius: 30,
-    maxWidth: "70%",
-    flexShrink: 1,
+    maxWidth: "100%",
   },
 });

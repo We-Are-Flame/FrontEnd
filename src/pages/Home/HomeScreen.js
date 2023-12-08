@@ -77,7 +77,6 @@ export default function HomeScreen() {
     const result = await axios.get(
       `${API_URL}/api/meetings?index=${page}&size=10&sort=${sort[selectedSort]}`
     );
-
     if (result.data.total_elements === clubList.length) {
       setLoading(false);
       return;

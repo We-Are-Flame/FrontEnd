@@ -73,6 +73,7 @@ export default function CreateClubPostPage({ route }) {
 
   const submitPost = () => {
     let missingFields = [];
+    console.log(hashtags);
     if (title === "") missingFields.push("모임명");
     if (title.length > 10) {
       Alert.alert(
@@ -221,8 +222,6 @@ export default function CreateClubPostPage({ route }) {
   const extractHashTags = (inputText) => {
     const regex = /#[\w가-힣]+/g; // 해시태그 추출을 위한 정규 표현식
     const hashTags = inputText.match(regex) || []; // 해시태그 추출
-    // 각 해시태그의 길이를 검사합니다.
-    
     return hashTags;
   };
 
@@ -360,8 +359,7 @@ export default function CreateClubPostPage({ route }) {
 
 
   useEffect(() => {
-    const tags = extractHashTags(introduce); // 해시태그 추출 및 검사
-    setHashtags(tags); // 유효한 해시태그만 상태에 설정
+    setHashtags(extractHashTags(introduce));
   }, [introduce]);
 
   useEffect(() => {

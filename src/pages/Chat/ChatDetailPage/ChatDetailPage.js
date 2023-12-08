@@ -27,21 +27,26 @@ import Chatting from "../Chatting/Chatting";
 import userStore from "../../../store/userStore";
 import ImageViewer from '../../../components/ImageViewer';
 
+import { Image } from "expo-image";
+
 
 export default function ChatDetailPage({ route }) {
   const [chat, setChat] = useState([]);
   const [text, setText] = useState("");
   const [isFocused, setIsFocused] = useState(false);
+  const [multipleImage, setMultipleImage] = useState([]);
+  const [status, requestPermission] = useMediaLibraryPermissions();
   const { userData } = userStore();
 
   const onMessageReceived = useCallback(async (payload) => {
     let responseChat = await JSON.parse(payload.body);
+
     setChat((preChat) => [
       ...preChat,
       {
         message_type: responseChat.message_type,
         sender: responseChat.sender,
-        time: new Date(),
+        time: responseChat.time,
         message: responseChat.message,
         profile_image: responseChat.profile_image,
       },
@@ -55,25 +60,13 @@ export default function ChatDetailPage({ route }) {
     TextDecoder: TextEncodingPolyfill.TextDecoder,
   });
 
-  function sendMessage(event) {
+  function sendMessage() {
     if (text && stompClient) {
       const chatMessage = {
         roomId: route.params.roomId,
-        sender: userData.nickname,
-        senderId: 7,
         message: text,
-        time: new Date(),
         messageType: "TALK",
       };
-
-      //   const dummyMessage = {
-      //     roomId: route.params.roomId,
-      //     sender: "박준하",
-      //     senderId: 9,
-      //     message: "나는 바보다",
-      //     time: new Date(),
-      //     messageType: 'TALK'
-      // };
 
       stompClient.send(
         "/pub/chat/sendMessage",
@@ -83,8 +76,9 @@ export default function ChatDetailPage({ route }) {
       //stompClient.send("/pub/chat/sendMessage", {}, JSON.stringify(dummyMessage));
       setText("");
     }
-    event.preventDefault();
   }
+
+  
 
   function onConnected() {
     stompClient.subscribe(
@@ -105,6 +99,132 @@ export default function ChatDetailPage({ route }) {
       })
     );
   }
+
+  function sendImageMessage() {
+    if ((multipleImage.length !== 0) && stompClient) {
+      for(let i=0; i<multipleImage.length; i++){
+        console.log("이미지 전송~~");
+        const chatMessage = {
+          roomId: route.params.roomId,
+          message: multipleImage[i],
+          messageType: "IMAGE",
+        };
+
+        stompClient.send(
+          "/pub/chat/sendMessage",
+          {},
+          JSON.stringify(chatMessage)
+        );
+      }
+
+    }
+  }
+
+  
+
+const uploadImage = async () => {
+  if (!status.granted) {
+    const permission = await requestPermission();
+    if (!permission.granted) {
+      return null;
+    }
+  }
+
+  let result = await launchImageLibraryAsync({
+      mediaTypes: MediaTypeOptions.Images,
+      allowsEditing: false,
+      quality: 1,
+      aspect: [1, 1],
+      allowsMultipleSelection: true, // 여러 이미지 선택 활성화
+    });
+
+  if (!result.canceled) {
+    const uploadPromises = result.assets.map(async (asset) => {
+      const lastIndex = asset.uri.lastIndexOf(".");
+      const extension = asset.uri.substring(lastIndex + 1);
+
+      let res = await axios.post(
+        `${API_URL}/api/presigned`, {
+          image_list: [{
+            file_name: generateRandomString(10),
+            file_type: "image/" + extension,
+          }],
+        }, {
+          headers: {
+            "Content-Type": `application/json`,
+          },
+        }
+      );
+
+      // 이미지의 URI로부터 바이너리 데이터를 가져옵니다.
+      const response = await fetch(asset.uri);
+      const blob = await response.blob();
+      const binaryDataArray = await blobToArrayBuffer(blob);
+
+      if (!res.data.image_list[0].presigned_url) {
+        throw new Error("사전 서명된 URL이 비어 있습니다.");
+      }
+
+      await axios.put(
+        res.data.image_list[0].presigned_url,
+        binaryDataArray, {
+          headers: {
+            "Content-Type": "image/" + extension,
+          },
+        }
+      );
+
+      // 업로드된 이미지의 URL을 반환합니다.
+      return res.data.image_list[0].image_url;
+    });
+
+    try {
+      // 여기서 모든 이미지 업로드 프로미스가 완료될 때까지 기다립니다.
+      const uploadedImages = await Promise.all(uploadPromises);
+      setMultipleImage(uploadedImages);
+      sendImageMessage();
+    } catch (err) {
+      console.error("이미지 업로드 중 오류 발생", err);
+    }
+  }
+};
+
+
+
+  function generateRandomString(length) {
+    const characters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let result = "";
+    const charactersLength = characters.length;
+
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+
+    return result;
+  }
+
+  const blobToArrayBuffer = (blob) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsArrayBuffer(blob);
+      reader.onloadend = () => {
+        const arrayBuffer = reader.result;
+        const uint8Array = new Uint8Array(arrayBuffer);
+        resolve(uint8Array);
+      };
+      reader.onerror = (error) => {
+        reject(error);
+      };
+    });
+  };
+
+  useEffect(() => {
+    if (multipleImage.length > 0) {
+      sendImageMessage();
+      setMultipleImage([]);
+    }
+  }, [multipleImage]);
 
   useEffect(() => {
     axios
@@ -155,7 +275,7 @@ export default function ChatDetailPage({ route }) {
         />
         </View>
         <View style={styles.chatInput}>
-          <TouchableOpacity style={styles.chatInputImage}>
+          <TouchableOpacity style={styles.chatInputImage} onPress={uploadImage}>
             <Entypo name="image" size={30} color="black" />
           </TouchableOpacity>
           <TextInput

@@ -180,7 +180,7 @@ export default function HomeDetailPage({ route }) {
   };
 
   const clickApply = () => {
-    Alert.alert("신청하시겠습니까?", "ㄱㄱ", [
+    Alert.alert("신청하시겠습니까?", `${detailData.info.title} 모임에 가입합니다.`, [
       {
         text: "취소",
         onPress: () => {
@@ -445,10 +445,16 @@ export default function HomeDetailPage({ route }) {
                   </TouchableOpacity>
                 ) : detailData.status.participate_status === "PENDING" ? (
                   <TouchableOpacity
-                    style={styles.homeDetailStateBtnBlack}
+                    style={styles.homeDetailStateBtnBlue}
+                  >
+                    <Text style={styles.homeDetailStateTextBlue}>참여 중</Text>
+                  </TouchableOpacity>
+                ) : detailData.status.participate_status === "PENDING" ? (
+                  <TouchableOpacity
+                    style={styles.homeDetailStateBtnDisabled}
                     onPress={clickCancel}
                   >
-                    <Text>수락 대기</Text>
+                    <Text style={styles.homeDetailStateTextDisable}>수락 대기중</Text>
                   </TouchableOpacity>
                 ) : detailData.status.participate_status === "REJECTED" ? (
                   <TouchableOpacity style={styles.homeDetailStateBtnRed}>
