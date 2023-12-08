@@ -93,7 +93,7 @@ export default function ClubManagePage({ route }) {
                   },
                 }
               );
-              console.log(res);
+              console.log(res.data);
               console.log("수락");
               setIsUpdate(!isUpdate);
             } catch (err) {

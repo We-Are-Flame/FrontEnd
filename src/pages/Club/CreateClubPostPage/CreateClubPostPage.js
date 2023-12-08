@@ -74,10 +74,10 @@ export default function CreateClubPostPage({ route }) {
   const submitPost = () => {
     let missingFields = [];
     if (title === "") missingFields.push("모임명");
-    if (title.length > 7) {
+    if (title.length > 10) {
       Alert.alert(
         "글쓰기 오류",
-        `모임 명은 8글자 미만입니다.`,
+        `모임 명은 10글자를 초과할 수 없습니다.`,
         [{ text: "확인", onPress: () => console.log("확인됨") }],
         { cancelable: false }
       );
@@ -104,11 +104,18 @@ export default function CreateClubPostPage({ route }) {
       );
       return;
     }
-    const now = new Date(); // 현재 시간을 나타내는 Date 객체 생성
-    console.log("sDate : " + sDate); //이게 잘 안나옴 sDate기 인들어갔음
 
-    if (sDate < now) {
-      //잘안됨
+    
+    
+
+
+    if (location === "") missingFields.push("위치");
+    if (time === "") missingFields.push("시간");
+    
+    // 현재 시간을 나타내는 Date 객체 생성
+    const now = new Date();
+  
+   if (sDate < now) {
       Alert.alert(
         "글쓰기 오류",
         `일시는 현재 시간보다 이후여야 합니다.`,
@@ -117,8 +124,6 @@ export default function CreateClubPostPage({ route }) {
       );
       return;
     }
-
-    // 날짜, 시간 유효성 추가해야함
 
     if (missingFields.length > 0) {
       Alert.alert(
@@ -216,6 +221,8 @@ export default function CreateClubPostPage({ route }) {
   const extractHashTags = (inputText) => {
     const regex = /#[\w가-힣]+/g; // 해시태그 추출을 위한 정규 표현식
     const hashTags = inputText.match(regex) || []; // 해시태그 추출
+    // 각 해시태그의 길이를 검사합니다.
+    
     return hashTags;
   };
 
@@ -350,6 +357,53 @@ export default function CreateClubPostPage({ route }) {
       };
     });
   };
+
+
+  useEffect(() => {
+    const tags = extractHashTags(introduce); // 해시태그 추출 및 검사
+    setHashtags(tags); // 유효한 해시태그만 상태에 설정
+  }, [introduce]);
+
+  useEffect(() => {
+    console.log(data);
+    axios
+      .post(`${API_URL}/api/meetings`, data, {
+        headers: {
+          "Content-Type": `application/json`,
+          Authorization: "Bearer " + `${userToken}`,
+        },
+      })
+      .then((res) => {
+        console.log(res.data);
+        axios
+          .post(
+            `${API_URL}/api/chat/room`,
+            {
+              meeting_id: res.data.id,
+              room_name: title,
+            },
+            {
+              headers: {
+                "Content-Type": `application/json`,
+                Authorization: "Bearer " + `${userToken}`,
+              },
+            }
+          )
+          .then((res) => {
+            console.log(res.data);
+            stompClient = Stomp.over(function () {
+              return new SockJS("http://118.67.128.48/ws-stomp");
+            });
+            stompClient.connect({}, () => onConnected(res.roomId), {});
+            navigation.replace("Home");
+          })
+          .catch((err) => console.log(err));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [data]);
+
 
   function generateRandomString(length) {
     const characters =

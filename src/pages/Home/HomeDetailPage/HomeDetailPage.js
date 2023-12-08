@@ -707,8 +707,7 @@ const styles = StyleSheet.create({
     margin: 20,
     backgroundColor: "white",
     borderRadius: 20,
-    paddingTop: 20,
-    paddingBottom: 30,
+    paddingBottom: 10,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {
@@ -744,23 +743,10 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   modalTextModify: {
-    borderTopWidth: 1,
-    borderTopColor: theme.psColor,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.psColor,
     color: theme.psColor,
   },
   modalTextDelete: {
-    borderTopWidth: 1,
-    borderTopColor: "red",
-    borderBottomWidth: 1,
-    borderBottomColor: "red",
     color: "red",
   },
-  modalTextClose: {
-    borderTopWidth: 1,
-    borderTopColor: "#000000",
-    borderBottomWidth: 1,
-    borderBottomColor: "#000000",
-  },
+
 });

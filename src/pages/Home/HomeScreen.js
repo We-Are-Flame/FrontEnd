@@ -24,7 +24,7 @@ import Header from "../../components/Header";
 import HomeContent from "./HomeContent/HomeContent";
 import HomeCategory from "./HomeCategory/HomeCategory";
 import Dropdown from "../../components/Dropdown";
-import { sort } from "../../utils/StaticData";
+import { sort_kor,sort } from "../../utils/StaticData";
 import userStore from "../../store/userStore";
 import { API_URL } from "@env";
 import modalHandleStore from "../../store/modalHandleStore";
@@ -35,7 +35,7 @@ export default function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [page, setPage] = useState(1);
   const [clubList, setClubList] = useState({});
-  const [selectedSort, setSelectedSort] = useState(sort[0]);
+  const [selectedSort, setSelectedSort] = useState(sort_kor[0]);
   const [pageLoading, setPageLoading] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -57,6 +57,7 @@ export default function HomeScreen() {
   const fetchData = async () => {
     setPageLoading(true);
     const clubData = await axios.get(
+
       `${API_URL}/api/meetings?index=0&size=10&sort=${selectedSort}`,
       {
         headers: {
@@ -137,7 +138,7 @@ export default function HomeScreen() {
                   {item.key === "sort" && (
                     <View style={styles.homeScreenSort}>
                       <Dropdown
-                        dropDownItem={sort}
+                        dropDownItem={sort_kor}
                         setData={setSelectedSort}
                         label="정렬 선택"
                         widthProps={150}

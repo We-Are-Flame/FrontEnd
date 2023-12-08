@@ -192,7 +192,7 @@ export const manageData = [
   },
 ];
 
-export const category = ["스포츠", "공부", "술", "게임", "봉사활동", "기타"];
+export const category = ["스포츠", "공부", "술", "게임", "택시", "기타"];
 
 export const timeArr = ["1시간", "2시간", "3시간", "4시간"];
 
@@ -311,4 +311,12 @@ export const post_headers = {
     "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzOk1FTUJFUiIsInVzZXJJZCI6MywiZW1haWwiOiJmb3JldmVyMjk2QG5hdmVyLmNvbSIsImlhdCI6MTcwMTAxNzIxMiwiZXhwIjoxNzAxMDI3MjEyfQ._6P9HJxnF3FUvNaolLrLgEVFN3FruLNrM1w2KNROCJg",
 };
 
-export const sort = ["soon", "new", "title"];
+export const sort_kor = [
+  "최신순","임박순","제목순"
+];
+
+export const sort = {
+  "최신순": "new",
+  "임박순": "soon", 
+  "제목순": "title"
+};
