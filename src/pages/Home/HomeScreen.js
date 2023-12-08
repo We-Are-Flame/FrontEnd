@@ -24,10 +24,10 @@ import Header from "../../components/Header";
 import HomeContent from "./HomeContent/HomeContent";
 import HomeCategory from "./HomeCategory/HomeCategory";
 import Dropdown from "../../components/Dropdown";
-import { sort_kor,sort } from "../../utils/StaticData";
+import { sort_kor, sort } from "../../utils/StaticData";
 import userStore from "../../store/userStore";
 import { API_URL } from "@env";
-
+import modalHandleStore from "../../store/modalHandleStore";
 import ReviewModalItem from "./ReviewModalItem/ReviewModalItem";
 import Loading from "../../components/Loading";
 
@@ -40,7 +40,8 @@ export default function HomeScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [endClub, setEndClub] = useState(true);
-  const { userToken, updatedState } = userStore();
+  const { setLoginModal } = modalHandleStore();
+  const { userToken, updatedState, isLogin } = userStore();
 
   const navigation = useNavigation();
 
@@ -48,6 +49,7 @@ export default function HomeScreen() {
     setRefreshing(true);
     setTimeout(() => {
       setRefreshing(false);
+      setPage(1);
       fetchData();
     }, 1000);
   }, []);
@@ -75,15 +77,15 @@ export default function HomeScreen() {
     const result = await axios.get(
       `${API_URL}/api/meetings?index=${page}&size=10&sort=${sort[selectedSort]}`
     );
-    if (result.data.total_pages === page) {
+    if (result.data.total_elements === clubList.length) {
       setLoading(false);
       return;
     }
 
-    setClubList((prevClubList) => {
+    setClubList((prevList) => {
       return {
-        ...prevClubList,
-        content: [...prevClubList.content, ...result.data.content]
+        ...prevList,
+        content: [...prevList.content, ...result.data.content],
       };
     });
     setPage(page + 1);
@@ -94,13 +96,6 @@ export default function HomeScreen() {
       getData();
     }
   };
-
-  // useEffect(() => {
-  //   clubList.content &&
-  //     clubList.content.map((data, index) => {
-  //       console.log(`${index} ${data.info.title}`);
-  //     });
-  // }, [clubList]);
 
   return (
     <PaperProvider>
@@ -193,8 +188,13 @@ export default function HomeScreen() {
             <View style={styles.modalView}>
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate("CreateClubPostPage");
-                  setModalVisible(false);
+                  if (isLogin) {
+                    navigation.navigate("CreateClubPostPage");
+                    setModalVisible(false);
+                  } else {
+                    setModalVisible(false);
+                    setLoginModal(true);
+                  }
                 }}
                 hitSlop={{ top: 32, bottom: 32, left: 32, right: 32 }}
               >

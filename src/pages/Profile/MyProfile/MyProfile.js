@@ -9,6 +9,7 @@ import ProfileEditModal from "../../../modals/ProfileEditModal/ProfileEditModal"
 import userStore from "../../../store/userStore";
 import modalHandleStore from "../../../store/modalHandleStore";
 import { useNavigation } from "@react-navigation/core";
+import defaultImg from "../../../../assets/defaultImg.jpg";
 export default function MyProfile() {
   const { setProfileEditModal } = modalHandleStore();
 
@@ -22,7 +23,7 @@ export default function MyProfile() {
         <View style={styles.myProfileImgContainer}>
           <Image
             style={styles.image}
-            source={userData.profile_image}
+            source={isLogin ? userData.profile_image : defaultImg}
             contentFit="cover"
           />
         </View>
@@ -61,17 +62,18 @@ export default function MyProfile() {
           <View style={{ ...styles.stateItems }}>
             <Text>나의 모임</Text>
             <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-              {userData.my_meetings} 개
+              {isLogin ? userData.my_meetings : 0} 개
             </Text>
           </View>
           <View style={styles.stateItems}>
             <Text>불꽃온도</Text>
             <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-              {userData.temperature} º
+              {isLogin ? userData.temperature : 0} º
             </Text>
           </View>
           <View style={{ ...styles.stateItems, borderRightWidth: 0 }}>
             <TouchableOpacity
+              disabled={!isLogin}
               onPress={() => {
                 navigation.navigate("UnivAuth");
               }}

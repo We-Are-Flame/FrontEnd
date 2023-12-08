@@ -25,7 +25,7 @@ import { useNavigation } from "@react-navigation/core";
 import axios from "axios";
 import { Stomp } from "@stomp/stompjs";
 import SockJS from "sockjs-client/dist/sockjs";
-
+import DateTimePicker from "react-native-modal-datetime-picker";
 import { API_URL } from "@env";
 import Dropdown from "../../../components/Dropdown";
 import ImageViewer from "../../../components/ImageViewer";
@@ -37,7 +37,7 @@ import { REST_API_KEY } from "@env";
 import userStore from "../../../store/userStore";
 
 export default function CreateClubPostPage({ route }) {
-  const [sDate, setSDate] = useState("");
+  const [sDate, setSDate] = useState(new Date());
   const [eDate, setEDate] = useState("");
   const [year, setYear] = useState("");
   const [month, setMonth] = useState("");
@@ -62,8 +62,13 @@ export default function CreateClubPostPage({ route }) {
   const [latitude, setLatitude] = useState(0);
   const [longitude, setLongitude] = useState(0);
   const { userToken, isLogin } = userStore();
+
+  const [dateOfBirth, setDateOfBirth] = useState("");
+  const [showPicker, setShowPicker] = useState(false);
+
   const [status, requestPermission] = useMediaLibraryPermissions();
   const navigation = useNavigation();
+
   const toggleSwitch = () => setAlarm((alarm) => !alarm);
 
   const submitPost = () => {
@@ -101,35 +106,17 @@ export default function CreateClubPostPage({ route }) {
       return;
     }
 
+    
+    
+
+
     if (location === "") missingFields.push("위치");
     if (time === "") missingFields.push("시간");
-    if (!year || !month || !day || !hour || !min) {
-      Alert.alert(
-        "글쓰기 오류",
-        `일시를 모두 입력해주세요.`,
-        [{ text: "확인", onPress: () => console.log("확인됨") }],
-        { cancelable: false }
-      );
-      return;
-    }
-
-    let startDate = new Date(
-      year,
-      parseInt(month, 10) - 1,
-      day,
-      hour,
-      min
-    );
-  
-    // 종료 시간을 계산하기 위해, 시작 시간에 시간을 더합니다.
-    let endDate = new Date(startDate);
-    endDate.setHours(startDate.getHours() + extractNumberFromString(time));
-  
+    
     // 현재 시간을 나타내는 Date 객체 생성
     const now = new Date();
   
-    if (startDate < now) {
-      // 여기서 startDate는 위에서 동기적으로 계산한 값입니다.
+   if (sDate < now) {
       Alert.alert(
         "글쓰기 오류",
         `일시는 현재 시간보다 이후여야 합니다.`,
@@ -174,6 +161,37 @@ export default function CreateClubPostPage({ route }) {
     }
   };
 
+  const toggleDatepicker = () => {
+    console.log("실행");
+    setShowPicker(!showPicker);
+  };
+
+  const formatDate = async (inputDate) => {
+    const date = new Date(inputDate);
+
+    const options = {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+
+    const formattedDate = date.toLocaleString("ko-KR", options);
+
+    return formattedDate;
+  };
+  const onConfirm = async (selectedDate) => {
+    const formattedDate = await formatDate(selectedDate);
+    setDateOfBirth(formattedDate);
+    setSDate(selectedDate);
+    setShowPicker(false);
+    console.log("확인");
+  };
+  const onCancel = () => {
+    setShowPicker(false);
+    console.log("취소");
+  };
   const validateTitle = (title) => {
     // 정규 표현식을 사용하여 특수문자 제한
     // 이 예시에서는 알파벳, 숫자, 공백, 하이픈, 밑줄, 마침표, 한글만 허용합니다.
@@ -339,6 +357,7 @@ export default function CreateClubPostPage({ route }) {
     });
   };
 
+
   useEffect(() => {
     setHashtags(extractHashTags(introduce));
   }, [introduce]);
@@ -383,6 +402,7 @@ export default function CreateClubPostPage({ route }) {
       });
   }, [data]);
 
+
   function generateRandomString(length) {
     const characters =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -413,14 +433,21 @@ export default function CreateClubPostPage({ route }) {
     return daysArray;
   }
 
-  // 위치 등록하는 hook 만약 parmas가 없다면 빈문자
+  useEffect(() => {
+    console.log(sDate, eDate);
+    console.log(sDate instanceof Date);
+  }, [sDate, eDate]);
+
+  useEffect(() => {
+    console.log(dateOfBirth);
+  }, []);
+
   useEffect(() => {
     if (route.params?.address) {
       setLocation(route.params.address);
     }
   }, [route.params]);
 
-  // 좌표 가져와서 등록하는 hook
   useEffect(() => {
     if (location != "") {
       getCoordinate(location);
@@ -428,31 +455,65 @@ export default function CreateClubPostPage({ route }) {
   }, [location]);
 
   useEffect(() => {
-    // 의존성 배열의 값 중 하나라도 빈 문자열이면 기능을 수행하지 않습니다.
-    if (!year || !month || !day || !hour || !min || !time) {
-      return;
-    }
-
-    // Date 객체를 생성합니다. 월은 0부터 시작하므로 1을 빼줍니다.
-    let startDate = new Date(
-      year,
-      parseInt(month, 10) - 1,
-      parseInt(day, 10),
-      parseInt(hour, 10) + 9,
-      parseInt(min, 10)
-    );
-    console.log(startDate);
-    // 종료 시간을 계산하기 위해, 시작 시간에 시간을 더합니다.
-    let endDate = new Date(startDate);
-    endDate.setHours(startDate.getHours() + extractNumberFromString(time));
-
-    // ISO 문자열 형식으로 변환합니다.
-    setSDate(startDate.toISOString());
+    let endDate = new Date(sDate);
+    endDate.setHours(sDate.getHours() + extractNumberFromString(time));
     setEDate(endDate.toISOString());
-  }, [year, month, day, hour, min, time]);
+  }, [time]);
+
+  useEffect(() => {
+    setHashtags(extractHashTags(introduce));
+  }, [introduce]);
+
+  useEffect(() => {
+    console.log(data);
+    axios
+      .post(`${API_URL}/api/meetings`, data, {
+        headers: {
+          "Content-Type": `application/json`,
+          Authorization: "Bearer " + `${userToken}`,
+        },
+      })
+      .then((res) => {
+        console.log(res.data);
+        axios
+          .post(
+            `${API_URL}/api/chat/room`,
+            {
+              meeting_id: res.data.id,
+              room_name: title,
+            },
+            {
+              headers: {
+                "Content-Type": `application/json`,
+                Authorization: "Bearer " + `${userToken}`,
+              },
+            }
+          )
+          .then((res) => {
+            console.log(res.data);
+            stompClient = Stomp.over(function () {
+              return new SockJS("http://118.67.128.48/ws-stomp");
+            });
+            stompClient.connect({}, () => onConnected(res.roomId), {});
+            navigation.replace("Home");
+          })
+          .catch((err) => console.log(err));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [data]);
 
   return (
     <View style={styles.createClubPostPageView}>
+      <DateTimePicker
+        locale="ko"
+        isVisible={showPicker}
+        mode="datetime"
+        date={sDate}
+        onConfirm={onConfirm}
+        onCancel={onCancel}
+      />
       <ScrollView
         style={{ borderTopColor: "#cccccc", borderTopWidth: 1, padding: 16 }}
       >
@@ -491,55 +552,20 @@ export default function CreateClubPostPage({ route }) {
           label="카테고리를 선택해주세요"
         />
         <Text style={styles.createPageLabel}>일시</Text>
-        <ScrollView style={{ flexDirection: "row", flex: 1 }}>
-          <Dropdown
-            dropDownItem={["2023", "2024", "2025"]}
-            setData={setYear}
-            label="연도"
-            widthProps={Dimensions.get("window").width / 3}
-          />
-          <Dropdown
-            dropDownItem={[
-              "01",
-              "02",
-              "03",
-              "04",
-              "05",
-              "06",
-              "07",
-              "08",
-              "09",
-              "10",
-              "11",
-              "12",
-            ]}
-            setData={setMonth}
-            label="월"
-            widthProps={Dimensions.get("window").width / 3}
-          />
-          <Dropdown
-            dropDownItem={getDaysArray(year, month).map((day) =>
-              day.toString()
-            )}
-            setData={setDay}
-            label="일"
-            widthProps={Dimensions.get("window").width / 3}
-          />
-          <Dropdown
-            dropDownItem={Array.from({ length: 24 }, (_, i) => i.toString())}
-            setData={setHour}
-            label="시"
-            widthProps={Dimensions.get("window").width / 3}
-          />
-          <Dropdown
-            dropDownItem={Array.from({ length: 60 }, (_, i) => i.toString())}
-            setData={setMin}
-            label="분"
-            widthProps={Dimensions.get("window").width / 3}
-          />
-        </ScrollView>
-        <Text style={styles.createPageLabel}>위치</Text>
 
+        <Pressable onPress={toggleDatepicker}>
+          <View pointerEvents="none">
+            <TextInput
+              style={{ ...styles.input, color: "black" }}
+              value={dateOfBirth}
+              onChangeText={setDateOfBirth}
+              placeholder="날짜, 시간을 선택해주세요"
+              editable={false}
+            />
+          </View>
+        </Pressable>
+
+        <Text style={styles.createPageLabel}>위치</Text>
         <TextInput
           onPressIn={() => {
             navigation.navigate("FindAddress", {
@@ -551,7 +577,6 @@ export default function CreateClubPostPage({ route }) {
           value={route.params?.address || ""}
           placeholder="예) 거의동 423-2"
         />
-
         <Text style={styles.createPageLabel}>상세 위치</Text>
         <TextInput
           style={styles.input}
