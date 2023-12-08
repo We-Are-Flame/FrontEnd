@@ -191,6 +191,7 @@ export default function HomeScreen() {
                 onPress={() => {
                   if (isLogin) {
                     navigation.navigate("CreateClubPostPage");
+                    setModalVisible(false);
                   } else {
                     setModalVisible(false);
                     setLoginModal(true);
