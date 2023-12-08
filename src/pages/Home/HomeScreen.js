@@ -55,7 +55,7 @@ export default function HomeScreen() {
   const fetchData = async () => {
     setPageLoading(true);
     const clubData = await axios.get(
-      `${API_URL}/api/meetings?start=0&end=10&sort=${sort[selectedSort]}`,
+      `${API_URL}/api/meetings?index=0&size=10&sort=${sort[selectedSort]}`,
       {
         headers: {
           "Content-Type": `application/json`,
@@ -73,17 +73,19 @@ export default function HomeScreen() {
 
   const getData = async () => {
     const result = await axios.get(
-      `${API_URL}/api/meetings?start=${page * 10}&end=${
-        (page + 1) * 10
-      }&sort=${sort[selectedSort]}`
+      `${API_URL}/api/meetings?index=${page}&size=10&sort=${sort[selectedSort]}`
     );
-
-    if (result.data.number_of_elements === clubList.number_of_elements) {
+    if (result.data.total_pages === page) {
       setLoading(false);
       return;
     }
 
-    setClubList({ ...clubList, ...result.data });
+    setClubList((prevClubList) => {
+      return {
+        ...prevClubList,
+        content: [...prevClubList.content, ...result.data.content]
+      };
+    });
     setPage(page + 1);
     setLoading(false);
   };
