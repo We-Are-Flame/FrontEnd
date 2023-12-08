@@ -24,6 +24,7 @@ import Loading from "../../components/Loading";
 export default function ChatScreen({ navigation }) {
   const [refreshing, setRefreshing] = useState(false);
   const [data, setData] = useState([]);
+  const [chatCount, setChatCount] = useState();
   const [pageLoading, setPageLoading] = useState(false);
   const { userToken, isLogin } = userStore();
 
@@ -44,15 +45,21 @@ export default function ChatScreen({ navigation }) {
       },
     });
     setData(res.data.content);
+    setChatCount(res.data.count);
     // console.log(res.data.content);
     setPageLoading(false);
   };
 
   useEffect(() => {
     if (isLogin) {
+      console.log("되는거아님?");
       fetchData();
     }
   }, []);
+
+  useEffect(() => {
+    console.log(chatCount);
+  }, [chatCount]);
 
   return (
     <View style={styles.chatScreenView}>
@@ -64,7 +71,7 @@ export default function ChatScreen({ navigation }) {
         <View style={{ flex: 7, backgroundColor: "#ffffff" }}>
           {pageLoading ? (
             <Loading />
-          ) : data.count && data.count !== 0 ? (
+          ) : chatCount && chatCount !== 0 ? (
             <FlatList
               refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
