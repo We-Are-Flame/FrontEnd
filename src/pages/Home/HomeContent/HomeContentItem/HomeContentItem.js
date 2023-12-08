@@ -90,6 +90,7 @@ export default function HomeContentItem({ state }) {
         navigation.navigate("HomeDetailPage", {
           id: state.id,
           hostName: state.host.name,
+          title: state.info.title,
         });
       }}
     >

@@ -50,6 +50,7 @@ export default function ClubCard({ clubData }) {
         navigation.navigate("HomeDetailPage", {
           id: clubData.id,
           hostName: userData.nickname,
+          title: clubData.info_output.title,
         });
       }}
       style={styles.manageCard}
