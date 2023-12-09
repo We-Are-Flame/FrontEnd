@@ -33,7 +33,12 @@ export default function Header() {
           style={{ ...styles.headerIconView, justifyContent: "space-between" }}
         >
           {routeName === "홈" ? (
-            <TouchableOpacity style={{ flex: 0.5 }}>
+            <TouchableOpacity
+              style={{ flex: 0.5 }}
+              onPress={() => {
+                navigation.navigate("Search");
+              }}
+            >
               <AntDesign name="search1" size={24} color="white" />
             </TouchableOpacity>
           ) : (
@@ -91,7 +96,11 @@ export default function Header() {
     } else if (routeName == "홈") {
       icons = (
         <View style={styles.headerIconView}>
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("Search");
+            }}
+          >
             <AntDesign name="search1" size={24} color="white" />
           </TouchableOpacity>
           <TouchableOpacity>
