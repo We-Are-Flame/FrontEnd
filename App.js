@@ -1,7 +1,7 @@
 /** @format */
 
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Pressable, Text, View } from "react-native";
+import { StyleSheet, Pressable, Text, View, Platform } from "react-native";
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -9,6 +9,8 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 
 import { AntDesign } from "@expo/vector-icons";
+import { PaperProvider } from "react-native-paper";
+import { HeaderBackButton } from "@react-navigation/elements";
 
 import theme from "./src/styles/theme";
 import ClubManagePage from "./src/pages/Club/ClubManagePage";
@@ -27,7 +29,9 @@ import ChatSettingPage from "./src/pages/Chat/ChatSettingPage/ChatSettingPage";
 import ChatDetailPage from "./src/pages/Chat/ChatDetailPage/ChatDetailPage";
 import UnivAuth from "./src/pages/Profile/UniAuth/UnivAuth";
 import LoginModal from "./src/modals/LoginModal/LoginModal";
-import { PaperProvider } from "react-native-paper";
+import SearchBar from "./src/pages/Search/SearhBar";
+import SearchContent from "./src/pages/Search/SearchContent";
+
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -86,8 +90,8 @@ export default function App() {
             component={HomeDetailPage}
             options={({ route }) => ({
               gestureEnabled: false,
-              headerShown: true,
               title: route.params?.title,
+              headerShown: true,
               headerBackTitle: " ",
               headerTintColor: "black",
             })}
@@ -204,6 +208,70 @@ export default function App() {
               headerTintColor: "black",
             })}
           />
+          <Stack.Screen
+            name="Search"
+            component={SearchContent}
+            options={({ navigation, route }) => ({
+              headerLeft: ({ onPress }) => (
+                <View
+                  style={{
+                    flex: 1,
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  <HeaderBackButton
+                    labelVisible={false}
+                    tintColor="black"
+                    onPress={onPress}
+                  />
+                  <SearchBar />
+                </View>
+              ),
+              headerTitle: " ",
+              headerBackVisible: true,
+              gestureEnabled: false,
+              headerShown: true,
+              headerBackTitle: " ",
+              headerTintColor: "black",
+              headerStyle: {
+                shadowColor: "transparent", // this covers iOS
+                elevation: 0, // this covers Andro
+              },
+            })}
+          />
+          {/* <Stack.Screen
+            name="SearchResult"
+            component={SearchResult}
+            options={({ navigation, route }) => ({
+              headerLeft: ({ onPress }) => (
+                <View
+                  style={{
+                    flex: 1,
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  <HeaderBackButton
+                    labelVisible={false}
+                    tintColor="black"
+                    onPress={onPress}
+                  />
+                  <SearchBar />
+                </View>
+              ),
+              headerTitle: " ",
+              headerBackVisible: true,
+              gestureEnabled: false,
+              headerShown: true,
+              headerBackTitle: " ",
+              headerTintColor: "black",
+              headerStyle: {
+                shadowColor: "transparent", // this covers iOS
+                elevation: 0, // this covers Andro
+              },
+            })}
+          /> */}
         </Stack.Navigator>
         <StatusBar style="auto" />
       </NavigationContainer>
