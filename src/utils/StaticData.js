@@ -149,48 +149,6 @@ export const myclubData = [
     ],
   },
 ];
-export const manageData = [
-  {
-    clubname: "우리는 불꽃", // 모임 이름
-    peoples: [
-      {
-        id: 1,
-        nickname: "라이언",
-        temper: 85,
-        img: "../../../../assets/lion.webp",
-      },
-      {
-        id: 2,
-        nickname: "춘식",
-        temper: 70,
-        img: "../../../../assets/chunsik.webp",
-      },
-      {
-        id: 3,
-        nickname: "네오",
-        temper: 60,
-        img: "../../../../assets/neo.webp",
-      },
-    ],
-  },
-  {
-    clubname: "우리는 물방울", // 모임 이름
-    peoples: [
-      {
-        id: 4,
-        nickname: "춘식",
-        temper: 90,
-        img: "../../../../assets/chunsik.webp",
-      },
-      {
-        id: 5,
-        nickname: "네오",
-        temper: 80,
-        img: "../../../../assets/neo.webp",
-      },
-    ],
-  },
-];
 
 export const category = ["스포츠", "공부", "술", "게임", "택시", "기타"];
 
@@ -300,23 +258,79 @@ export const participateList = {
   ],
 };
 
+export const recentData = {
+  count: 15,
+  content: [
+    {
+      id: 1,
+      title: "ㅎㅇ",
+    },
+    {
+      id: 2,
+      title: "술",
+    },
+    {
+      id: 3,
+      title: "축구 게임",
+    },
+    {
+      id: 4,
+      title: "동아리",
+    },
+    {
+      id: 5,
+      title: "새로운 아이템 1",
+    },
+    {
+      id: 6,
+      title: "새로운 아이템 2",
+    },
+    {
+      id: 7,
+      title: "새로운 아이템 3",
+    },
+    {
+      id: 8,
+      title: "새로운 아이템 4",
+    },
+    {
+      id: 9,
+      title: "새로운 아이템 5",
+    },
+    {
+      id: 10,
+      title: "새로운 아이템 6",
+    },
+    {
+      id: 11,
+      title: "새로운 아이템 7",
+    },
+    {
+      id: 12,
+      title: "새로운 아이템 8",
+    },
+    {
+      id: 13,
+      title: "새로운 아이템 9",
+    },
+    {
+      id: 14,
+      title: "새로운 아이템 10",
+    },
+    {
+      id: 15,
+      title: "새로운 아이템 11",
+    },
+  ],
+};
 export const headers = {
   "Content-Type": `application/json`,
 };
 
-export const post_headers = {
-  "Content-Type": `application/json`,
-  Authorization:
-    "Bearer " +
-    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzOk1FTUJFUiIsInVzZXJJZCI6MywiZW1haWwiOiJmb3JldmVyMjk2QG5hdmVyLmNvbSIsImlhdCI6MTcwMTAxNzIxMiwiZXhwIjoxNzAxMDI3MjEyfQ._6P9HJxnF3FUvNaolLrLgEVFN3FruLNrM1w2KNROCJg",
-};
-
-export const sort_kor = [
-  "최신순","임박순","제목순"
-];
-
+export const sort_kor = ["최신순", "임박순", "제목순"];
+export const search_sort = ["임박순"];
 export const sort = {
-  "최신순": "new",
-  "임박순": "soon", 
-  "제목순": "title"
+  최신순: "new",
+  임박순: "soon",
+  제목순: "title",
 };
