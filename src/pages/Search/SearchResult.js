@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, ScrollView, FlatList } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  FlatList,
+  RefreshControl,
+  ActivityIndicator,
+} from "react-native";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import theme from "../../styles/theme";
 import axios from "axios";
@@ -16,6 +24,7 @@ const FirstRoute = ({
   titleResult,
   pageLoading,
   selectedSort,
+  onEndReached,
 }) => {
   return (
     <View style={{ flex: 1 }}>
@@ -23,6 +32,9 @@ const FirstRoute = ({
         <Loading />
       ) : titleResult && titleResult.number_of_elements !== 0 ? (
         <FlatList
+          onEndReached={onEndReached}
+          onEndReachedThreshold={0.6}
+          disableVirtualization={false}
           style={{ flex: 1 }}
           data={[{ key: "sort" }, { key: "content" }]}
           renderItem={({ item }) => (
@@ -71,6 +83,7 @@ const SecondRoute = ({
   tagResult,
   pageLoading,
   selectedSort,
+  onEndReached,
 }) => {
   return (
     <View style={{ flex: 1 }}>
@@ -78,6 +91,9 @@ const SecondRoute = ({
         <Loading />
       ) : tagResult && tagResult.number_of_elements !== 0 ? (
         <FlatList
+          onEndReached={onEndReached}
+          onEndReachedThreshold={0.6}
+          disableVirtualization={false}
           style={{ flex: 1 }}
           data={[{ key: "sort" }, { key: "content" }]}
           renderItem={({ item }) => (
@@ -132,6 +148,10 @@ const renderTabBar = (props) => (
 export default function SearchResult() {
   const [selectedSortTitle, setSelectedSortTitle] = useState(search_sort[0]);
   const [selectedSortTag, setSelectedSortTag] = useState(search_sort[0]);
+  const [titlePage, setTitlePage] = useState(1);
+  const [tagPage, setTagPage] = useState(1);
+  const [loadingTitle, setLoadingTitle] = useState(false);
+  const [loadingTag, setLoadingTag] = useState(false);
   const [titleResult, setTitleResult] = useState({});
   const [tagResult, setTagResult] = useState({});
   const [pageLoading, setPageLoading] = useState(null);
@@ -159,6 +179,51 @@ export default function SearchResult() {
     setPageLoading(false);
   };
 
+  const continueFetchTitle = async () => {
+    const result = await axios.get(
+      `${API_URL}/api/meetings/search?index=${titlePage}&size=10&sort=${sort[selectedSortTitle]}&title=${searchText}`
+    );
+    if (result.data.total_elements === titleResult.content.length) {
+      setLoadingTitle(false);
+      return;
+    }
+    setTitleResult((prevList) => {
+      return {
+        ...prevList,
+        content: [...prevList.content, ...result.data.content],
+      };
+    });
+    setTitlePage(titlePage + 1);
+    setLoadingTitle(false);
+  };
+
+  const continueFetchTag = async () => {
+    const result = await axios.get(
+      `${API_URL}/api/meetings/search?index=${tagPage}&size=10&sort=${sort[selectedSortTag]}&hashtag=${searchText}`
+    );
+    if (result.data.total_elements === tagResult.content.length) {
+      setLoadingTag(false);
+      return;
+    }
+    setTagResult((prevList) => {
+      return {
+        ...prevList,
+        content: [...prevList.content, ...result.data.content],
+      };
+    });
+    setTagPage(tagPage + 1);
+    setLoadingTag(false);
+  };
+  const onEndReachedAtTitle = () => {
+    if (!loadingTitle) {
+      continueFetchTitle();
+    }
+  };
+  const onEndReachedAtTag = () => {
+    if (!loadingTag) {
+      continueFetchTag();
+    }
+  };
   const renderScene = ({
     route,
     jumpTo,
@@ -178,6 +243,7 @@ export default function SearchResult() {
             setSelectedSort={setSelectedSort}
             titleResult={titleResult}
             pageLoading={pageLoading}
+            onEndReached={onEndReachedAtTitle}
           />
         );
       case "second":
@@ -189,6 +255,7 @@ export default function SearchResult() {
             setSelectedSort={setSelectedSortTag}
             tagResult={tagResult}
             pageLoading={pageLoading}
+            onEndReached={onEndReachedAtTag}
           />
         );
       default:
