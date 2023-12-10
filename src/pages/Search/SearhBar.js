@@ -1,37 +1,16 @@
 /** @format */
 
 import React, { useState, useEffect } from "react";
-import { View, Text, Dimensions, StyleSheet, TextInput } from "react-native";
+import { View, StyleSheet, TextInput } from "react-native";
 import theme from "../../styles/theme";
-import axios from "axios";
-import userStore from "../../store/userStore";
-import { useNavigation } from "@react-navigation/core";
-import { API_URL } from "@env";
-import searchStore from "../../store/searchStore";
-export default function SearchBar() {
-  // const [searchText, setSearchText] = useState("");
-  const { searchText, setSearchText, setShowResult } = searchStore();
-  const navigation = useNavigation();
 
-  const handleSearchSubmit = () => {
-    if (searchText === "") {
-      console.log("최근검색");
-    } else {
-      setSubmitText(searchText);
-      console.log("검색결과");
-    }
-  };
-  // useEffect(() => {
-  //   console.log(searchText);
-  // }, [searchText]);
+import searchStore from "../../store/searchStore";
+
+export default function SearchBar() {
+  const { searchText, setSearchText, setShowResult } = searchStore();
+
   return (
-    <View
-      style={{
-        width: 300,
-        height: "100%",
-        justifyContent: "center",
-      }}
-    >
+    <View style={styles.searchBarView}>
       <TextInput
         placeholder="태그, 제목 검색"
         value={searchText}
@@ -41,24 +20,28 @@ export default function SearchBar() {
         }}
         returnKeyType="search"
         onSubmitEditing={() => {
+          if (searchText.trim() === "") {
+            return;
+          }
           setShowResult(true);
         }}
-        style={{
-          fontSize: 16,
-          height: "85%",
-          backgroundColor: "#F2F3F6",
-          borderRadius: 5,
-          padding: 10,
-        }}
+        style={styles.inputTextStyle}
       />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  randomScreenView: {},
+  searchBarView: { width: 300, height: "100%", justifyContent: "center" },
   randomScreenHeaderSpace: {
     flex: theme.headerSpace,
     backgroundColor: theme.psColor,
+  },
+  inputTextStyle: {
+    fontSize: 16,
+    height: "85%",
+    backgroundColor: "#F2F3F6",
+    borderRadius: 5,
+    padding: 10,
   },
 });
