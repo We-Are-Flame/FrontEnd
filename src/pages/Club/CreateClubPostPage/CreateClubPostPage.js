@@ -39,11 +39,6 @@ import userStore from "../../../store/userStore";
 export default function CreateClubPostPage({ route }) {
   const [sDate, setSDate] = useState(new Date());
   const [eDate, setEDate] = useState("");
-  const [year, setYear] = useState("");
-  const [month, setMonth] = useState("");
-  const [day, setDay] = useState("");
-  const [hour, setHour] = useState("");
-  const [min, setMin] = useState("");
   const [location, setLocation] = useState("");
   const [detailLocation, setDetailLocation] = useState("");
   const [people, setPeople] = useState("");
@@ -62,6 +57,7 @@ export default function CreateClubPostPage({ route }) {
   const [latitude, setLatitude] = useState(0);
   const [longitude, setLongitude] = useState(0);
   const { userToken, isLogin } = userStore();
+  const [realTime, setRealTime] = useState("");
 
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [showPicker, setShowPicker] = useState(false);
@@ -69,6 +65,9 @@ export default function CreateClubPostPage({ route }) {
   const [status, requestPermission] = useMediaLibraryPermissions();
   const navigation = useNavigation();
 
+  useEffect(() => {
+    console.log(sDate);
+  }, [sDate]);
   const toggleSwitch = () => setAlarm((alarm) => !alarm);
 
   const submitPost = () => {
@@ -106,17 +105,13 @@ export default function CreateClubPostPage({ route }) {
       return;
     }
 
-    
-    
-
-
     if (location === "") missingFields.push("위치");
     if (time === "") missingFields.push("시간");
-    
+
     // 현재 시간을 나타내는 Date 객체 생성
     const now = new Date();
-  
-   if (sDate < now) {
+
+    if (sDate < now) {
       Alert.alert(
         "글쓰기 오류",
         `일시는 현재 시간보다 이후여야 합니다.`,
@@ -150,7 +145,7 @@ export default function CreateClubPostPage({ route }) {
           longitude: longitude,
         },
         time: {
-          start_time: sDate,
+          start_time: realTime,
           end_time: eDate,
         },
         image: {
@@ -182,9 +177,12 @@ export default function CreateClubPostPage({ route }) {
     return formattedDate;
   };
   const onConfirm = async (selectedDate) => {
+    const korDate = new Date(selectedDate);
     const formattedDate = await formatDate(selectedDate);
+    korDate.setHours(korDate.getHours() + 9);
     setDateOfBirth(formattedDate);
-    setSDate(selectedDate);
+    setSDate(korDate);
+    setRealTime(korDate.toISOString());
     setShowPicker(false);
     console.log("확인");
   };
@@ -357,7 +355,6 @@ export default function CreateClubPostPage({ route }) {
     });
   };
 
-
   useEffect(() => {
     setHashtags(extractHashTags(introduce));
   }, [introduce]);
@@ -402,7 +399,6 @@ export default function CreateClubPostPage({ route }) {
       });
   }, [data]);
 
-
   function generateRandomString(length) {
     const characters =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -432,11 +428,6 @@ export default function CreateClubPostPage({ route }) {
 
     return daysArray;
   }
-
-  useEffect(() => {
-    console.log(sDate, eDate);
-    console.log(sDate instanceof Date);
-  }, [sDate, eDate]);
 
   useEffect(() => {
     console.log(dateOfBirth);
