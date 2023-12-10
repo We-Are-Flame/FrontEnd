@@ -6,8 +6,6 @@ import { StyleSheet, Pressable, Text, View, Platform } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useState, useEffect, useCallback } from "react";
-import { useNavigation } from "@react-navigation/native";
-
 import { AntDesign } from "@expo/vector-icons";
 import { PaperProvider } from "react-native-paper";
 import { HeaderBackButton } from "@react-navigation/elements";
@@ -235,43 +233,11 @@ export default function App() {
               headerBackTitle: " ",
               headerTintColor: "black",
               headerStyle: {
-                shadowColor: "transparent", // this covers iOS
-                elevation: 0, // this covers Andro
+                shadowColor: "transparent",
+                elevation: 0,
               },
             })}
           />
-          {/* <Stack.Screen
-            name="SearchResult"
-            component={SearchResult}
-            options={({ navigation, route }) => ({
-              headerLeft: ({ onPress }) => (
-                <View
-                  style={{
-                    flex: 1,
-                    flexDirection: "row",
-                    alignItems: "center",
-                  }}
-                >
-                  <HeaderBackButton
-                    labelVisible={false}
-                    tintColor="black"
-                    onPress={onPress}
-                  />
-                  <SearchBar />
-                </View>
-              ),
-              headerTitle: " ",
-              headerBackVisible: true,
-              gestureEnabled: false,
-              headerShown: true,
-              headerBackTitle: " ",
-              headerTintColor: "black",
-              headerStyle: {
-                shadowColor: "transparent", // this covers iOS
-                elevation: 0, // this covers Andro
-              },
-            })}
-          /> */}
         </Stack.Navigator>
         <StatusBar style="auto" />
       </NavigationContainer>
