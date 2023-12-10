@@ -148,7 +148,7 @@ export default function HomeContentItem({ state }) {
           <View style={{ flexDirection: "row", marginLeft: 3, marginTop: 5 }}>
             <Ionicons name="people" size={20} color="black" />
             <Text style={{ marginTop: 3 }}>
-              &nbsp;{state.info.current_participants + 1}/
+              &nbsp;{state.info.current_participants}/
               {state.info.max_participants}
             </Text>
           </View>
