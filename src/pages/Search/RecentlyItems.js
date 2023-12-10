@@ -10,12 +10,6 @@ import { Feather, EvilIcons, AntDesign } from "@expo/vector-icons";
 import { API_URL } from "@env";
 import searchStore from "../../store/searchStore";
 export default function RecentlyItems({ data }) {
-  const { searchText, setSearchText } = searchStore();
-
-  //   useEffect(() => {
-  //     console.log(searchText);
-  //   }, [searchText]);
-
   return (
     <View style={styles.recentlyItemsView}>
       <View style={styles.iconContainer}>
