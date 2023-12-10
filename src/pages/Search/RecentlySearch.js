@@ -131,9 +131,6 @@ import RecentlyItems from "./RecentlyItems";
 export default function RecentlySearch() {
   const { searchText, setSearchText } = searchStore();
   const [datalength, setDataLenght] = useState(1);
-  //   useEffect(() => {
-  //     console.log(searchText);
-  //   }, [searchText]);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -146,11 +143,10 @@ export default function RecentlySearch() {
             </View>
 
             <View style={styles.recentlyItems}>
-              {recentData.content &&
+              {/* {recentData.content &&
                 recentData.content.map((data, index) => {
-                  console.log(data);
                   return <RecentlyItems data={data} key={index} />;
-                })}
+                })} */}
             </View>
           </ScrollView>
         ) : (
@@ -161,11 +157,10 @@ export default function RecentlySearch() {
             </View>
 
             <View style={styles.recentlyItems}>
-              {recentData.content &&
+              {/* {recentData.content &&
                 recentData.content.map((data, index) => {
-                  console.log(data);
                   return <RecentlyItems data={data} key={index} />;
-                })}
+                })} */}
             </View>
           </View>
         )}
