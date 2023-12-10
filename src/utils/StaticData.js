@@ -328,7 +328,7 @@ export const headers = {
 };
 
 export const sort_kor = ["최신순", "임박순", "제목순"];
-export const search_sort = ["임박순"];
+export const search_sort = ["최신순", "임박순"];
 export const sort = {
   최신순: "new",
   임박순: "soon",
