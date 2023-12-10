@@ -1,52 +1,121 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { View, Text, StyleSheet, ScrollView, FlatList } from "react-native";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
-import { MaterialIcons } from "@expo/vector-icons";
 import theme from "../../styles/theme";
-
+import axios from "axios";
 import { API_URL } from "@env";
-
+import HomeContent from "../Home/HomeContent/HomeContent";
 import RNPickerSelect from "react-native-picker-select";
 import { search_sort } from "../../utils/StaticData";
-
-const FirstRoute = ({ search_sort, setSelectedSort }) => {
+import searchStore from "../../store/searchStore";
+import { sort } from "../../utils/StaticData";
+import Loading from "../../components/Loading";
+const FirstRoute = ({
+  search_sort,
+  setSelectedSort,
+  titleResult,
+  pageLoading,
+  selectedSort,
+}) => {
   return (
     <View style={{ flex: 1 }}>
-      <View style={styles.headerContainer}>
-        <View style={styles.pickerSelectContainer}>
-          <RNPickerSelect
-            fixAndroidTouchableBug={true}
-            useNativeAndroidPickerStyle={false}
-            style={{
-              ...styles.pickerSelectStyle,
-            }}
-            onValueChange={(value) => setSelectedSort(value)}
-            items={search_sort.map((data, index) => {
-              return { label: data, value: data, key: index };
-            })}
-            placeholder={{
-              label: "최신순",
-            }}
-          />
+      {pageLoading ? (
+        <Loading />
+      ) : titleResult && titleResult.number_of_elements !== 0 ? (
+        <FlatList
+          style={{ flex: 1 }}
+          data={[{ key: "sort" }, { key: "content" }]}
+          renderItem={({ item }) => (
+            <View>
+              {item.key === "sort" && (
+                <View style={styles.headerContainer}>
+                  <View style={styles.pickerSelectContainer}>
+                    <RNPickerSelect
+                      fixAndroidTouchableBug={true}
+                      useNativeAndroidPickerStyle={false}
+                      value={selectedSort}
+                      style={{
+                        ...styles.pickerSelectStyle,
+                      }}
+                      onValueChange={(value) => setSelectedSort(value)}
+                      items={search_sort.map((data, index) => {
+                        return { label: data, value: data, key: index };
+                      })}
+                      placeholder={{}}
+                    />
+                  </View>
+                </View>
+              )}
+              {item.key === "content" && (
+                <View style={styles.homeScreenContent}>
+                  <HomeContent clubList={titleResult} />
+                </View>
+              )}
+            </View>
+          )}
+        />
+      ) : (
+        <View style={{ flex: 1, ...theme.centerStyle }}>
+          <Text style={{ fontSize: 16, color: "lightgray" }}>
+            검색 결과가 없습니다.
+          </Text>
         </View>
-      </View>
-      <View style={{ flex: 1, ...theme.centerStyle }}>
-        <Text style={{ fontSize: 16, color: "lightgray" }}>
-          생성한 모임이 없습니다.
-        </Text>
-      </View>
+      )}
     </View>
   );
 };
 
-const SecondRoute = ({ search_sort, setSelectedSort }) => {
+const SecondRoute = ({
+  search_sort,
+  setSelectedSort,
+  tagResult,
+  pageLoading,
+  selectedSort,
+}) => {
   return (
     <View style={{ flex: 1 }}>
-      <View style={{ flex: 1, ...theme.centerStyle }}>
-        <Text style={{ fontSize: 16, color: "lightgray" }}>
-          참여한 모임이 없습니다
-        </Text>
-      </View>
+      {pageLoading ? (
+        <Loading />
+      ) : tagResult && tagResult.number_of_elements !== 0 ? (
+        <FlatList
+          style={{ flex: 1 }}
+          data={[{ key: "sort" }, { key: "content" }]}
+          renderItem={({ item }) => (
+            <View>
+              {item.key === "sort" && (
+                <View style={styles.headerContainer}>
+                  <View style={styles.pickerSelectContainer}>
+                    <RNPickerSelect
+                      fixAndroidTouchableBug={true}
+                      useNativeAndroidPickerStyle={false}
+                      value={selectedSort}
+                      style={{
+                        ...styles.pickerSelectStyle,
+                      }}
+                      onValueChange={(value) => setSelectedSort(value)}
+                      items={search_sort.map((data, index) => {
+                        return { label: data, value: data, key: index };
+                      })}
+                      placeholder={{}}
+                    />
+                  </View>
+                </View>
+              )}
+              {item.key === "content" && (
+                <View style={styles.homeScreenContent}>
+                  <HomeContent clubList={tagResult} />
+                </View>
+              )}
+            </View>
+          )}
+        />
+      ) : (
+        <View style={{ flex: 1, ...theme.centerStyle }}>
+          <Text style={{ fontSize: 16, color: "lightgray" }}>
+            검색 결과가 없습니다.
+          </Text>
+        </View>
+      )}
     </View>
   );
 };
@@ -61,7 +130,34 @@ const renderTabBar = (props) => (
 );
 
 export default function SearchResult() {
-  const [selectedSort, setSelectedSort] = useState(search_sort[0]);
+  const [selectedSortTitle, setSelectedSortTitle] = useState(search_sort[0]);
+  const [selectedSortTag, setSelectedSortTag] = useState(search_sort[0]);
+  const [titleResult, setTitleResult] = useState({});
+  const [tagResult, setTagResult] = useState({});
+  const [pageLoading, setPageLoading] = useState(null);
+  const [index, setIndex] = useState(0);
+  const [routes] = useState([
+    { key: "first", title: "제목" },
+    { key: "second", title: "해시태그" },
+  ]);
+  const { searchText } = searchStore();
+
+  const fetchData = async () => {
+    setPageLoading(true);
+    try {
+      const searchTitleResult = await axios.get(
+        `${API_URL}/api/meetings/search?index=0&size=10&sort=${sort[selectedSortTitle]}&title=${searchText}`
+      );
+      const searchTagResult = await axios.get(
+        `${API_URL}/api/meetings/search?index=0&size=10&sort=${sort[selectedSortTag]}&hashtag=${searchText}`
+      );
+      setTitleResult(searchTitleResult.data);
+      setTagResult(searchTagResult.data);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+    setPageLoading(false);
+  };
 
   const renderScene = ({
     route,
@@ -69,6 +165,8 @@ export default function SearchResult() {
     selectedSort,
     setSelectedSort,
     search_sort,
+    titleResult,
+    pageLoading,
   }) => {
     switch (route.key) {
       case "first":
@@ -78,6 +176,8 @@ export default function SearchResult() {
             jumpTo={jumpTo}
             selectedSort={selectedSort}
             setSelectedSort={setSelectedSort}
+            titleResult={titleResult}
+            pageLoading={pageLoading}
           />
         );
       case "second":
@@ -85,27 +185,37 @@ export default function SearchResult() {
           <SecondRoute
             search_sort={search_sort}
             jumpTo={jumpTo}
-            selectedSort={selectedSort}
-            setSelectedSort={setSelectedSort}
+            selectedSort={selectedSortTag}
+            setSelectedSort={setSelectedSortTag}
+            tagResult={tagResult}
+            pageLoading={pageLoading}
           />
         );
       default:
         return null;
     }
   };
-  const [index, setIndex] = useState(0);
-  const [routes] = useState([
-    { key: "first", title: "해시태그" },
-    { key: "second", title: "제목" },
-  ]);
 
+  useEffect(() => {
+    fetchData();
+  }, [selectedSortTitle, selectedSortTag]);
+  useEffect(() => {
+    console.log(selectedSortTitle);
+  }, [selectedSortTitle]);
   return (
     <View style={styles.searchContentView}>
       <TabView
         renderTabBar={renderTabBar}
         navigationState={{ index, routes }}
         renderScene={(props) =>
-          renderScene({ ...props, selectedSort, setSelectedSort, search_sort })
+          renderScene({
+            ...props,
+            selectedSort: selectedSortTitle,
+            setSelectedSort: setSelectedSortTitle,
+            search_sort,
+            titleResult,
+            pageLoading,
+          })
         }
         onIndexChange={setIndex}
       />
