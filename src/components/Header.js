@@ -13,13 +13,14 @@ import { useState, useEffect } from "react";
 
 import modalHandleStore from "../store/modalHandleStore";
 import userStore from "../store/userStore";
-
+import searchStore from "../store/searchStore";
 export default function Header() {
   const [logoName, setLogoName] = useState("");
   const route = useRoute();
   const navigation = useNavigation();
   const { isLogin } = userStore();
   const { loginModal, setLoginModal } = modalHandleStore();
+  const { setShowResult, setSearchText } = searchStore();
 
   useEffect(() => {
     console.log(route.name);
@@ -37,6 +38,8 @@ export default function Header() {
               style={{ flex: 0.5 }}
               onPress={() => {
                 navigation.navigate("Search");
+                setShowResult(false);
+                setSearchText("");
               }}
             >
               <AntDesign name="search1" size={24} color="white" />
@@ -99,6 +102,8 @@ export default function Header() {
           <TouchableOpacity
             onPress={() => {
               navigation.navigate("Search");
+              setShowResult(false);
+              setSearchText("");
             }}
           >
             <AntDesign name="search1" size={24} color="white" />
