@@ -355,50 +355,6 @@ export default function CreateClubPostPage({ route }) {
     });
   };
 
-  useEffect(() => {
-    setHashtags(extractHashTags(introduce));
-  }, [introduce]);
-
-  useEffect(() => {
-    console.log(data);
-    axios
-      .post(`${API_URL}/api/meetings`, data, {
-        headers: {
-          "Content-Type": `application/json`,
-          Authorization: "Bearer " + `${userToken}`,
-        },
-      })
-      .then((res) => {
-        console.log(res.data);
-        axios
-          .post(
-            `${API_URL}/api/chat/room`,
-            {
-              meeting_id: res.data.id,
-              room_name: title,
-            },
-            {
-              headers: {
-                "Content-Type": `application/json`,
-                Authorization: "Bearer " + `${userToken}`,
-              },
-            }
-          )
-          .then((res) => {
-            console.log(res.data);
-            stompClient = Stomp.over(function () {
-              return new SockJS("http://118.67.128.48/ws-stomp");
-            });
-            stompClient.connect({}, () => onConnected(res.roomId), {});
-            navigation.replace("Home");
-          })
-          .catch((err) => console.log(err));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [data]);
-
   function generateRandomString(length) {
     const characters =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
