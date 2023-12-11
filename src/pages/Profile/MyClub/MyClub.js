@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import ClubCard from "../ClubCard/ClubCard";
 import MeetingComponent from "../MeetingComponent/MeetingComponent";
-
+import userStore from "../../../store/userStore";
 const groupMeetingsByDate = (meetings) => {
   return meetings.reduce((grouped, meeting) => {
     const date = meeting.time_output.start_time.split("T")[0];
@@ -25,14 +25,14 @@ const groupMeetingsByDate = (meetings) => {
   }, {});
 };
 
-const FirstRoute = ({ myClubData }) => {
+const FirstRoute = ({ myClubData, isLogin }) => {
   const meetings = myClubData.content || [];
 
   const groupedMeetings = groupMeetingsByDate(meetings);
 
   return (
     <View style={{ flex: 1 }}>
-      {Object.keys(groupedMeetings).length !== 0 ? (
+      {Object.keys(groupedMeetings).length !== 0 && isLogin ? (
         <ScrollView nestedScrollEnabled={true} style={{ flex: 1 }}>
           <MeetingComponent groupedMeetings={groupedMeetings} />
         </ScrollView>
@@ -47,13 +47,13 @@ const FirstRoute = ({ myClubData }) => {
   );
 };
 
-const SecondRoute = ({ joinedClubData }) => {
+const SecondRoute = ({ joinedClubData, isLogin }) => {
   const meetings = joinedClubData.content || [];
   const groupedMeetings = groupMeetingsByDate(meetings);
 
   return (
     <View style={{ flex: 1 }}>
-      {Object.keys(groupedMeetings).length !== 0 ? (
+      {Object.keys(groupedMeetings).length !== 0 && isLogin ? (
         <ScrollView nestedScrollEnabled={true} style={{ flex: 1 }}>
           <MeetingComponent groupedMeetings={groupedMeetings} />
         </ScrollView>
@@ -78,12 +78,25 @@ const renderTabBar = (props) => (
 );
 
 export default function MyClub({ myClubData, joinedClubData }) {
+  const { isLogin } = userStore();
   const renderScene = ({ route, jumpTo, myClubData, joinedClubData }) => {
     switch (route.key) {
       case "first":
-        return <FirstRoute jumpTo={jumpTo} myClubData={myClubData} />;
+        return (
+          <FirstRoute
+            jumpTo={jumpTo}
+            myClubData={myClubData}
+            isLogin={isLogin}
+          />
+        );
       case "second":
-        return <SecondRoute jumpTo={jumpTo} joinedClubData={joinedClubData} />;
+        return (
+          <SecondRoute
+            jumpTo={jumpTo}
+            joinedClubData={joinedClubData}
+            isLogin={isLogin}
+          />
+        );
       default:
         return null;
     }
