@@ -15,8 +15,8 @@ import { Button } from "react-native-paper";
 import axios from "axios";
 import { Ionicons } from "@expo/vector-icons";
 import { API_URL } from "@env";
-import { Stomp } from '@stomp/stompjs';
-import SockJS from 'sockjs-client/dist/sockjs';
+import { Stomp } from "@stomp/stompjs";
+import SockJS from "sockjs-client/dist/sockjs";
 
 import theme from "../../styles/theme";
 import userStore from "../../store/userStore";
@@ -43,21 +43,21 @@ export default function ClubManagePage({ route }) {
     setCheckItems(newCheckItems);
   };
 
-  async function onMessageReceived(payload) { //여기에 알림 묻히기?
+  async function onMessageReceived(payload) {
+    //여기에 알림 묻히기?
     let chat = await JSON.parse(payload.body);
-  };
+  }
 
-  const TextEncodingPolyfill = require('text-encoding');
+  const TextEncodingPolyfill = require("text-encoding");
 
-  Object.assign('global', {
+  Object.assign("global", {
     TextEncoder: TextEncodingPolyfill.TextEncoder,
     TextDecoder: TextEncodingPolyfill.TextDecoder,
   });
 
   //채팅방 소켓 연결
-  function onConnected(room_id,user_infos) {
-    for(let i=0; i<user_infos.length; i++){
-      let username = "이태헌"; //유저 닉네임
+  function onConnected(room_id, user_infos) {
+    for (let i = 0; i < user_infos.length; i++) {
       stompClient.subscribe("/sub/chat/room/" + room_id, onMessageReceived);
 
       stompClient.send(
@@ -67,7 +67,7 @@ export default function ClubManagePage({ route }) {
           roomId: room_id,
           sender: user_infos[i].nickname,
           senderId: user_infos[i].user_id,
-          message: username + "님이 입장하셨습니다.",
+          message: user_infos[i].nickname + "님이 입장하셨습니다.",
           time: new Date(),
           messageType: "ENTER",
         })
@@ -134,7 +134,11 @@ export default function ClubManagePage({ route }) {
               stompClient = Stomp.over(function () {
                 return new SockJS("http://118.67.128.48/ws-stomp");
               });
-              stompClient.connect({}, () => onConnected(res.room_id,res.user_infos), {});
+              stompClient.connect(
+                {},
+                () => onConnected(res.room_id, res.user_infos),
+                {}
+              );
             } catch (err) {
               console.log(err);
             }

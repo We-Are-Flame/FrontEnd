@@ -77,7 +77,7 @@ export default function HomeScreen() {
     const result = await axios.get(
       `${API_URL}/api/meetings?index=${page}&size=10&sort=${sort[selectedSort]}`
     );
-    if (result.data.total_elements === clubList.length) {
+    if (result.data.total_elements === clubList.content.length) {
       setLoading(false);
       return;
     }
@@ -200,87 +200,6 @@ export default function HomeScreen() {
               >
                 <Ionicons name="baseball-outline" size={24} color="black" />
               </TouchableOpacity>
-            </View>
-          </TouchableOpacity>
-        </Modal>
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={endClub}
-          onRequestClose={() => {
-            setEndClub(!endClub);
-          }}
-        >
-          <TouchableOpacity
-            style={styles.modalOverlay}
-            activeOpacity={1}
-            //onPress={() => setEndClub(!endClub)} // 이 부분이 모달 외부를 눌렀을 때 닫히도록 함
-          >
-            <View style={styles.centeredView}>
-              <View style={styles.reviewModal}>
-                <Text style={{ fontSize: 28, fontWeight: "bold" }}>
-                  지난 모임은 즐거우셨나요?
-                </Text>
-                <View
-                  style={{ flexDirection: "row", justifyContent: "center" }}
-                >
-                  <Text style={{ fontWeight: "bold" }}>제목여기에&nbsp;</Text>
-                  <Text>모임의 사람들을 평가해주세요 !</Text>
-                </View>
-                <View>
-                  <View style={{ flexDirection: "row", marginTop: 10 }}>
-                    <Text style={{ flex: 1 }}></Text>
-                    <Text style={{ flex: 1, fontWeight: "bold" }}>이름</Text>
-                    <Text style={{ flex: 1, fontWeight: "bold" }}>온도</Text>
-                    <Text style={{ flex: 1, fontWeight: "bold" }}>평가</Text>
-                  </View>
-                  <ReviewModalItem />
-                  <ReviewModalItem />
-                  <ReviewModalItem />
-                  {/* <FlatList 플랫리스트 이용하여 스크롤 구현
-                    data={reviewData}
-                    renderItem={({ item }) => <ReviewModalItem {...item} />}
-                    keyExtractor={item => item.id}
-                    // 필요한 경우 추가 props
-                  /> */}
-                  <Pressable
-                    onPress={() => {
-                      console.log("리뷰 제출!");
-                      setEndClub(false);
-                    }}
-                    style={({ pressed }) => [
-                      {
-                        backgroundColor: pressed
-                          ? theme.subColor
-                          : theme.psColor,
-                      },
-                      { borderRadius: 10 },
-                    ]}
-                  >
-                    <Text style={styles.reviewSubmitBtn}>평가하기</Text>
-                  </Pressable>
-                  <View style={{ flexDirection: "row" }}>
-                    <View style={{ flex: 2 }} />
-                    <Pressable
-                      onPress={() => {
-                        console.log("닫기");
-                        setEndClub(false);
-                      }}
-                      style={() => [
-                        {
-                          borderRadius: 10,
-                          backgroundColor: "#ffffff",
-                          marginTop: 10,
-                          flex: 1,
-                        },
-                      ]}
-                    >
-                      <Text style={styles.reviewCancelBtn}>닫기</Text>
-                    </Pressable>
-                    <View style={{ flex: 2 }} />
-                  </View>
-                </View>
-              </View>
             </View>
           </TouchableOpacity>
         </Modal>

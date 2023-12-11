@@ -16,7 +16,7 @@ import dummy1 from "../../../../../assets/kitchingLogo.png";
 
 import { Ionicons, Entypo, AntDesign } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
-import { Dimensions } from 'react-native';
+import { Dimensions } from "react-native";
 
 export default function HomeContentItem({ state }) {
   const navigation = useNavigation();
@@ -148,7 +148,7 @@ export default function HomeContentItem({ state }) {
           <View style={{ flexDirection: "row", marginLeft: 3, marginTop: 5 }}>
             <Ionicons name="people" size={20} color="black" />
             <Text style={{ marginTop: 3 }}>
-              &nbsp;{state.info.current_participants + 1}/
+              &nbsp;{state.info.current_participants}/
               {state.info.max_participants}
             </Text>
           </View>
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
     padding: 15,
     flex: 1,
     height: 350,
-    width:Dimensions.get("window").width-40,
+    width: Dimensions.get("window").width - 40,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,

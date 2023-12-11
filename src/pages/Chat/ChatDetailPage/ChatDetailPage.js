@@ -25,10 +25,9 @@ import { API_URL } from "@env";
 
 import Chatting from "../Chatting/Chatting";
 import userStore from "../../../store/userStore";
-import ImageViewer from '../../../components/ImageViewer';
+import ImageViewer from "../../../components/ImageViewer";
 
 import { Image } from "expo-image";
-
 
 export default function ChatDetailPage({ route }) {
   const [chat, setChat] = useState([]);
@@ -78,8 +77,6 @@ export default function ChatDetailPage({ route }) {
     }
   }
 
-  
-
   function onConnected() {
     stompClient.subscribe(
       "/sub/chat/room/" + route.params.roomId,
@@ -92,7 +89,7 @@ export default function ChatDetailPage({ route }) {
       JSON.stringify({
         roomId: route.params.roomId,
         sender: userData.nickname,
-        senderId: 7,
+        senderId: 8,
         message: userData.nickname + "님이 입장하셨습니다.",
         time: new Date(),
         messageType: "ENTER",
@@ -101,8 +98,8 @@ export default function ChatDetailPage({ route }) {
   }
 
   function sendImageMessage() {
-    if ((multipleImage.length !== 0) && stompClient) {
-      for(let i=0; i<multipleImage.length; i++){
+    if (multipleImage.length !== 0 && stompClient) {
+      for (let i = 0; i < multipleImage.length; i++) {
         console.log("이미지 전송~~");
         const chatMessage = {
           roomId: route.params.roomId,
@@ -116,21 +113,18 @@ export default function ChatDetailPage({ route }) {
           JSON.stringify(chatMessage)
         );
       }
-
     }
   }
 
-  
-
-const uploadImage = async () => {
-  if (!status.granted) {
-    const permission = await requestPermission();
-    if (!permission.granted) {
-      return null;
+  const uploadImage = async () => {
+    if (!status.granted) {
+      const permission = await requestPermission();
+      if (!permission.granted) {
+        return null;
+      }
     }
-  }
 
-  let result = await launchImageLibraryAsync({
+    let result = await launchImageLibraryAsync({
       mediaTypes: MediaTypeOptions.Images,
       allowsEditing: false,
       quality: 1,
@@ -138,58 +132,57 @@ const uploadImage = async () => {
       allowsMultipleSelection: true, // 여러 이미지 선택 활성화
     });
 
-  if (!result.canceled) {
-    const uploadPromises = result.assets.map(async (asset) => {
-      const lastIndex = asset.uri.lastIndexOf(".");
-      const extension = asset.uri.substring(lastIndex + 1);
+    if (!result.canceled) {
+      const uploadPromises = result.assets.map(async (asset) => {
+        const lastIndex = asset.uri.lastIndexOf(".");
+        const extension = asset.uri.substring(lastIndex + 1);
 
-      let res = await axios.post(
-        `${API_URL}/api/presigned`, {
-          image_list: [{
-            file_name: generateRandomString(10),
-            file_type: "image/" + extension,
-          }],
-        }, {
-          headers: {
-            "Content-Type": `application/json`,
+        let res = await axios.post(
+          `${API_URL}/api/presigned`,
+          {
+            image_list: [
+              {
+                file_name: generateRandomString(10),
+                file_type: "image/" + extension,
+              },
+            ],
           },
+          {
+            headers: {
+              "Content-Type": `application/json`,
+            },
+          }
+        );
+
+        // 이미지의 URI로부터 바이너리 데이터를 가져옵니다.
+        const response = await fetch(asset.uri);
+        const blob = await response.blob();
+        const binaryDataArray = await blobToArrayBuffer(blob);
+
+        if (!res.data.image_list[0].presigned_url) {
+          throw new Error("사전 서명된 URL이 비어 있습니다.");
         }
-      );
 
-      // 이미지의 URI로부터 바이너리 데이터를 가져옵니다.
-      const response = await fetch(asset.uri);
-      const blob = await response.blob();
-      const binaryDataArray = await blobToArrayBuffer(blob);
-
-      if (!res.data.image_list[0].presigned_url) {
-        throw new Error("사전 서명된 URL이 비어 있습니다.");
-      }
-
-      await axios.put(
-        res.data.image_list[0].presigned_url,
-        binaryDataArray, {
+        await axios.put(res.data.image_list[0].presigned_url, binaryDataArray, {
           headers: {
             "Content-Type": "image/" + extension,
           },
-        }
-      );
+        });
 
-      // 업로드된 이미지의 URL을 반환합니다.
-      return res.data.image_list[0].image_url;
-    });
+        // 업로드된 이미지의 URL을 반환합니다.
+        return res.data.image_list[0].image_url;
+      });
 
-    try {
-      // 여기서 모든 이미지 업로드 프로미스가 완료될 때까지 기다립니다.
-      const uploadedImages = await Promise.all(uploadPromises);
-      setMultipleImage(uploadedImages);
-      sendImageMessage();
-    } catch (err) {
-      console.error("이미지 업로드 중 오류 발생", err);
+      try {
+        // 여기서 모든 이미지 업로드 프로미스가 완료될 때까지 기다립니다.
+        const uploadedImages = await Promise.all(uploadPromises);
+        setMultipleImage(uploadedImages);
+        sendImageMessage();
+      } catch (err) {
+        console.error("이미지 업로드 중 오류 발생", err);
+      }
     }
-  }
-};
-
-
+  };
 
   function generateRandomString(length) {
     const characters =
@@ -263,16 +256,20 @@ const uploadImage = async () => {
           : theme.screenHeight / 10
       }
     >
-    <View style={styles.chatDetailPageView}>
-      <View style={styles.chatContent}>
-        <FlatList
-          style={styles.chatContent}
-          data={chat}
-          renderItem={renderItem}
-          onContentSizeChange={() => this.flatList.scrollToEnd({animated: true})}
-          keyExtractor={(item, index) => index.toString()} // 고유 키를 제공
-          ref={(ref) => { this.flatList = ref; }}
-        />
+      <View style={styles.chatDetailPageView}>
+        <View style={styles.chatContent}>
+          <FlatList
+            style={styles.chatContent}
+            data={chat}
+            renderItem={renderItem}
+            onContentSizeChange={() =>
+              this.flatList.scrollToEnd({ animated: true })
+            }
+            keyExtractor={(item, index) => index.toString()} // 고유 키를 제공
+            ref={(ref) => {
+              this.flatList = ref;
+            }}
+          />
         </View>
         <View style={styles.chatInput}>
           <TouchableOpacity style={styles.chatInputImage} onPress={uploadImage}>

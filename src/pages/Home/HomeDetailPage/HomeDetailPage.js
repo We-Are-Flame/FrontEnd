@@ -147,11 +147,6 @@ export default function HomeDetailPage({ route }) {
     }
   }, [detailData]);
 
-  // useEffect(() => {
-  //   console.log(carouselImage);
-  //   console.log(detailData.image);
-  // }, [carouselImage]);
-
   const addComment = (newComment) => {
     setAddedComment((prevComments) => [...prevComments, newComment]);
   };
@@ -180,37 +175,41 @@ export default function HomeDetailPage({ route }) {
   };
 
   const clickApply = () => {
-    Alert.alert("신청하시겠습니까?", `${detailData.info.title} 모임에 가입합니다.`, [
-      {
-        text: "취소",
-        onPress: () => {
-          console.log("취소");
+    Alert.alert(
+      "신청하시겠습니까?",
+      `${detailData.info.title} 모임에 가입합니다.`,
+      [
+        {
+          text: "취소",
+          onPress: () => {
+            console.log("취소");
+          },
         },
-      },
-      {
-        text: "확인",
-        onPress: async () => {
-          const res = await axios.post(
-            `${API_URL}/api/meetings/${detailData.id}/apply`,
-            null,
-            {
-              headers: {
-                "Content-Type": `application/json`,
-                Authorization: "Bearer " + `${userToken}`,
-              },
-            }
-          );
-          setIsUpdate(!isUpdate);
-          //채팅방 입장 통신 추가할 것
+        {
+          text: "확인",
+          onPress: async () => {
+            const res = await axios.post(
+              `${API_URL}/api/meetings/${detailData.id}/apply`,
+              null,
+              {
+                headers: {
+                  "Content-Type": `application/json`,
+                  Authorization: "Bearer " + `${userToken}`,
+                },
+              }
+            );
+            setIsUpdate(!isUpdate);
+            //채팅방 입장 통신 추가할 것
+          },
         },
-      },
-    ]);
+      ]
+    );
   };
 
   const clickCancel = () => {
     Alert.alert(
-      "모임을 탈퇴하시겠습니까?",
-      `${detailData.info.title}을 탈퇴합니다.`,
+      "모임을 신청을 취소 하시겠습니까?",
+      `신청 관리 명단에서 제외됩니다.`,
       [
         {
           text: "취소",
@@ -444,9 +443,7 @@ export default function HomeDetailPage({ route }) {
                     <Text>수락됨</Text>
                   </TouchableOpacity>
                 ) : detailData.status.participate_status === "PENDING" ? (
-                  <TouchableOpacity
-                    style={styles.homeDetailStateBtnBlue}
-                  >
+                  <TouchableOpacity style={styles.homeDetailStateBtnBlue}>
                     <Text style={styles.homeDetailStateTextBlue}>참여 중</Text>
                   </TouchableOpacity>
                 ) : detailData.status.participate_status === "PENDING" ? (
@@ -454,7 +451,7 @@ export default function HomeDetailPage({ route }) {
                     style={styles.homeDetailStateBtnDisabled}
                     onPress={clickCancel}
                   >
-                    <Text style={styles.homeDetailStateTextDisable}>수락 대기중</Text>
+                    <Text>수락 대기중</Text>
                   </TouchableOpacity>
                 ) : detailData.status.participate_status === "REJECTED" ? (
                   <TouchableOpacity style={styles.homeDetailStateBtnRed}>
@@ -501,7 +498,7 @@ export default function HomeDetailPage({ route }) {
                     <Text style={styles.informationFormmat}>모집인원</Text>
                   </View>
                   <Text style={{ ...styles.informationFormmat, flex: 6 }}>
-                    {detailData.info.current_participants + 1} /{" "}
+                    {detailData.info.current_participants} /{" "}
                     {detailData.info.max_participants}
                   </Text>
                   <Text></Text>
@@ -754,5 +751,4 @@ const styles = StyleSheet.create({
   modalTextDelete: {
     color: "red",
   },
-
 });
