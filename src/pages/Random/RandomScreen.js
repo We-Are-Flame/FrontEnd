@@ -35,7 +35,7 @@ export default function RandomScreen({ navigation }) {
     setPageLoading(true);
     try {
       const res = await axios.get(
-        `${API_URL}/api/meetings?index=0&size=10&sort=soon`,
+        `${process.env.EXPO_PUBLIC_API_URL}/api/meetings?index=0&size=10&sort=soon`,
         {
           headers: {
             "Content-Type": `application/json`,

@@ -9,7 +9,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import userStore from "../../../store/userStore";
 export default function ProfileSetting() {
-  const menus = ["계정정보", "알림설정", "문의하기", "로그아웃"];
+  const menus = ["로그아웃"];
   const {
     updatedState,
     setUpdatedState,

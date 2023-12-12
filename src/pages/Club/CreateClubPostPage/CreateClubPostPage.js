@@ -205,7 +205,7 @@ export default function CreateClubPostPage({ route }) {
       url: url,
       method: "get",
       headers: {
-        Authorization: `KakaoAK ${REST_API_KEY}`,
+        Authorization: `KakaoAK ${process.env.EXPO_PUBLIC_REST_API_KEY}`,
       },
     }).then((res) => {
       setLatitude(res.data.documents[0].address.y);
@@ -283,7 +283,7 @@ export default function CreateClubPostPage({ route }) {
           const extension = result.assets[i].uri.substring(lastIndex + 1);
           console.log(extension);
           let res = await axios.post(
-            `${API_URL}/api/presigned`,
+            `${process.env.EXPO_PUBLIC_API_URL}/api/presigned`,
             {
               image_list: [
                 {
@@ -414,7 +414,7 @@ export default function CreateClubPostPage({ route }) {
   useEffect(() => {
     console.log(data);
     axios
-      .post(`${API_URL}/api/meetings`, data, {
+      .post(`${process.env.EXPO_PUBLIC_API_URL}/api/meetings`, data, {
         headers: {
           "Content-Type": `application/json`,
           Authorization: "Bearer " + `${userToken}`,
@@ -424,7 +424,7 @@ export default function CreateClubPostPage({ route }) {
         console.log(res.data);
         axios
           .post(
-            `${API_URL}/api/chat/room`,
+            `${process.env.EXPO_PUBLIC_API_URL}/api/chat/room`,
             {
               meeting_id: res.data.id,
               room_name: title,
@@ -722,10 +722,12 @@ const styles = StyleSheet.create({
   },
   imageWrapper: {
     borderWidth: 1,
+    margin: 5,
     borderColor: theme.profileBorderColor,
     width: Dimensions.get("window").width - 50,
     height: (Dimensions.get("window").width - 50) / 2,
-    borderRadius: theme.screenWidth / 6,
+    // borderRadius: theme.screenWidth / 6,
+    borderRadius: 2,
     ...theme.centerStyle,
     overflow: "hidden",
     flexDirection: "row",

@@ -26,7 +26,7 @@ export default function KaKaoLogin() {
     var condition = data.indexOf(exp);
     if (condition != -1) {
       var access_token = data.substring(condition + exp.length);
-      const userInfoResponse = await axios.get(`${API_URL}/api/user`, {
+      const userInfoResponse = await axios.get(`${process.env.EXPO_PUBLIC_API_URL}/api/user`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + access_token,
@@ -48,7 +48,7 @@ export default function KaKaoLogin() {
         originWhitelist={["*"]}
         scalesPageToFit={false}
         source={{
-          uri: `${API_URL}/api/login/kakao`,
+          uri: `${process.env.EXPO_PUBLIC_API_URL}/api/login/kakao`,
         }}
         injectedJavaScript={INJECTED_JAVASCRIPT}
         javaScriptEnabled

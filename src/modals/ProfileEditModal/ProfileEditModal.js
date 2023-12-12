@@ -82,7 +82,7 @@ export default function ProfileEditModal() {
 
   const sendUpdatedImg = async () => {
     const r = await axios.put(
-      `${API_URL}/api/user/profile-image`,
+      `${process.env.EXPO_PUBLIC_API_URL}/api/user/profile-image`,
       {
         image: {
           profile_image_url: imageUrl,
@@ -116,7 +116,7 @@ export default function ProfileEditModal() {
   const sendUpdatedNickname = async () => {
     try {
       await axios.put(
-        `${API_URL}/api/user/nickname`,
+        `${process.env.EXPO_PUBLIC_API_URL}/api/user/nickname`,
         { nickname: editableNickname },
         {
           headers: {
@@ -194,7 +194,7 @@ export default function ProfileEditModal() {
         setImageExtension(extension);
 
         let res = await axios.post(
-          `${API_URL}/api/presigned`,
+          `${process.env.EXPO_PUBLIC_API_URL}/api/presigned`,
           {
             image_list: [
               {

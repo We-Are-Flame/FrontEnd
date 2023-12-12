@@ -38,7 +38,7 @@ export default function ChatScreen({ navigation }) {
 
   const fetchData = async () => {
     setPageLoading(true);
-    const res = await axios.get(`${API_URL}/api/chat/rooms`, {
+    const res = await axios.get(`${process.env.EXPO_PUBLIC_API_URL}/api/chat/rooms`, {
       headers: {
         "Content-Type": `application/json`,
         Authorization: "Bearer " + `${userToken}`,

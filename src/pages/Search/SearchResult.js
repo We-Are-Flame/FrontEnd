@@ -166,10 +166,10 @@ export default function SearchResult() {
     setPageLoading(true);
     try {
       const searchTitleResult = await axios.get(
-        `${API_URL}/api/meetings/search?index=0&size=10&sort=${sort[selectedSortTitle]}&title=${searchText}`
+        `${process.env.EXPO_PUBLIC_API_URL}/api/meetings/search?index=0&size=10&sort=${sort[selectedSortTitle]}&title=${searchText}`
       );
       const searchTagResult = await axios.get(
-        `${API_URL}/api/meetings/search?index=0&size=10&sort=${sort[selectedSortTag]}&hashtag=${searchText}`
+        `${process.env.EXPO_PUBLIC_API_URL}/api/meetings/search?index=0&size=10&sort=${sort[selectedSortTag]}&hashtag=${searchText}`
       );
       setTitleResult(searchTitleResult.data);
       setTagResult(searchTagResult.data);
@@ -181,7 +181,7 @@ export default function SearchResult() {
 
   const continueFetchTitle = async () => {
     const result = await axios.get(
-      `${API_URL}/api/meetings/search?index=${titlePage}&size=10&sort=${sort[selectedSortTitle]}&title=${searchText}`
+      `${process.env.EXPO_PUBLIC_API_URL}/api/meetings/search?index=${titlePage}&size=10&sort=${sort[selectedSortTitle]}&title=${searchText}`
     );
     if (result.data.total_elements === titleResult.content.length) {
       setLoadingTitle(false);
@@ -199,7 +199,7 @@ export default function SearchResult() {
 
   const continueFetchTag = async () => {
     const result = await axios.get(
-      `${API_URL}/api/meetings/search?index=${tagPage}&size=10&sort=${sort[selectedSortTag]}&hashtag=${searchText}`
+      `${process.env.EXPO_PUBLIC_API_URL}/api/meetings/search?index=${tagPage}&size=10&sort=${sort[selectedSortTag]}&hashtag=${searchText}`
     );
     if (result.data.total_elements === tagResult.content.length) {
       setLoadingTag(false);

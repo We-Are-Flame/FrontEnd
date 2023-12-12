@@ -137,7 +137,7 @@ export default function ChatDetailPage({ route }) {
         const extension = asset.uri.substring(lastIndex + 1);
 
         let res = await axios.post(
-          `${API_URL}/api/presigned`,
+          `${process.env.EXPO_PUBLIC_API_URL}/api/presigned`,
           {
             image_list: [
               {
@@ -220,7 +220,7 @@ export default function ChatDetailPage({ route }) {
 
   useEffect(() => {
     axios
-      .get(`${API_URL}/api/chat/${route.params.roomId}/messages`, null, {
+      .get(`${process.env.EXPO_PUBLIC_API_URL}/api/chat/${route.params.roomId}/messages`, null, {
         headers: {
           "Content-Type": `application/json`,
         },

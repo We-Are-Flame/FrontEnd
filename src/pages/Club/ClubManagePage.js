@@ -78,7 +78,7 @@ export default function ClubManagePage({ route }) {
   const fetchData = async () => {
     setPageLoading(true);
     const res = await axios.get(
-      `${API_URL}/api/meetings/${clubId}/registrations`,
+      `${process.env.EXPO_PUBLIC_API_URL}/api/meetings/${clubId}/registrations`,
       {
         headers: {
           "Content-Type": `application/json`,
@@ -117,7 +117,7 @@ export default function ClubManagePage({ route }) {
           onPress: async () => {
             try {
               const res = await axios.post(
-                `${API_URL}/api/meetings/${clubId}/accept`,
+                `${process.env.EXPO_PUBLIC_API_URL}/api/meetings/${clubId}/accept`,
                 {
                   registration_ids: Array.from(checkItems),
                 },
@@ -177,7 +177,7 @@ export default function ClubManagePage({ route }) {
             onPress: async () => {
               try {
                 const res = await axios.post(
-                  `${API_URL}/api/meetings/${clubId}/reject`,
+                  `${process.env.EXPO_PUBLIC_API_URL}/api/meetings/${clubId}/reject`,
                   {
                     registration_ids: Array.from(checkItems),
                   },

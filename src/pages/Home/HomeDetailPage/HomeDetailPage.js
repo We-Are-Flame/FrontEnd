@@ -73,12 +73,15 @@ export default function HomeDetailPage({ route }) {
   const fetchData = async () => {
     try {
       setPageLoading(true);
-      const res = await axios.get(`${API_URL}/api/meetings/${stateId}`, {
-        headers: {
-          "Content-Type": `application/json`,
-          Authorization: "Bearer " + `${userToken}`,
-        },
-      });
+      const res = await axios.get(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/meetings/${stateId}`,
+        {
+          headers: {
+            "Content-Type": `application/json`,
+            Authorization: "Bearer " + `${userToken}`,
+          },
+        }
+      );
       setDetailData(res.data);
       setPageLoading(false);
     } catch (err) {
@@ -158,12 +161,15 @@ export default function HomeDetailPage({ route }) {
 
   const clickDelete = () => {
     axios
-      .delete(`${API_URL}/api/meetings/${detailData.id}`, {
-        headers: {
-          "Content-Type": `application/json`,
-          Authorization: "Bearer " + `${userToken}`,
-        },
-      })
+      .delete(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/meetings/${detailData.id}`,
+        {
+          headers: {
+            "Content-Type": `application/json`,
+            Authorization: "Bearer " + `${userToken}`,
+          },
+        }
+      )
       .then((res) => {
         console.log(res.data);
         setModalVisible(false);
@@ -189,7 +195,7 @@ export default function HomeDetailPage({ route }) {
           text: "확인",
           onPress: async () => {
             const res = await axios.post(
-              `${API_URL}/api/meetings/${detailData.id}/apply`,
+              `${process.env.EXPO_PUBLIC_API_URL}/api/meetings/${detailData.id}/apply`,
               null,
               {
                 headers: {
@@ -221,12 +227,16 @@ export default function HomeDetailPage({ route }) {
           text: "확인",
           onPress: () => {
             axios
-              .post(`${API_URL}/api/meetings/${detailData.id}/cancel`, null, {
-                headers: {
-                  "Content-Type": `application/json`,
-                  Authorization: "Bearer " + `${userToken}`,
-                },
-              })
+              .post(
+                `${process.env.EXPO_PUBLIC_API_URL}/api/meetings/${detailData.id}/cancel`,
+                null,
+                {
+                  headers: {
+                    "Content-Type": `application/json`,
+                    Authorization: "Bearer " + `${userToken}`,
+                  },
+                }
+              )
               .then((res) => {
                 console.log(res.data);
                 setIsUpdate(!isUpdate);
@@ -331,23 +341,6 @@ export default function HomeDetailPage({ route }) {
                       <View style={styles.modalOverlay}>
                         <View style={styles.centeredView}>
                           <View style={styles.modalView}>
-                            <Pressable
-                              style={({ pressed }) => [
-                                {
-                                  opacity: pressed ? 0.2 : 1,
-                                },
-                              ]}
-                              onPress={clickModify}
-                            >
-                              <Text
-                                style={[
-                                  styles.modalTextModify,
-                                  styles.modalText,
-                                ]}
-                              >
-                                수정
-                              </Text>
-                            </Pressable>
                             <Pressable
                               style={({ pressed }) => [
                                 {

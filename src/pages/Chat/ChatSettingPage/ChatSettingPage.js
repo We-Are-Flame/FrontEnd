@@ -34,7 +34,7 @@ export default function ChatSettingPage({ navigation, route }) {
   const toggleSwitch = () => {
     axios
       .put(
-        `${API_URL}/api/chat/${route.params.roomId}/notification`,
+        `${process.env.EXPO_PUBLIC_API_URL}/api/chat/${route.params.roomId}/notification`,
         {
           is_notification: !alarm,
         },
@@ -67,7 +67,7 @@ export default function ChatSettingPage({ navigation, route }) {
 
     axios
       .put(
-        `${API_URL}/api/chat/${route.params.roomId}/title`,
+        `${process.env.EXPO_PUBLIC_API_URL}/api/chat/${route.params.roomId}/title`,
         {
           title: title,
         },
@@ -90,7 +90,7 @@ export default function ChatSettingPage({ navigation, route }) {
   const outChatRoom = () => {
     if(host){
       axios
-      .delete(`${API_URL}/api/chat/${route.params.roomId}`, {
+      .delete(`${process.env.EXPO_PUBLIC_API_URL}/api/chat/${route.params.roomId}`, {
         headers: {
           "Content-Type": `application/json`,
           Authorization: "Bearer " + `${userToken}`,
@@ -105,7 +105,7 @@ export default function ChatSettingPage({ navigation, route }) {
       });
     }else{
       axios
-      .delete(`${API_URL}/api/chat/${route.params.roomId}/user`, {
+      .delete(`${process.env.EXPO_PUBLIC_API_URL}/api/chat/${route.params.roomId}/user`, {
         headers: {
           "Content-Type": `application/json`,
           Authorization: "Bearer " + `${userToken}`,
@@ -123,7 +123,7 @@ export default function ChatSettingPage({ navigation, route }) {
 
   useEffect(() => {
     axios
-      .get(`${API_URL}/api/chat/${route.params.roomId}/users`, null, {
+      .get(`${process.env.EXPO_PUBLIC_API_URL}/api/chat/${route.params.roomId}/users`, null, {
         headers: {
           "Content-Type": `application/json`,
         },
@@ -138,7 +138,7 @@ export default function ChatSettingPage({ navigation, route }) {
 
   useEffect(() => {
     axios
-      .get(`${API_URL}/api/chat/${route.params.roomId}/notification`, {
+      .get(`${process.env.EXPO_PUBLIC_API_URL}/api/chat/${route.params.roomId}/notification`, {
         headers: {
           "Content-Type": `application/json`,
           Authorization: "Bearer " + `${userToken}`,
@@ -154,7 +154,7 @@ export default function ChatSettingPage({ navigation, route }) {
 
   useEffect(() => {
     axios
-      .get(`${API_URL}/api/chat/${route.params.roomId}/title`, {
+      .get(`${process.env.EXPO_PUBLIC_API_URL}/api/chat/${route.params.roomId}/title`, {
         headers: {
           "Content-Type": `application/json`,
           Authorization: "Bearer " + `${userToken}`,
@@ -170,7 +170,7 @@ export default function ChatSettingPage({ navigation, route }) {
 
   useEffect(() => {
     axios
-      .get(`${API_URL}/api/chat/${route.params.roomId}/thumbnail`, {
+      .get(`${process.env.EXPO_PUBLIC_API_URL}/api/chat/${route.params.roomId}/thumbnail`, {
         headers: {
           "Content-Type": `application/json`,
           Authorization: "Bearer " + `${userToken}`,
@@ -186,7 +186,7 @@ export default function ChatSettingPage({ navigation, route }) {
 
   useEffect(() => {
     axios
-      .get(`${API_URL}/api/chat/${route.params.roomId}/host`, {
+      .get(`${process.env.EXPO_PUBLIC_API_URL}/api/chat/${route.params.roomId}/host`, {
         headers: {
           "Content-Type": `application/json`,
           Authorization: "Bearer " + `${userToken}`,
