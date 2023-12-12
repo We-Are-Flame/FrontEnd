@@ -28,7 +28,7 @@ export default function UnivAuth() {
       const response = await axios.post(
         `${process.env.EXPO_PUBLIC_API_URL}/api/user/email/verification`,
         {
-          email: "pueropstar@kumoh.ac.kr",
+          email: `${userEmail}@kumoh.ac.kr`,
         },
         {
           headers: {
@@ -49,7 +49,7 @@ export default function UnivAuth() {
       const response = await axios.put(
         `${process.env.EXPO_PUBLIC_API_URL}/api/user/email/verification`,
         {
-          email: "pueropstar@kumoh.ac.kr",
+          email: `${userEmail}@kumoh.ac.kr`,
           auth_code: authCode,
         },
         {
