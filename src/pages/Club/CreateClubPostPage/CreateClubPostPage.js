@@ -545,7 +545,21 @@ export default function CreateClubPostPage({ route }) {
           value={title}
           placeholder="예) 함께 풋살 하실 분 구해요."
         />
-        <Text style={styles.createPageLabel}>모임 소개글</Text>
+        <View style={{ flexDirection: "row" }}>
+          <Text style={styles.createPageLabel}>모임 소개글</Text>
+          <Text
+            style={{
+              fontSize: 12,
+              marginLeft: 5,
+              color: "#aaaaaa",
+              flexWrap: "wrap",
+              flexDirection: "row",
+              width: "73%",
+            }}
+          >
+            #@@와 같은 형식으로 적으면 해시태그로 인식됩니다.
+          </Text>
+        </View>
         <TextInput
           style={styles.inputArea}
           onChangeText={setIntroduce}

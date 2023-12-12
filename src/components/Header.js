@@ -2,7 +2,13 @@
 
 import * as React from "react";
 
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  Pressable,
+} from "react-native";
 
 import { Ionicons, AntDesign } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/core";
@@ -109,7 +115,12 @@ export default function Header() {
             <AntDesign name="search1" size={24} color="white" />
           </TouchableOpacity>
           <TouchableOpacity>
-            <AntDesign name="bells" size={24} color="white" />
+            <AntDesign
+              name="bells"
+              size={24}
+              color="white"
+              onPress={() => navigation.navigate("AlarmPage")}
+            />
           </TouchableOpacity>
         </View>
       );

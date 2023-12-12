@@ -29,6 +29,7 @@ import UnivAuth from "./src/pages/Profile/UniAuth/UnivAuth";
 import LoginModal from "./src/modals/LoginModal/LoginModal";
 import SearchBar from "./src/pages/Search/SearhBar";
 import SearchContent from "./src/pages/Search/SearchContent";
+import AlarmPage from "./src/pages/AlarmPage/AlarmPage";
 
 const Stack = createStackNavigator();
 
@@ -236,6 +237,17 @@ export default function App() {
                 shadowColor: "transparent",
                 elevation: 0,
               },
+            })}
+          />
+          <Stack.Screen
+            name="AlarmPage"
+            component={AlarmPage}
+            options={({ route }) => ({
+              gestureEnabled: false,
+              headerShown: true,
+              title: "알림",
+              headerBackTitle: " ",
+              headerTintColor: "black",
             })}
           />
         </Stack.Navigator>

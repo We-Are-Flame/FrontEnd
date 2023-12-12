@@ -42,6 +42,7 @@ export default function HomeScreen() {
   const [endClub, setEndClub] = useState(true);
   const { setLoginModal } = modalHandleStore();
   const { userToken, updatedState, isLogin } = userStore();
+  const [selectedCategory, setSelectedCategory] = useState("");
 
   const navigation = useNavigation();
 
@@ -75,7 +76,7 @@ export default function HomeScreen() {
 
   const getData = async () => {
     const result = await axios.get(
-      `${API_URL}/api/meetings?index=${page}&size=10&sort=${sort[selectedSort]}`
+      `${API_URL}/api/meetings?index=${page}&size=10&sort=${sort[selectedSort]}&category=${selectedCategory}`
     );
     if (result.data.total_elements === clubList.content.length) {
       setLoading(false);
@@ -96,6 +97,24 @@ export default function HomeScreen() {
       getData();
     }
   };
+
+  useEffect(() => {
+    axios
+      .get(
+        `${API_URL}/api/meetings?index=${page}&size=10&sort=${sort[selectedSort]}&category=${selectedCategory}`
+      )
+      .then((res) => {
+        if (res.data && Array.isArray(res.data.content)) {
+          setClubList(res.data); // Ensure data is structured correctly
+        } else {
+          // Handle unexpected response
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        // Handle error
+      });
+  }, [selectedCategory]);
 
   return (
     <PaperProvider>
@@ -130,7 +149,7 @@ export default function HomeScreen() {
                       <Text style={styles.homeScreenCategoryText}>
                         확인해 보세요!
                       </Text>
-                      <HomeCategory />
+                      <HomeCategory setSelectedCategory={setSelectedCategory} />
                     </View>
                   )}
                   {item.key === "sort" && (

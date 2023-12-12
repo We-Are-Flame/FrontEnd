@@ -100,7 +100,6 @@ export default function ChatDetailPage({ route }) {
   function sendImageMessage() {
     if (multipleImage.length !== 0 && stompClient) {
       for (let i = 0; i < multipleImage.length; i++) {
-        console.log("이미지 전송~~");
         const chatMessage = {
           roomId: route.params.roomId,
           message: multipleImage[i],

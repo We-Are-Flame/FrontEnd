@@ -34,6 +34,7 @@ export default function KaKaoLogin() {
       }); //채팅에서 사용하기 위해 스플래시 페이지에서 미리 사용자 정보를 가져옴
       setUserToken(access_token);
       setUserData(userInfoResponse.data);
+      console.log("userInfo" + userInfoResponse);
       storeData(access_token);
       setIsLogin(true);
       navigation.replace("Home", { screen: "Home" });

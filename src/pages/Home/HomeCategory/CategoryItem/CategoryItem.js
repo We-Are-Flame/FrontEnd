@@ -31,9 +31,9 @@ const icon = [
   <AntDesign name="aliwangwang" size={theme.categoryIconSize} color="black" />,
 ];
 
-export default function CategoryItem({ data, index }) {
+export default function CategoryItem({ data, index, setSelectedCategory }) {
   return (
-    <TouchableOpacity>
+    <TouchableOpacity onPress={() => setSelectedCategory(data)}>
       <View style={styles.categoryItemView}>
         {icon[index]}
         <Text>{data}</Text>
