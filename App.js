@@ -179,7 +179,7 @@ export default function App() {
               ),
               gestureEnabled: false,
               headerShown: true,
-              title: "채팅",
+              title: route.params?.roomName,
               headerBackTitle: " ",
               headerTintColor: "black",
             })}
