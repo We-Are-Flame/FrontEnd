@@ -16,7 +16,7 @@ import { Octicons } from "@expo/vector-icons";
 import kitchingLogo from "../../../../assets/kitchingLogo.png";
 const screenWidth = Dimensions.get("window").width;
 
-export default function ChatItem({ chatData }) {
+export default function ChatItem({ chatData, userId }) {
   const navigation = useNavigation();
 
   const formatDate = (dateString) => {
@@ -42,6 +42,7 @@ export default function ChatItem({ chatData }) {
         navigation.navigate("ChatDetailPage", {
           roomId: chatData.room_id,
           roomName: chatData.room_name,
+          userId: userId,
         });
       }}
     >

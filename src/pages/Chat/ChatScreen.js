@@ -22,6 +22,7 @@ import { API_URL } from "@env";
 import Loading from "../../components/Loading";
 
 export default function ChatScreen({ navigation }) {
+  const [userId, setUserId] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
   const [data, setData] = useState([]);
   const [chatCount, setChatCount] = useState();
@@ -38,12 +39,25 @@ export default function ChatScreen({ navigation }) {
 
   const fetchData = async () => {
     setPageLoading(true);
-    const res = await axios.get(`${process.env.EXPO_PUBLIC_API_URL}/api/chat/rooms`, {
-      headers: {
-        "Content-Type": `application/json`,
-        Authorization: "Bearer " + `${userToken}`,
-      },
-    });
+    const res = await axios.get(
+      `${process.env.EXPO_PUBLIC_API_URL}/api/chat/rooms`,
+      {
+        headers: {
+          "Content-Type": `application/json`,
+          Authorization: "Bearer " + `${userToken}`,
+        },
+      }
+    );
+    const responseUserId = await axios.get(
+      `${process.env.EXPO_PUBLIC_API_URL}/api/user/id`,
+      {
+        headers: {
+          "Content-Type": `application/json`,
+          Authorization: "Bearer " + `${userToken}`,
+        },
+      }
+    );
+    setUserId(responseUserId.data.user_id);
     setData(res.data.content);
     setChatCount(res.data.count);
     // console.log(res.data.content);
@@ -52,14 +66,13 @@ export default function ChatScreen({ navigation }) {
 
   useEffect(() => {
     if (isLogin) {
-      console.log("되는거아님?");
       fetchData();
     }
   }, []);
 
   useEffect(() => {
-    console.log(chatCount);
-  }, [chatCount]);
+    console.log(userId);
+  }, [userId]);
 
   return (
     <View style={styles.chatScreenView}>
@@ -79,7 +92,7 @@ export default function ChatScreen({ navigation }) {
               style={{ marginTop: 20 }}
               data={data}
               renderItem={({ item, index }) => (
-                <ChatItem chatData={item} key={index} />
+                <ChatItem chatData={item} key={index} userId={userId} />
               )}
               keyExtractor={(item, index) => index.toString()}
               ItemSeparatorComponent={() => <View style={{ height: 20 }} />}

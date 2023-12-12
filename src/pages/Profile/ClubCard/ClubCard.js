@@ -7,6 +7,7 @@ import { useNavigation } from "@react-navigation/core";
 
 import { Button, Card } from "react-native-paper";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import kitchingLogoSmall from "../../../../assets/kitchingLogoSmall.jpg";
 import userStore from "../../../store/userStore";
 export default function ClubCard({ clubData }) {
   const { userData } = userStore();
@@ -57,14 +58,17 @@ export default function ClubCard({ clubData }) {
     >
       <View style={{ flexDirection: "row", ...theme.centerStyle }}>
         <View style={styles.cardCoverContainer}>
-          <Card.Cover
-            style={styles.cardImageStyle}
-            source={{
-              uri: clubData.thumbnail_url
-                ? clubData.thumbnail_url
-                : "https://kr.object.ncloudstorage.com/nanum-bucket/20231128155940_kitchingLogo.png",
-            }}
-          />
+          {clubData.thumbnail_url ? (
+            <Card.Cover
+              style={styles.cardImageStyle}
+              source={{ uri: clubData.thumbnail_url }}
+            />
+          ) : (
+            <Card.Cover
+              style={styles.cardImageStyle}
+              source={kitchingLogoSmall}
+            />
+          )}
         </View>
         <View style={styles.cardContentStyle}>
           <View style={styles.clubContentTop}>
