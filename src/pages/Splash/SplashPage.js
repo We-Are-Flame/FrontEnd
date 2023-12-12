@@ -31,41 +31,24 @@ export default function SplashPage() {
         console.log(token);
 
         if (token !== null) {
-          // axios
-          //   .get(`${API_URL}/api/user/notification`, {
-          //     headers: {
-          //       "Content-Type": `application/json`,
-          //       Authorization: "Bearer " + `${token}`,
-          //     },
-          //   })
-          //   .then(async (res) => {
-          //     const userInfoResponse = await axios.get(`${API_URL}/api/user`, {
-          //       headers: {
-          //         "Content-Type": "application/json",
-          //         Authorization: "Bearer " + token,
-          //       },
-          //     }); //채팅에서 사용하기 위해 스플래시 페이지에서 미리 사용자 정보를 가져옴
-          //     setUserToken(token);
-          //     setUserData(userInfoResponse.data);
-          //     setIsLogin(true);
-          //     navigation.replace("Home");
-          //   })
-          //   .catch((err) => {
-          //     navigation.replace("Login");
-          //     console.log(err);
-          //   });
-          await axios.get(`${process.env.EXPO_PUBLIC_API_URL}/api/user/notification`, {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: "Bearer " + token,
-            },
-          });
-          const userInfoResponse = await axios.get(`${process.env.EXPO_PUBLIC_API_URL}/api/user`, {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: "Bearer " + token,
-            },
-          }); //채팅에서 사용하기 위해 스플래시 페이지에서 미리 사용자 정보를 가져옴
+          await axios.get(
+            `${process.env.EXPO_PUBLIC_API_URL}/api/user/notification`,
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + token,
+              },
+            }
+          );
+          const userInfoResponse = await axios.get(
+            `${process.env.EXPO_PUBLIC_API_URL}/api/user`,
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + token,
+              },
+            }
+          ); //채팅에서 사용하기 위해 스플래시 페이지에서 미리 사용자 정보를 가져옴
           setUserToken(token);
           setUserData(userInfoResponse.data);
           setIsLogin(true);
