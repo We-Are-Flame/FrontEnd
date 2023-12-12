@@ -32,7 +32,7 @@ export default function HomeDetailCommentInput({
     }
     axios
       .post(
-        `${API_URL}/api/meetings/${id}/comments`,
+        `${process.env.EXPO_PUBLIC_API_URL}/api/meetings/${id}/comments`,
         { description: text },
         {
           headers: {

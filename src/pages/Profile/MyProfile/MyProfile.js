@@ -9,6 +9,8 @@ import ProfileEditModal from "../../../modals/ProfileEditModal/ProfileEditModal"
 import userStore from "../../../store/userStore";
 import modalHandleStore from "../../../store/modalHandleStore";
 import { useNavigation } from "@react-navigation/core";
+import AuthMark from "../../../../assets/authmark.png";
+import SchoolAuthMark from "../../../components/SchoolAuthMark";
 import defaultImg from "../../../../assets/defaultImg.jpg";
 export default function MyProfile() {
   const { setProfileEditModal } = modalHandleStore();
@@ -17,6 +19,9 @@ export default function MyProfile() {
   const { isLogin, userData } = userStore();
   const navigation = useNavigation();
 
+  useEffect(() => {
+    console.log(userData);
+  }, []);
   return (
     <View style={styles.myProfileView}>
       <View style={styles.myProfileViewTop}>
@@ -32,7 +37,9 @@ export default function MyProfile() {
             style={{
               flex: 1,
               backgroundColor: "white",
-              justifyContent: "center",
+              justifyContent: "flex-start",
+              alignItems: "center",
+              flexDirection: "row",
             }}
           >
             <Text style={{ fontWeight: "bold", fontSize: isLogin ? 16 : 18 }}>
@@ -40,6 +47,9 @@ export default function MyProfile() {
                 ? userData.nickname
                 : `로그인 후 다양한\n모임에 참여해보세요!`}
             </Text>
+            {isLogin && userData.is_school_verified ? (
+              <SchoolAuthMark width={30} height={30} />
+            ) : null}
           </View>
         </View>
       </View>
@@ -75,6 +85,9 @@ export default function MyProfile() {
             <TouchableOpacity
               disabled={!isLogin}
               onPress={() => {
+                if (isLogin && userData.is_school_verified) {
+                  return;
+                }
                 navigation.navigate("UnivAuth");
               }}
             >
@@ -83,10 +96,17 @@ export default function MyProfile() {
                 style={{
                   fontSize: 16,
                   fontWeight: "bold",
-                  color: isAuth ? theme.psColor : "gray",
+                  color:
+                    isLogin && userData.is_school_verified
+                      ? theme.psColor
+                      : "gray",
                 }}
               >
-                {isAuth ? "인증됨" : "인증필요"}
+                {isLogin
+                  ? userData.is_school_verified
+                    ? "인증완료"
+                    : "인증필요"
+                  : "인증필요"}
               </Text>
             </TouchableOpacity>
           </View>

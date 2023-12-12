@@ -22,7 +22,7 @@ export default function HomeDetailComment({ id, addedComment }) {
 
   useEffect(() => {
     axios
-      .get(`${API_URL}/api/meetings/${id}/comments`, null, { headers: headers })
+      .get(`${process.env.EXPO_PUBLIC_API_URL}/api/meetings/${id}/comments`, null, { headers: headers })
       .then((res) => setComment(res.data))
       .catch((err) => console.log(err));
   }, [addedComment]);

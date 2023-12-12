@@ -41,7 +41,7 @@ export default function ProfilePage() {
     try {
       if (userToken) {
         const tokenValidationResponse = await axios.get(
-          `${API_URL}/api/user/notification`,
+          `${process.env.EXPO_PUBLIC_API_URL}/api/user/notification`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -55,20 +55,20 @@ export default function ProfilePage() {
             "토큰 유효함",
             tokenValidationResponse.data.is_user_notification
           );
-          const userInfoResponse = await axios.get(`${API_URL}/api/user`, {
+          const userInfoResponse = await axios.get(`${process.env.EXPO_PUBLIC_API_URL}/api/user`, {
             headers: {
               "Content-Type": "application/json",
               Authorization: "Bearer " + userToken,
             },
           });
-          const mymeetings = await axios.get(`${API_URL}/api/meetings/my`, {
+          const mymeetings = await axios.get(`${process.env.EXPO_PUBLIC_API_URL}/api/meetings/my`, {
             headers: {
               "Content-Type": "application/json",
               Authorization: "Bearer " + userToken,
             },
           });
           const joinedMeetings = await axios.get(
-            `${API_URL}/api/meetings/participated`,
+            `${process.env.EXPO_PUBLIC_API_URL}/api/meetings/participated`,
             {
               headers: {
                 "Content-Type": "application/json",

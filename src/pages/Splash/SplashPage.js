@@ -54,13 +54,13 @@ export default function SplashPage() {
           //     navigation.replace("Login");
           //     console.log(err);
           //   });
-          await axios.get(`${API_URL}/api/user/notification`, {
+          await axios.get(`${process.env.EXPO_PUBLIC_API_URL}/api/user/notification`, {
             headers: {
               "Content-Type": "application/json",
               Authorization: "Bearer " + token,
             },
           });
-          const userInfoResponse = await axios.get(`${API_URL}/api/user`, {
+          const userInfoResponse = await axios.get(`${process.env.EXPO_PUBLIC_API_URL}/api/user`, {
             headers: {
               "Content-Type": "application/json",
               Authorization: "Bearer " + token,

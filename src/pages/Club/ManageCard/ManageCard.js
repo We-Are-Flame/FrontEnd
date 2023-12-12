@@ -48,7 +48,7 @@ export default function ManageCard({
         onPress: async () => {
           try {
             const res = await axios.post(
-              `${API_URL}/api/meetings/${clubId}/reject`,
+              `${process.env.EXPO_PUBLIC_API_URL}/api/meetings/${clubId}/reject`,
               {
                 registration_ids: [participantData.id],
               },

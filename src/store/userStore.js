@@ -9,12 +9,16 @@ const userStore = create((set) => ({
     profile_image: "",
     temperature: 0,
     my_meetings: 0,
+    is_school_verified: false,
   },
   setUserData: (userData) => {
     set((state) => ({ userData: { ...state.userData, ...userData } }));
   },
   setNickname: (nickname) => {
     set((state) => ({ userData: { ...state.userData, nickname } }));
+  },
+  setVerified: (isVerified) => {
+    set((state) => ({ userData: { ...state.userData, isVerified } }));
   },
   setProfileImage: (profileImage) => {
     set((state) => ({

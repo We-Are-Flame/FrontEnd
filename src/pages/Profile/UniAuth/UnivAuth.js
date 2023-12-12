@@ -26,7 +26,10 @@ export default function UnivAuth() {
   const requestAuthCode = async () => {
     try {
       const response = await axios.post(
-        `${API_URL}/api/user/email/verification?email=${userEmail}@kumoh.ac.kr`,
+        `${process.env.EXPO_PUBLIC_API_URL}/api/user/email/verification`,
+        {
+          email: "pueropstar@kumoh.ac.kr",
+        },
         {
           headers: {
             "Content-Type": "application/json",
@@ -44,7 +47,11 @@ export default function UnivAuth() {
   const verifyAuthCode = async () => {
     try {
       const response = await axios.put(
-        `${API_URL}/api/user/email/verification?email${userEmail}@kumoh.ac.kr&code=${authCode}`,
+        `${process.env.EXPO_PUBLIC_API_URL}/api/user/email/verification`,
+        {
+          email: "pueropstar@kumoh.ac.kr",
+          auth_code: authCode,
+        },
         {
           headers: {
             "Content-Type": "application/json",
@@ -52,15 +59,23 @@ export default function UnivAuth() {
           },
         }
       );
-      console.log(response);
-      Alert.alert("인증 성공", "인증이 완료되었습니다.", [
-        {
-          text: "확인",
-          onPress: () => {
-            navigation.goBack();
+
+      if (response.status === 200) {
+        Alert.alert("인증 성공", "인증이 완료되었습니다.", [
+          {
+            text: "확인",
+            onPress: () => {
+              navigation.goBack();
+            },
           },
-        },
-      ]);
+        ]);
+      } else {
+        Alert.alert("인증 실패", "인증번호가 일치하지 않습니다.", [
+          {
+            text: "확인",
+          },
+        ]);
+      }
     } catch (err) {
       console.log(err);
     }
@@ -68,7 +83,7 @@ export default function UnivAuth() {
 
   useEffect(() => {
     console.log(
-      `${API_URL}/api/user/email/verification?email=${userEmail}@kumoh.ac.kr`
+      `${process.env.EXPO_PUBLIC_API_URL}/api/user/email/verification?email=${userEmail}@kumoh.ac.kr`
     );
   }, [userEmail]);
   /// userStore에 isAuth를 추가 인증이 됐으면 isAuth를 true로 바꾼다. 그 후 마이페이지에서 또 처리 (인증마크)
