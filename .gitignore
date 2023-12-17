@@ -37,3 +37,6 @@ yarn-error.*
 
 #API KEY
 apiKey.js
+
+#build
+eas.json
