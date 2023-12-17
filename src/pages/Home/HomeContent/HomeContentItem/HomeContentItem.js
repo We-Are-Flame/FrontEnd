@@ -114,9 +114,15 @@ export default function HomeContentItem({ state }) {
           </View>
         </View>
         <View style={styles.homeContentItemContent}>
-          <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-            {state.info.title}
-          </Text>
+          <View style={{ flex: 1 }}>
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={{ fontSize: 20, fontWeight: "bold" }}
+            >
+              {state.info.title}
+            </Text>
+          </View>
           <View>
             <Text style={{ color: "#848484", marginLeft: 50 }}>
               {timeString}

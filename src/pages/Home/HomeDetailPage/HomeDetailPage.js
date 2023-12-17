@@ -416,6 +416,7 @@ export default function HomeDetailPage({ route }) {
                 />
 
                 {/* 여기에 종료된게임, 참가신청, 참가취소 버튼 추가 */}
+
                 {detailData.status.is_expire ? (
                   <TouchableOpacity style={styles.homeDetailStateBtnGray}>
                     <Text style={styles.homeDetailStateTextGray}>
@@ -424,6 +425,11 @@ export default function HomeDetailPage({ route }) {
                   </TouchableOpacity>
                 ) : detailData.status.is_owner ? (
                   ""
+                ) : detailData.info.max_participants ===
+                  detailData.info.current_participants ? (
+                  <TouchableOpacity style={styles.homeDetailStateBtnBlack}>
+                    <Text>가득참</Text>
+                  </TouchableOpacity>
                 ) : detailData.status.participate_status === "NONE" ? (
                   <TouchableOpacity
                     style={styles.homeDetailStateBtnBlue}
