@@ -89,7 +89,7 @@ export default function ChatDetailPage({ route }) {
       JSON.stringify({
         roomId: route.params.roomId,
         sender: userData.nickname,
-        senderId: 8,
+        senderId: route.params.userId,
         message: userData.nickname + "님이 입장하셨습니다.",
         time: new Date(),
         messageType: "ENTER",
@@ -220,11 +220,15 @@ export default function ChatDetailPage({ route }) {
 
   useEffect(() => {
     axios
-      .get(`${process.env.EXPO_PUBLIC_API_URL}/api/chat/${route.params.roomId}/messages`, null, {
-        headers: {
-          "Content-Type": `application/json`,
-        },
-      })
+      .get(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/chat/${route.params.roomId}/messages`,
+        null,
+        {
+          headers: {
+            "Content-Type": `application/json`,
+          },
+        }
+      )
       .then((res) => {
         setChat(res.data.content);
         console.log(res.data.content);
@@ -240,7 +244,7 @@ export default function ChatDetailPage({ route }) {
 
   useEffect(() => {
     stompClient = Stomp.over(function () {
-      return new SockJS("http://118.67.128.48/ws-stomp");
+      return new SockJS(`${process.env.EXPO_PUBLIC_API_URL}/ws-stomp`);
     });
     stompClient.connect({}, onConnected, {});
   }, []);
@@ -328,5 +332,4 @@ const styles = StyleSheet.create({
     flex: 1,
     ...theme.centerStyle,
   },
-  chatContent: {},
 });

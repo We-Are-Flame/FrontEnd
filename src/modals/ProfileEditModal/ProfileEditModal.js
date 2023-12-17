@@ -36,7 +36,7 @@ export default function ProfileEditModal() {
   const [presignedUrl, setPresignedUrl] = useState("");
   const [imageExtension, setImageExtension] = useState("");
   const [status, requestPermission] = useMediaLibraryPermissions();
-  
+
   useEffect(() => {
     if (userData.nickname == editableNickname) {
       setIsNicknameChange(false);
@@ -132,7 +132,9 @@ export default function ProfileEditModal() {
   const validateNickname = (changeName) => {
     const regex = /^[a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣]*$/;
     return (
-      regex.test(changeName) && changeName.length >= 2 && changeName.length <= 6
+      regex.test(changeName) &&
+      changeName.length >= 2 &&
+      changeName.length <= 10
     );
   };
 
@@ -289,11 +291,11 @@ export default function ProfileEditModal() {
               placeholderTextColor="lightgray"
               value={editableNickname}
               onChangeText={handleNicknameChange}
-              maxLength={6}
+              maxLength={10}
             />
             {!isNicknameValid && (
               <Text style={{ color: "red", marginTop: 5 }}>
-                닉네임은 공백과 특수문자를 제외한 2~6자로 입력해주세요
+                닉네임은 공백과 특수문자를 제외한 2~10자로 입력해주세요
               </Text>
             )}
           </View>

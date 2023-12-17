@@ -3,8 +3,9 @@
 import Carousel from "react-native-snap-carousel";
 import { Image } from "expo-image";
 import { View, StyleSheet } from "react-native";
-import HomeContentItem from '../pages/Home/HomeContent/HomeContentItem/HomeContentItem';
-import theme from './../styles/theme';
+import HomeContentItem from "../pages/Home/HomeContent/HomeContentItem/HomeContentItem";
+import theme from "./../styles/theme";
+import kitchingLogoSmall from "../../assets/kitchingLogoSmall.jpg";
 
 //<MyCarousel entries={carouselArr} widthProps={Dimensions.get('window').width} heightProps={200} layout="default"/>
 export default function MyCarousel({
@@ -12,15 +13,15 @@ export default function MyCarousel({
   widthProps,
   heightProps,
   layout,
-  flag
+  flag,
 }) {
   const renderItem = ({ item, index }) => {
-    if(flag === 1){
+    if (flag === 1) {
       return (
         <View style={[styles.imageView, { height: heightProps }]}>
           {/* 여기에 이미지나 다른 내용을 추가할 수 있습니다. */}
           <Image
-            source={item}
+            source={item || kitchingLogoSmall}
             style={{
               // width: "100%",
               // height: undefined,
@@ -30,21 +31,26 @@ export default function MyCarousel({
               height: heightProps,
             }} // 예시 크기, 원하는 대로 조절
             // contentFit="scale-down" // 또는 "contain", "stretch" 등
-            contentFit="cover"
+            contentFit="contain"
           />
         </View>
       );
-    }
-    else{
+    } else {
       return (
-        <View style={{ height: heightProps, width: widthProps, ...theme.centerStyle }}>
-          <HomeContentItem state={item}/>
+        <View
+          style={{
+            height: heightProps,
+            width: widthProps,
+            ...theme.centerStyle,
+          }}
+        >
+          <HomeContentItem state={item} />
         </View>
       );
     }
   };
 
-  if(flag === 1){
+  if (flag === 1) {
     return (
       <Carousel
         data={entries}
@@ -54,8 +60,7 @@ export default function MyCarousel({
         layout={layout}
       />
     );
-  }
-  else{
+  } else {
     return (
       <Carousel
         data={entries}

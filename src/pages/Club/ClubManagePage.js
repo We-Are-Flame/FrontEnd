@@ -132,7 +132,9 @@ export default function ClubManagePage({ route }) {
               console.log("수락");
               setIsUpdate(!isUpdate);
               stompClient = Stomp.over(function () {
-                return new SockJS("http://118.67.128.48/ws-stomp");
+                return new SockJS(
+                  `${process.env.EXPO_PUBLIC_API_URL}/ws-stomp`
+                );
               });
               stompClient.connect(
                 {},

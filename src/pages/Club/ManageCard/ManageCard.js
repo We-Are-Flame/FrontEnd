@@ -11,7 +11,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { Pressable } from "react-native";
 import { API_URL } from "@env";
 import userStore from "../../../store/userStore";
-
+import SchoolAuthMark from "../../../components/SchoolAuthMark";
 export default function ManageCard({
   isUpdate,
   setIsUpdate,
@@ -92,9 +92,24 @@ export default function ManageCard({
             contentFit="cover"
           />
         </View>
-        <View style={{ justifyContent: "center", flex: 1 }}>
-          <Text style={{ fontWeight: "600" }}>{participantData.nickname}</Text>
-          <Text>온도 {participantData.temperature} º</Text>
+        <View>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              flex: 1,
+            }}
+          >
+            <Text style={{ fontWeight: "600" }}>
+              {participantData.nickname}
+            </Text>
+            {participantData.is_school_email ? (
+              <SchoolAuthMark width={30} height={30} />
+            ) : null}
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text>온도 {participantData.temperature} º</Text>
+          </View>
         </View>
         <View style={styles.buttonContainer}>
           <View style={{ flex: 1 }}></View>

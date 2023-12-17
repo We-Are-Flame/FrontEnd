@@ -13,10 +13,12 @@ import { useNavigation } from "@react-navigation/native";
 
 import theme from "../../../../styles/theme";
 import dummy1 from "../../../../../assets/kitchingLogo.png";
-
+import kitchingLogoSmall from "../../../../../assets/kitchingLogoSmall.jpg";
 import { Ionicons, Entypo, AntDesign } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Dimensions } from "react-native";
+import userStore from "../../../../store/userStore";
+import SchoolAuthMark from "../../../../components/SchoolAuthMark";
 
 export default function HomeContentItem({ state }) {
   const navigation = useNavigation();
@@ -24,6 +26,7 @@ export default function HomeContentItem({ state }) {
   const [timeString, setTimeString] = useState("");
   const [hashtagString, setHashtagString] = useState("");
   const [dateString, setDateString] = useState("");
+  const { isLogin, userData } = userStore();
 
   const imageSource = state.host.profile_image
     ? { uri: state.host.profile_image }
@@ -96,21 +99,30 @@ export default function HomeContentItem({ state }) {
     >
       <View style={styles.homeContentItemView}>
         <View style={styles.homeContentItemTitle}>
-          <View style={{ flexDirection: "row" }}>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
             <Image
               source={imageSource}
-              style={{ width: 24, height: 24 }} // 예시 크기, 원하는 대로 조절
+              style={{ width: 24, height: 24, borderRadius: 50 }} // 예시 크기, 원하는 대로 조절
               contentFit="cover" // 또는 "contain", "stretch" 등
             />
             <Text style={styles.homeContentItemTitleNickname}>
               {state.host.name}
             </Text>
+            {state.host.is_school_email ? (
+              <SchoolAuthMark width={30} height={30} />
+            ) : null}
           </View>
         </View>
         <View style={styles.homeContentItemContent}>
-          <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-            {state.info.title}
-          </Text>
+          <View style={{ flex: 1 }}>
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={{ fontSize: 20, fontWeight: "bold" }}
+            >
+              {state.info.title}
+            </Text>
+          </View>
           <View>
             <Text style={{ color: "#848484", marginLeft: 50 }}>
               {timeString}
@@ -130,7 +142,7 @@ export default function HomeContentItem({ state }) {
               borderRadius: 10,
               marginBottom: 10,
             }}
-            source={state.thumbnail_url || dummy1}
+            source={state.thumbnail_url || kitchingLogoSmall}
             contentFit="cover" // 또는 fill
           />
           <View style={{ flexDirection: "row" }}>
@@ -186,7 +198,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   homeContentItemTitleNickname: {
-    marginTop: 5,
     marginLeft: 5,
   },
   homeContentItemContent: {

@@ -37,6 +37,7 @@ import { REST_API_KEY } from "@env";
 import userStore from "../../../store/userStore";
 
 export default function CreateClubPostPage({ route }) {
+  const [userId, setUserId] = useState(0);
   const [sDate, setSDate] = useState(new Date());
   const [eDate, setEDate] = useState("");
   const [location, setLocation] = useState("");
@@ -56,7 +57,7 @@ export default function CreateClubPostPage({ route }) {
   const [data, setData] = useState({});
   const [latitude, setLatitude] = useState(0);
   const [longitude, setLongitude] = useState(0);
-  const { userToken, isLogin } = userStore();
+  const { userData, userToken, isLogin } = userStore();
   const [realTime, setRealTime] = useState("");
 
   const [dateOfBirth, setDateOfBirth] = useState("");
@@ -65,34 +66,21 @@ export default function CreateClubPostPage({ route }) {
   const [status, requestPermission] = useMediaLibraryPermissions();
   const navigation = useNavigation();
 
-  useEffect(() => {
-    console.log(sDate);
-  }, [sDate]);
   const toggleSwitch = () => setAlarm((alarm) => !alarm);
 
   const submitPost = () => {
     let missingFields = [];
     console.log(hashtags);
     if (title === "") missingFields.push("모임명");
-    if (title.length > 10) {
+    if (title.length > 16) {
       Alert.alert(
         "글쓰기 오류",
-        `모임 명은 10글자를 초과할 수 없습니다.`,
+        `모임 명은 15글자를 초과할 수 없습니다.`,
         [{ text: "확인", onPress: () => console.log("확인됨") }],
         { cancelable: false }
       );
       return;
     }
-    // if (!validateTitle(title)) {
-    //   Alert.alert(
-    //     "글쓰기 오류",
-    //     `모임 명은 특수문자를 제한합니다.`,
-    //     [
-    //       { text: "확인", onPress: () => console.log("확인됨") },
-    //     ],
-    //     { cancelable: false }
-    //   );
-    // }
     if (categoryData === "") missingFields.push("카테고리");
     if (people === "") missingFields.push("인원");
     if (people < 1) {
@@ -190,13 +178,10 @@ export default function CreateClubPostPage({ route }) {
     setShowPicker(false);
     console.log("취소");
   };
-  const validateTitle = (title) => {
-    // 정규 표현식을 사용하여 특수문자 제한
-    // 이 예시에서는 알파벳, 숫자, 공백, 하이픈, 밑줄, 마침표, 한글만 허용합니다.
-    const pattern = /^[A-Za-z0-9 _.-가-힣]+$/;
-    return pattern.test(title);
-  };
 
+  useEffect(() => {
+    console.log(process.env.EXPO_PUBLIC_REST_API_KEY);
+  }, []);
   const getCoordinate = async (placeAddress) => {
     const url =
       "https://dapi.kakao.com/v2/local/search/address.json?query=" +
@@ -226,7 +211,7 @@ export default function CreateClubPostPage({ route }) {
   //채팅방 소켓 연결
   function onConnected(room_id) {
     let roomId = room_id; //post할때 response값
-    let username = "이태헌"; //유저 닉네임
+
     stompClient.subscribe("/sub/chat/room/" + roomId, onMessageReceived);
 
     stompClient.send(
@@ -234,9 +219,9 @@ export default function CreateClubPostPage({ route }) {
       {},
       JSON.stringify({
         roomId: roomId,
-        sender: username,
-        senderId: 2,
-        message: username + "님이 입장하셨습니다.",
+        sender: userData.nickname,
+        senderId: userId,
+        message: userData.nickname + "님이 입장하셨습니다.",
         time: new Date(),
         messageType: "ENTER",
       })
@@ -386,7 +371,19 @@ export default function CreateClubPostPage({ route }) {
   }
 
   useEffect(() => {
-    console.log(dateOfBirth);
+    axios
+      .get(`${process.env.EXPO_PUBLIC_API_URL}/api/user/id`, {
+        headers: {
+          "Content-Type": `application/json`,
+          Authorization: "Bearer " + `${userToken}`,
+        },
+      })
+      .then((res) => {
+        setUserId(res.data.user_id);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
   useEffect(() => {
@@ -412,7 +409,7 @@ export default function CreateClubPostPage({ route }) {
   }, [introduce]);
 
   useEffect(() => {
-    console.log(data);
+    // console.log(data);
     axios
       .post(`${process.env.EXPO_PUBLIC_API_URL}/api/meetings`, data, {
         headers: {
@@ -439,7 +436,7 @@ export default function CreateClubPostPage({ route }) {
           .then((res) => {
             console.log(res.data);
             stompClient = Stomp.over(function () {
-              return new SockJS("http://118.67.128.48/ws-stomp");
+              return new SockJS(`${process.env.EXPO_PUBLIC_API_URL}/ws-stomp`);
             });
             stompClient.connect({}, () => onConnected(res.roomId), {});
             navigation.replace("Home");
@@ -533,6 +530,7 @@ export default function CreateClubPostPage({ route }) {
         />
         <Text style={styles.createPageLabel}>인원</Text>
         <TextInput
+          inputMode="decimal"
           style={styles.input}
           onChangeText={setPeople}
           value={people}
@@ -604,7 +602,7 @@ export default function CreateClubPostPage({ route }) {
         </View>
         <TouchableOpacity style={styles.submitBtn} onPress={submitPost}>
           <Text style={{ color: "#ffffff", fontWeight: "bold" }}>
-            게임 등록
+            모임 등록
           </Text>
         </TouchableOpacity>
       </ScrollView>
@@ -649,7 +647,7 @@ const styles = StyleSheet.create({
   },
   timeBtn: {
     flex: 1,
-    height: "50px",
+    height: 50,
   },
   inputTime: {
     height: 40,

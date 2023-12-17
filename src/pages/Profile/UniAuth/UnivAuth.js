@@ -17,7 +17,7 @@ import userStore from "../../../store/userStore";
 import { API_URL } from "@env";
 
 export default function UnivAuth() {
-  const { userData, setUserData, userToken } = userStore();
+  const { userData, setUserData, userToken, setVerified } = userStore();
   const [isSend, setIsSend] = useState(false);
   const [userEmail, setUserEmail] = useState("");
   const [authCode, setAuthCode] = useState("");
@@ -65,27 +65,21 @@ export default function UnivAuth() {
           {
             text: "확인",
             onPress: () => {
+              setVerified(true);
               navigation.goBack();
             },
           },
         ]);
-      } else {
-        Alert.alert("인증 실패", "인증번호가 일치하지 않습니다.", [
-          {
-            text: "확인",
-          },
-        ]);
       }
     } catch (err) {
+      Alert.alert("인증 실패", "인증번호가 일치하지 않습니다.", [
+        {
+          text: "확인",
+        },
+      ]);
       console.log(err);
     }
   };
-
-  useEffect(() => {
-    console.log(
-      `${process.env.EXPO_PUBLIC_API_URL}/api/user/email/verification?email=${userEmail}@kumoh.ac.kr`
-    );
-  }, [userEmail]);
   /// userStore에 isAuth를 추가 인증이 됐으면 isAuth를 true로 바꾼다. 그 후 마이페이지에서 또 처리 (인증마크)
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>

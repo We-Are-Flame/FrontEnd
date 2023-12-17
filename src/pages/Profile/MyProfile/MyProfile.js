@@ -48,7 +48,7 @@ export default function MyProfile() {
                 : `로그인 후 다양한\n모임에 참여해보세요!`}
             </Text>
             {isLogin && userData.is_school_verified ? (
-              <SchoolAuthMark width={30} height={30} />
+              <SchoolAuthMark width={36} height={36} />
             ) : null}
           </View>
         </View>

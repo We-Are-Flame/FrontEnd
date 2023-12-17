@@ -58,6 +58,7 @@ export default function SplashPage() {
           navigation.replace("Login");
         }
       } catch (err) {
+        navigation.replace("Login");
         console.log("에러 발생", err);
       }
     }, 2000);

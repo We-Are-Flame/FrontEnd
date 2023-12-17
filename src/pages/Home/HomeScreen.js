@@ -76,7 +76,9 @@ export default function HomeScreen() {
 
   const getData = async () => {
     const result = await axios.get(
-      `${process.env.EXPO_PUBLIC_API_URL}/api/meetings?index=${page}&size=10&sort=${sort[selectedSort]}`
+      selectedCategory === ""
+        ? `${process.env.EXPO_PUBLIC_API_URL}/api/meetings?index=${page}&size=10&sort=${sort[selectedSort]}`
+        : `${process.env.EXPO_PUBLIC_API_URL}/api/meetings?index=${page}&size=10&sort=${sort[selectedSort]}&category=${selectedCategory}`
     );
     if (result.data.total_elements === clubList.content.length) {
       setLoading(false);
@@ -89,9 +91,14 @@ export default function HomeScreen() {
         content: [...prevList.content, ...result.data.content],
       };
     });
+
     setPage(page + 1);
     setLoading(false);
   };
+
+  useEffect(() => {
+    console.log(page);
+  }, [page]);
   const onEndReached = () => {
     if (!loading) {
       getData();
@@ -101,7 +108,7 @@ export default function HomeScreen() {
   useEffect(() => {
     axios
       .get(
-        `${API_URL}/api/meetings?index=${page}&size=10&sort=${sort[selectedSort]}&category=${selectedCategory}`
+        `${process.env.EXPO_PUBLIC_API_URL}/api/meetings?index=0&size=10&sort=${sort[selectedSort]}&category=${selectedCategory}`
       )
       .then((res) => {
         if (res.data && Array.isArray(res.data.content)) {
@@ -128,7 +135,7 @@ export default function HomeScreen() {
         <View style={{ flex: 7 }}>
           {pageLoading ? (
             <Loading />
-          ) : clubList.number_of_elements !== 0 ? (
+          ) : (
             <FlatList
               onEndReached={onEndReached}
               onEndReachedThreshold={0.6}
@@ -162,25 +169,27 @@ export default function HomeScreen() {
                       />
                     </View>
                   )}
-                  {item.key === "content" && (
-                    <View style={styles.homeScreenContent}>
-                      <HomeContent clubList={clubList} />
-                    </View>
-                  )}
+                  {item.key === "content" &&
+                    (clubList.number_of_elements !== 0 ? (
+                      <View style={styles.homeScreenContent}>
+                        <HomeContent clubList={clubList} />
+                      </View>
+                    ) : (
+                      <View
+                        style={{
+                          ...theme.centerStyle,
+                          flex: 1,
+                          marginTop: theme.screenHeight / 5,
+                        }}
+                      >
+                        <Text style={{ fontSize: 16, color: "gray" }}>
+                          {`아직 모임이 없어요. 새로운 모임을 만들어보세요!`}
+                        </Text>
+                      </View>
+                    ))}
                 </View>
               )}
             />
-          ) : (
-            <View
-              style={{
-                ...theme.centerStyle,
-                flex: 1,
-              }}
-            >
-              <Text style={{ fontSize: 16, color: "gray" }}>
-                {`아직 모임이 없어요. 새로운 모임을 만들어보세요!`}
-              </Text>
-            </View>
           )}
         </View>
         <FAB

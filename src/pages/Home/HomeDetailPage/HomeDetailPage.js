@@ -22,13 +22,13 @@ import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import { Ionicons, AntDesign, MaterialIcons } from "@expo/vector-icons";
 import kitchingLogo from "../../../../assets/kitchingLogo.png";
-
+import SchoolAuthMark from "../../../components/SchoolAuthMark";
 import Spinner from "../../../../assets/loading_spinner.svg";
 import theme from "../../../styles/theme";
 import HomeDetailComment from "./HomeDetailComment/HomeDetailComment";
 import HomeDetailCommentInput from "./HomeDetailComment/HomeDetailCommentInput";
 import MyCarousel from "../../../components/MyCarousel";
-
+import placeHolderIMG from "../../../../assets/kitchingLogo.png";
 import GoogleMap from "../../../components/GoogleMap";
 import { API_URL } from "@env";
 import userStore from "../../../store/userStore";
@@ -273,6 +273,7 @@ export default function HomeDetailPage({ route }) {
                     <Image
                       source={imageSource}
                       style={{
+                        borderRadius: 50,
                         width: 24,
                         height: 24,
                         marginTop: 3,
@@ -295,12 +296,19 @@ export default function HomeDetailPage({ route }) {
                           fontSize: 10,
                         }}
                       >
-                        {detailData.info.category || "스포츠"}
+                        {detailData.category || "스포츠"}
                       </Text>
                     </View>
-                    <Text style={{ fontWeight: "bold" }}>
-                      {detailData.host.name}
-                    </Text>
+                    <View
+                      style={{ flexDirection: "row", alignItems: "center" }}
+                    >
+                      <Text style={{ fontWeight: "bold", flexGrow: 0 }}>
+                        {detailData.host.name}
+                      </Text>
+                      {detailData.host.is_school_email ? (
+                        <SchoolAuthMark width={25} height={25} />
+                      ) : null}
+                    </View>
                   </View>
                 </View>
                 <View></View>
@@ -408,6 +416,7 @@ export default function HomeDetailPage({ route }) {
                 />
 
                 {/* 여기에 종료된게임, 참가신청, 참가취소 버튼 추가 */}
+
                 {detailData.status.is_expire ? (
                   <TouchableOpacity style={styles.homeDetailStateBtnGray}>
                     <Text style={styles.homeDetailStateTextGray}>
@@ -416,6 +425,11 @@ export default function HomeDetailPage({ route }) {
                   </TouchableOpacity>
                 ) : detailData.status.is_owner ? (
                   ""
+                ) : detailData.info.max_participants ===
+                  detailData.info.current_participants ? (
+                  <TouchableOpacity style={styles.homeDetailStateBtnBlack}>
+                    <Text>가득참</Text>
+                  </TouchableOpacity>
                 ) : detailData.status.participate_status === "NONE" ? (
                   <TouchableOpacity
                     style={styles.homeDetailStateBtnBlue}
@@ -437,14 +451,9 @@ export default function HomeDetailPage({ route }) {
                   </TouchableOpacity>
                 ) : detailData.status.participate_status === "PENDING" ? (
                   <TouchableOpacity style={styles.homeDetailStateBtnBlue}>
-                    <Text style={styles.homeDetailStateTextBlue}>참여 중</Text>
-                  </TouchableOpacity>
-                ) : detailData.status.participate_status === "PENDING" ? (
-                  <TouchableOpacity
-                    style={styles.homeDetailStateBtnDisabled}
-                    onPress={clickCancel}
-                  >
-                    <Text>수락 대기중</Text>
+                    <Text style={styles.homeDetailStateTextBlue}>
+                      수락 대기중
+                    </Text>
                   </TouchableOpacity>
                 ) : detailData.status.participate_status === "REJECTED" ? (
                   <TouchableOpacity style={styles.homeDetailStateBtnRed}>
